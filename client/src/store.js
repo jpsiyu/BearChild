@@ -1,14 +1,15 @@
 import { createStore, combineReducers } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import ResMgr from './resMgr'
+import Music from './music'
 import macro from './macro'
 import pjson from '../../package.json'
 
-const resReducer = (state = new ResMgr() , action) => {
+const resReducer = (state = new ResMgr(), action) => {
     return state
 }
 
-const gameStateReducer = (state = macro.StateGame , action) => {
+const gameStateReducer = (state = macro.StateGame, action) => {
     switch (action.type) {
         case macro.ActionStateChange:
             return action.payload
@@ -17,9 +18,14 @@ const gameStateReducer = (state = macro.StateGame , action) => {
     }
 }
 
+const musicReducer = (state = new Music(), action) => {
+    return state
+}
+
 const appReducer = combineReducers({
     resMgr: resReducer,
     gameState: gameStateReducer,
+    music: musicReducer,
 })
 
 
@@ -55,10 +61,16 @@ const getImg = (name) => {
     return res.getImg(name)
 }
 
+const getMusic = () => {
+    const allState = store.getState()
+    return allState.music
+}
+
 export default {
     getStore,
     gameState,
     changeState,
     getResMgr,
     getImg,
+    getMusic,
 }

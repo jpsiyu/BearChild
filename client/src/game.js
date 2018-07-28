@@ -39,6 +39,7 @@ class Game {
     }
 
     resetGame() {
+        store.getMusic().playBg()
         this.grid = new Grid()
 
         let pos = tool.grid2coord(tool.maxRow(), 2)

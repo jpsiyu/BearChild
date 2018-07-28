@@ -6,6 +6,7 @@ const app = express()
 app.use(express.static(path.resolve(__dirname, '../dist')))
 app.use(express.static(path.resolve(__dirname, '../client/public')))
 app.use(express.static(path.resolve(__dirname, '../client/images')))
+app.use(express.static(path.resolve(__dirname, '../client/music')))
 
 app.use('*', (req, res) => {
     res.status(404).json('404')

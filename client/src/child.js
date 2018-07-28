@@ -2,7 +2,6 @@ import drawing from './drawing'
 import macro from './macro'
 import Element from './element'
 import store from './store'
-import { timingSafeEqual } from 'crypto';
 
 class Child extends Element {
     constructor(x, y) {
