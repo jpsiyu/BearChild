@@ -1,10 +1,12 @@
-class Resource {
+class ResMgr {
     constructor() {
         this.names= [
-            'girl',
+            'child',
             'door',
             'milk',
             'mom',
+            'drink',
+            'catched',
         ]
         this.images = {}
     }
@@ -16,7 +18,6 @@ class Resource {
             const path = `${name}.png`
             img.src = path
             img.onload = () => {
-                //console.log(`${name} loaded`)
                 this.images[name] = img
                 loadNum++
                 if(loadNum === this.names.length)
@@ -24,7 +25,6 @@ class Resource {
             }
         })
     }
-
 }
 
-export default Resource
+export default ResMgr

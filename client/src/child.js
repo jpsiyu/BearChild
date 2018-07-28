@@ -1,12 +1,13 @@
 import drawing from './drawing'
 import macro from './macro'
 import Element from './element'
+import gameMgr from './gameMgr'
 
 class Child extends Element {
-    constructor(x, y, img) {
+    constructor(x, y) {
         const radius = macro.GridSize / 2
         super(x, y, radius)
-        this.img = img
+        this.img = gameMgr.res.images['child']
 
         this.drinkMilk = false
         this.drinkMilkTime = 2
@@ -28,6 +29,7 @@ class Child extends Element {
     draw(context) {
         context.save()
         context.translate(this.x, this.y)
+        this.img = this.drinkMilk ? gameMgr.res.images['drink'] : gameMgr.res.images['child']
         drawing.drawImg(context, -macro.GridSize/2, -macro.GridSize/2, this.radius, this.img)
         context.restore()
     }

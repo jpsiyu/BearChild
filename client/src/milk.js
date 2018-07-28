@@ -1,12 +1,13 @@
 import drawing from './drawing'
 import macro from './macro'
 import Element from './element'
+import gameMgr from './gameMgr'
 
 class Milk extends Element {
-    constructor(x, y, img) {
-        const radius = macro.GridSize / 2
+    constructor(x, y) {
+        const radius = macro.GridSize / 3
         super(x, y, radius)
-        this.img = img
+        this.img = gameMgr.res.images['milk']
     }
 
     update() { }
@@ -14,7 +15,7 @@ class Milk extends Element {
     draw(context) {
         context.save()
         context.translate(this.x, this.y)
-        drawing.drawImg(context, -macro.GridSize/2, -macro.GridSize/2, this.radius, this.img)
+        drawing.drawImg(context, -this.radius, -this.radius, this.radius, this.img)
         context.restore()
     }
 

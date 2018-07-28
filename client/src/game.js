@@ -7,7 +7,7 @@ import { Grid } from './grid'
 import { NumberIndicator } from './indicator'
 import tool from './tool'
 import Milk from './milk'
-import Resource from './resource'
+import gameMgr from './gameMgr'
 
 class Game {
     constructor(context) {
@@ -16,7 +16,6 @@ class Game {
         this.frame = this.frame.bind(this)
         this.level = 1
         this.milks = []
-        this.res = new Resource()
 
         this.context.canvas.focus()
         window.addEventListener('keydown', ev => {
@@ -27,31 +26,30 @@ class Game {
             'Level ', 70, 10, { pt: 12 }
         )
 
-        this.res.loadImgs( () => {
+        gameMgr.res.loadImgs(() => {
             this.resetGame()
             window.requestAnimationFrame(this.frame)
         })
     }
 
     restartGame() {
+        gameMgr.state = macro.StateGame
         this.level = 1
         this.resetGame()
     }
 
     resetGame() {
-        this.gameOver = false
         this.grid = new Grid()
 
         let pos = tool.grid2coord(tool.maxRow(), 2)
-        this.child = new Child(pos.x, pos.y, this.res.images['girl'])
+        this.child = new Child(pos.x, pos.y)
 
         pos = tool.grid2coord(tool.maxRow(), 0)
-        this.mom = new Mom(pos.x, pos.y, this.res.images['mom'])
+        this.mom = new Mom(pos.x, pos.y)
 
         this.door = new Door(
             this.context.canvas.width - macro.GridSize,
             macro.GridSize,
-            this.res.images['door']
         )
 
         this.randomMilk()
@@ -63,21 +61,23 @@ class Game {
         const inLimit = (row, col) => {
             return col > 2 && col < tool.maxCol() - 2
         }
-        while (posList.length < 8) {
-            const row = Math.floor(Math.random() * tool.maxRow())
-            const col = Math.floor(Math.random() * tool.maxCol())
+        while (posList.length < 14) {
+            const row = Math.round(Math.random() * tool.maxRow())
+            const col = Math.round(Math.random() * tool.maxCol())
             const g = [row, col]
             if (!posList.includes(g) && inLimit(row, col)) {
                 posList.push(g)
                 const pos = tool.grid2coord(row, col)
-                this.milks.push(new Milk(pos.x, pos.y, this.res.images['milk']))
+                this.milks.push(new Milk(pos.x, pos.y))
             }
         }
     }
 
     levelUp() {
+        gameMgr.state = macro.StateLevelUp
         this.level += 1
         this.resetGame()
+        setTimeout(() => { gameMgr.state = macro.StateGame }, 2 * 1000)
     }
 
     reachDoor() {
@@ -87,7 +87,7 @@ class Game {
 
     momCatchChild() {
         const dis = tool.distance(this.child, this.mom)
-        return dis < (this.child.radius + this.mom.radius)
+        return dis < (this.mom.radius)
     }
 
     childCatchMilk() {
@@ -112,56 +112,79 @@ class Game {
     }
 
     update(elapsed) {
-        if (this.gameOver) return
-        if (this.reachDoor()) {
-            this.levelUp()
-            return
+        switch (gameMgr.state) {
+            case macro.StateGame:
+                if (this.reachDoor()) {
+                    gameMgr.state = macro.StateReachDoor
+                    setTimeout(() => { this.levelUp() }, 2 * 1000)
+                    return
+                }
+                if (this.momCatchChild()) {
+                    gameMgr.state = macro.StateGameOver
+                    return
+                }
+                if (this.childCatchMilk()) {
+                    this.child.drinkMilk = true
+                }
+                this.mom.update(this.child, elapsed)
+                this.child.update(elapsed)
+                break
+            case macro.StateReachDoor:
+            case macro.StateGameOver:
+            case macro.StateLevelUp:
+                break
         }
-        if (this.momCatchChild()) {
-            this.gameOver = true
-            return
-        }
-        if (this.childCatchMilk()) {
-            this.child.drinkMilk = true
-        }
-        this.mom.update(this.child, elapsed)
-        this.child.update(elapsed)
     }
 
     draw() {
-        if (this.gameOver) {
-            this.drawGameOver()
-            return
-        }
-        this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
-        this.grid.draw(this.context, this.child)
-        this.child.draw(this.context)
-        this.mom.draw(this.context)
-        this.milks.forEach(milk => {
-            milk.draw(this.context)
-        })
-        this.grid.drawMask(this.context, this.child)
-        this.door.draw(this.context)
+        switch (gameMgr.state) {
+            case macro.StateLevelUp:
+                this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
+                drawing.drawLabel(
+                    this.context,
+                    `Level ${this.level}`,
+                    this.context.canvas.width / 2,
+                    this.context.canvas.height / 2, { pt: 30, color: 'white' }
+                )
+                break
+            case macro.StateGameOver:
+            case macro.StateGame:
+            case macro.StateReachDoor:
+                this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
+                this.grid.draw(this.context, this.child)
+                this.milks.forEach(milk => {
+                    milk.draw(this.context)
+                })
+                this.mom.draw(this.context)
+                this.grid.drawMask(this.context, this.child)
+                this.door.draw(this.context)
 
-        this.levelIndicator.draw(this.context, this.level)
+                this.levelIndicator.draw(this.context, this.level)
+                if (gameMgr.state !== macro.StateGameOver) this.child.draw(this.context)
+                if (gameMgr.state === macro.StateGameOver) this.drawGameOver()
+                break
+        }
     }
 
     drawGameOver() {
         const w = this.context.canvas.width
         const h = this.context.canvas.height
-        drawing.drawLabel(this.context, 'Game Over', w / 2, h / 2, { pt: 14 })
-        drawing.drawLabel(this.context, 'Press Space To Restart', w / 2, h / 2 + 15, { pt: 10 })
+        drawing.drawLabel(this.context, 'Game Over', w / 2, h / 2, { pt: 30 })
+        drawing.drawLabel(this.context, 'Press Space To Restart', w / 2, h / 2 + 30, { pt: 16 })
 
     }
 
-    keyHandler(keyCode) {
-        switch (keyCode) {
-            case ' ':
-                if (this.gameOver) this.restartGame()
+    keyHandler(key) {
+        switch (gameMgr.state) {
+            case macro.StateGame:
+                this.child.move(this.context, key)
                 break
+            case macro.StateGameOver:
+                if (key === ' ')
+                    this.restartGame()
+                break
+
         }
-        if (!this.gameOver)
-            this.child.move(this.context, keyCode)
     }
 }
 

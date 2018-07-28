@@ -76,7 +76,8 @@ const drawLabel = (context, label, x, y, options) => {
     context.save()
     options = options || {}
     const pt = options.pt || 10
-    context.fillStyle = 'black'
+    const color = options.color || 'black'
+    context.fillStyle = color
     context.textAlign = 'center'
     context.font = `${pt}pt Arial`
     context.fillText(label, x, y)

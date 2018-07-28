@@ -19748,7 +19748,7 @@ if ('development' === 'production') {
   module.exports = require('./cjs/react-dom.development.js');
 }
 },{"./cjs/react-dom.development.js":"../../node_modules/react-dom/cjs/react-dom.development.js"}],"../src/macro.js":[function(require,module,exports) {
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -19756,8 +19756,13 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = {
     Width: 800,
     Height: 400,
-    GridSize: 80,
-    Visiable: 4
+    GridSize: 50,
+    Visiable: 3,
+
+    StateGame: 'StateGame',
+    StateGameOver: 'StateGameOver',
+    StateLevelUp: 'StateLevelUp',
+    StateReachDoor: 'StateReachDoor'
 };
 },{}],"../src/drawing.js":[function(require,module,exports) {
 'use strict';
@@ -19849,7 +19854,8 @@ var drawLabel = function drawLabel(context, label, x, y, options) {
     context.save();
     options = options || {};
     var pt = options.pt || 10;
-    context.fillStyle = 'black';
+    var color = options.color || 'black';
+    context.fillStyle = color;
     context.textAlign = 'center';
     context.font = pt + 'pt Arial';
     context.fillText(label, x, y);
@@ -19883,7 +19889,78 @@ var Element = function Element(x, y, radius) {
 };
 
 exports.default = Element;
-},{}],"../src/child.js":[function(require,module,exports) {
+},{}],"../src/resource.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ResMgr = function () {
+    function ResMgr() {
+        _classCallCheck(this, ResMgr);
+
+        this.names = ['child', 'door', 'milk', 'mom', 'drink', 'catched'];
+        this.images = {};
+    }
+
+    _createClass(ResMgr, [{
+        key: 'loadImgs',
+        value: function loadImgs(callback) {
+            var _this = this;
+
+            var loadNum = 0;
+            this.names.forEach(function (name) {
+                var img = new Image();
+                var path = name + '.png';
+                img.src = path;
+                img.onload = function () {
+                    _this.images[name] = img;
+                    loadNum++;
+                    if (loadNum === _this.names.length) callback();
+                };
+            });
+        }
+    }]);
+
+    return ResMgr;
+}();
+
+exports.default = ResMgr;
+},{}],"../src/gameMgr.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _resource = require('./resource');
+
+var _resource2 = _interopRequireDefault(_resource);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var GameMgr = function GameMgr() {
+    _classCallCheck(this, GameMgr);
+
+    this.res = new _resource2.default();
+    this.state = _macro2.default.StateGame;
+};
+
+var gameMgr = new GameMgr();
+
+exports.default = gameMgr;
+},{"./resource":"../src/resource.js","./macro":"../src/macro.js"}],"../src/child.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -19904,6 +19981,10 @@ var _element = require('./element');
 
 var _element2 = _interopRequireDefault(_element);
 
+var _gameMgr = require('./gameMgr');
+
+var _gameMgr2 = _interopRequireDefault(_gameMgr);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -19915,14 +19996,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Child = function (_Element) {
     _inherits(Child, _Element);
 
-    function Child(x, y, img) {
+    function Child(x, y) {
         _classCallCheck(this, Child);
 
         var radius = _macro2.default.GridSize / 2;
 
         var _this = _possibleConstructorReturn(this, (Child.__proto__ || Object.getPrototypeOf(Child)).call(this, x, y, radius));
 
-        _this.img = img;
+        _this.img = _gameMgr2.default.res.images['child'];
 
         _this.drinkMilk = false;
         _this.drinkMilkTime = 2;
@@ -19945,6 +20026,7 @@ var Child = function (_Element) {
         value: function draw(context) {
             context.save();
             context.translate(this.x, this.y);
+            this.img = this.drinkMilk ? _gameMgr2.default.res.images['drink'] : _gameMgr2.default.res.images['child'];
             _drawing2.default.drawImg(context, -_macro2.default.GridSize / 2, -_macro2.default.GridSize / 2, this.radius, this.img);
             context.restore();
         }
@@ -19985,7 +20067,7 @@ var Child = function (_Element) {
 }(_element2.default);
 
 exports.default = Child;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js"}],"../src/door.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./gameMgr":"../src/gameMgr.js"}],"../src/door.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20006,6 +20088,10 @@ var _element = require('./element');
 
 var _element2 = _interopRequireDefault(_element);
 
+var _gameMgr = require('./gameMgr');
+
+var _gameMgr2 = _interopRequireDefault(_gameMgr);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20017,14 +20103,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Door = function (_Element) {
     _inherits(Door, _Element);
 
-    function Door(x, y, img) {
+    function Door(x, y) {
         _classCallCheck(this, Door);
 
         var radius = _macro2.default.GridSize;
 
         var _this = _possibleConstructorReturn(this, (Door.__proto__ || Object.getPrototypeOf(Door)).call(this, x, y, radius));
 
-        _this.img = img;
+        _this.img = _gameMgr2.default.res.images['door'];
         return _this;
     }
 
@@ -20045,7 +20131,7 @@ var Door = function (_Element) {
 }(_element2.default);
 
 exports.default = Door;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js"}],"../src/mom.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./gameMgr":"../src/gameMgr.js"}],"../src/mom.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20066,6 +20152,10 @@ var _macro = require('./macro');
 
 var _macro2 = _interopRequireDefault(_macro);
 
+var _gameMgr = require('./gameMgr');
+
+var _gameMgr2 = _interopRequireDefault(_gameMgr);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20077,7 +20167,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Mom = function (_Element) {
     _inherits(Mom, _Element);
 
-    function Mom(x, y, img) {
+    function Mom(x, y) {
         _classCallCheck(this, Mom);
 
         var radius = _macro2.default.GridSize / 2;
@@ -20087,7 +20177,7 @@ var Mom = function (_Element) {
         _this.chaseSpeed = 100;
         _this.waitTime = 1;
         _this.waitPass = 0;
-        _this.img = img;
+        _this.img = _gameMgr2.default.res.images['mom'];
         return _this;
     }
 
@@ -20114,7 +20204,14 @@ var Mom = function (_Element) {
         value: function draw(context) {
             context.save();
             context.translate(this.x, this.y);
-            _drawing2.default.drawImg(context, -_macro2.default.GridSize / 2, -_macro2.default.GridSize / 2, this.radius, this.img);
+            if (_gameMgr2.default.state == _macro2.default.StateGameOver) {
+                this.radius = _macro2.default.GridSize;
+                this.img = _gameMgr2.default.res.images['catched'];
+            } else {
+                this.radius = _macro2.default.GridSize / 2;
+                this.img = _gameMgr2.default.res.images['mom'];
+            }
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
             context.restore();
         }
     }]);
@@ -20123,7 +20220,7 @@ var Mom = function (_Element) {
 }(_element2.default);
 
 exports.default = Mom;
-},{"./element":"../src/element.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js"}],"../src/grid.js":[function(require,module,exports) {
+},{"./element":"../src/element.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js","./gameMgr":"../src/gameMgr.js"}],"../src/grid.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20154,7 +20251,7 @@ var Grid = function () {
         key: 'draw',
         value: function draw(context, child) {
             context.save();
-            _drawing2.default.drawCover(context, 'rgb(255, 218, 229');
+            _drawing2.default.drawCover(context, 'rgb(238, 217, 255');
             var h = _macro2.default.GridSize / 2;
             _drawing2.default.drawGrid(context);
             context.restore();
@@ -20307,6 +20404,10 @@ var _element = require('./element');
 
 var _element2 = _interopRequireDefault(_element);
 
+var _gameMgr = require('./gameMgr');
+
+var _gameMgr2 = _interopRequireDefault(_gameMgr);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20318,14 +20419,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Milk = function (_Element) {
     _inherits(Milk, _Element);
 
-    function Milk(x, y, img) {
+    function Milk(x, y) {
         _classCallCheck(this, Milk);
 
-        var radius = _macro2.default.GridSize / 2;
+        var radius = _macro2.default.GridSize / 3;
 
         var _this = _possibleConstructorReturn(this, (Milk.__proto__ || Object.getPrototypeOf(Milk)).call(this, x, y, radius));
 
-        _this.img = img;
+        _this.img = _gameMgr2.default.res.images['milk'];
         return _this;
     }
 
@@ -20337,7 +20438,7 @@ var Milk = function (_Element) {
         value: function draw(context) {
             context.save();
             context.translate(this.x, this.y);
-            _drawing2.default.drawImg(context, -_macro2.default.GridSize / 2, -_macro2.default.GridSize / 2, this.radius, this.img);
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
             context.restore();
         }
     }]);
@@ -20346,50 +20447,7 @@ var Milk = function (_Element) {
 }(_element2.default);
 
 exports.default = Milk;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js"}],"../src/resource.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Resource = function () {
-    function Resource() {
-        _classCallCheck(this, Resource);
-
-        this.names = ['girl', 'door', 'milk', 'mom'];
-        this.images = {};
-    }
-
-    _createClass(Resource, [{
-        key: 'loadImgs',
-        value: function loadImgs(callback) {
-            var _this = this;
-
-            var loadNum = 0;
-            this.names.forEach(function (name) {
-                var img = new Image();
-                var path = name + '.png';
-                img.src = path;
-                img.onload = function () {
-                    //console.log(`${name} loaded`)
-                    _this.images[name] = img;
-                    loadNum++;
-                    if (loadNum === _this.names.length) callback();
-                };
-            });
-        }
-    }]);
-
-    return Resource;
-}();
-
-exports.default = Resource;
-},{}],"../src/game.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./gameMgr":"../src/gameMgr.js"}],"../src/game.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20430,9 +20488,9 @@ var _milk = require('./milk');
 
 var _milk2 = _interopRequireDefault(_milk);
 
-var _resource = require('./resource');
+var _gameMgr = require('./gameMgr');
 
-var _resource2 = _interopRequireDefault(_resource);
+var _gameMgr2 = _interopRequireDefault(_gameMgr);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -20449,7 +20507,6 @@ var Game = function () {
         this.frame = this.frame.bind(this);
         this.level = 1;
         this.milks = [];
-        this.res = new _resource2.default();
 
         this.context.canvas.focus();
         window.addEventListener('keydown', function (ev) {
@@ -20458,7 +20515,7 @@ var Game = function () {
 
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
 
-        this.res.loadImgs(function () {
+        _gameMgr2.default.res.loadImgs(function () {
             _this.resetGame();
             window.requestAnimationFrame(_this.frame);
         });
@@ -20467,22 +20524,22 @@ var Game = function () {
     _createClass(Game, [{
         key: 'restartGame',
         value: function restartGame() {
+            _gameMgr2.default.state = _macro2.default.StateGame;
             this.level = 1;
             this.resetGame();
         }
     }, {
         key: 'resetGame',
         value: function resetGame() {
-            this.gameOver = false;
             this.grid = new _grid.Grid();
 
             var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 2);
-            this.child = new _child2.default(pos.x, pos.y, this.res.images['girl']);
+            this.child = new _child2.default(pos.x, pos.y);
 
             pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 0);
-            this.mom = new _mom2.default(pos.x, pos.y, this.res.images['mom']);
+            this.mom = new _mom2.default(pos.x, pos.y);
 
-            this.door = new _door2.default(this.context.canvas.width - _macro2.default.GridSize, _macro2.default.GridSize, this.res.images['door']);
+            this.door = new _door2.default(this.context.canvas.width - _macro2.default.GridSize, _macro2.default.GridSize);
 
             this.randomMilk();
         }
@@ -20494,22 +20551,26 @@ var Game = function () {
             var inLimit = function inLimit(row, col) {
                 return col > 2 && col < _tool2.default.maxCol() - 2;
             };
-            while (posList.length < 8) {
-                var row = Math.floor(Math.random() * _tool2.default.maxRow());
-                var col = Math.floor(Math.random() * _tool2.default.maxCol());
+            while (posList.length < 14) {
+                var row = Math.round(Math.random() * _tool2.default.maxRow());
+                var col = Math.round(Math.random() * _tool2.default.maxCol());
                 var g = [row, col];
                 if (!posList.includes(g) && inLimit(row, col)) {
                     posList.push(g);
                     var pos = _tool2.default.grid2coord(row, col);
-                    this.milks.push(new _milk2.default(pos.x, pos.y, this.res.images['milk']));
+                    this.milks.push(new _milk2.default(pos.x, pos.y));
                 }
             }
         }
     }, {
         key: 'levelUp',
         value: function levelUp() {
+            _gameMgr2.default.state = _macro2.default.StateLevelUp;
             this.level += 1;
             this.resetGame();
+            setTimeout(function () {
+                _gameMgr2.default.state = _macro2.default.StateGame;
+            }, 2 * 1000);
         }
     }, {
         key: 'reachDoor',
@@ -20521,7 +20582,7 @@ var Game = function () {
         key: 'momCatchChild',
         value: function momCatchChild() {
             var dis = _tool2.default.distance(this.child, this.mom);
-            return dis < this.child.radius + this.mom.radius;
+            return dis < this.mom.radius;
         }
     }, {
         key: 'childCatchMilk',
@@ -20551,59 +20612,81 @@ var Game = function () {
     }, {
         key: 'update',
         value: function update(elapsed) {
-            if (this.gameOver) return;
-            if (this.reachDoor()) {
-                this.levelUp();
-                return;
+            var _this3 = this;
+
+            switch (_gameMgr2.default.state) {
+                case _macro2.default.StateGame:
+                    if (this.reachDoor()) {
+                        _gameMgr2.default.state = _macro2.default.StateReachDoor;
+                        setTimeout(function () {
+                            _this3.levelUp();
+                        }, 2 * 1000);
+                        return;
+                    }
+                    if (this.momCatchChild()) {
+                        _gameMgr2.default.state = _macro2.default.StateGameOver;
+                        return;
+                    }
+                    if (this.childCatchMilk()) {
+                        this.child.drinkMilk = true;
+                    }
+                    this.mom.update(this.child, elapsed);
+                    this.child.update(elapsed);
+                    break;
+                case _macro2.default.StateReachDoor:
+                case _macro2.default.StateGameOver:
+                case _macro2.default.StateLevelUp:
+                    break;
             }
-            if (this.momCatchChild()) {
-                this.gameOver = true;
-                return;
-            }
-            if (this.childCatchMilk()) {
-                this.child.drinkMilk = true;
-            }
-            this.mom.update(this.child, elapsed);
-            this.child.update(elapsed);
         }
     }, {
         key: 'draw',
         value: function draw() {
-            var _this3 = this;
+            var _this4 = this;
 
-            if (this.gameOver) {
-                this.drawGameOver();
-                return;
+            switch (_gameMgr2.default.state) {
+                case _macro2.default.StateLevelUp:
+                    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+                    _drawing2.default.drawLabel(this.context, 'Level ' + this.level, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
+                    break;
+                case _macro2.default.StateGameOver:
+                case _macro2.default.StateGame:
+                case _macro2.default.StateReachDoor:
+                    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+                    this.grid.draw(this.context, this.child);
+                    this.milks.forEach(function (milk) {
+                        milk.draw(_this4.context);
+                    });
+                    this.mom.draw(this.context);
+                    this.grid.drawMask(this.context, this.child);
+                    this.door.draw(this.context);
+
+                    this.levelIndicator.draw(this.context, this.level);
+                    if (_gameMgr2.default.state !== _macro2.default.StateGameOver) this.child.draw(this.context);
+                    if (_gameMgr2.default.state === _macro2.default.StateGameOver) this.drawGameOver();
+                    break;
             }
-            this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
-            this.grid.draw(this.context, this.child);
-            this.child.draw(this.context);
-            this.mom.draw(this.context);
-            this.milks.forEach(function (milk) {
-                milk.draw(_this3.context);
-            });
-            this.grid.drawMask(this.context, this.child);
-            this.door.draw(this.context);
-
-            this.levelIndicator.draw(this.context, this.level);
         }
     }, {
         key: 'drawGameOver',
         value: function drawGameOver() {
             var w = this.context.canvas.width;
             var h = this.context.canvas.height;
-            _drawing2.default.drawLabel(this.context, 'Game Over', w / 2, h / 2, { pt: 14 });
-            _drawing2.default.drawLabel(this.context, 'Press Space To Restart', w / 2, h / 2 + 15, { pt: 10 });
+            _drawing2.default.drawLabel(this.context, 'Game Over', w / 2, h / 2, { pt: 30 });
+            _drawing2.default.drawLabel(this.context, 'Press Space To Restart', w / 2, h / 2 + 30, { pt: 16 });
         }
     }, {
         key: 'keyHandler',
-        value: function keyHandler(keyCode) {
-            switch (keyCode) {
-                case ' ':
-                    if (this.gameOver) this.restartGame();
+        value: function keyHandler(key) {
+            switch (_gameMgr2.default.state) {
+                case _macro2.default.StateGame:
+                    this.child.move(this.context, key);
                     break;
+                case _macro2.default.StateGameOver:
+                    if (key === ' ') this.restartGame();
+                    break;
+
             }
-            if (!this.gameOver) this.child.move(this.context, keyCode);
         }
     }]);
 
@@ -20611,7 +20694,7 @@ var Game = function () {
 }();
 
 exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./milk":"../src/milk.js","./resource":"../src/resource.js"}],"../src/gameCpt.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./milk":"../src/milk.js","./gameMgr":"../src/gameMgr.js"}],"../src/gameCpt.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20748,7 +20831,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49246' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '59274' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

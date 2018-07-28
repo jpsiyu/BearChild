@@ -1,27 +1,27 @@
 import Element from './element'
 import drawing from './drawing'
 import macro from './macro'
+import gameMgr from './gameMgr'
 
-class Mom extends Element{
-    constructor(x, y, img){
+class Mom extends Element {
+    constructor(x, y) {
         const radius = macro.GridSize / 2
         super(x, y, radius)
         this.chaseSpeed = 100
         this.waitTime = 1
         this.waitPass = 0
-        this.img = img
+        this.img = gameMgr.res.images['mom']
     }
 
-
-    update(child, elapsed) { 
-        if(this.waitPass < this.waitTime){
+    update(child, elapsed) {
+        if (this.waitPass < this.waitTime) {
             this.waitPass += elapsed
             return
         }
         this.chase(child, elapsed)
     }
 
-    chase(child, elapsed){
+    chase(child, elapsed) {
         const dy = child.y - this.y
         const dx = child.x - this.x
         const theta = Math.atan2(dy, dx)
@@ -32,7 +32,14 @@ class Mom extends Element{
     draw(context) {
         context.save()
         context.translate(this.x, this.y)
-        drawing.drawImg(context, -macro.GridSize/2, -macro.GridSize/2, this.radius, this.img)
+        if (gameMgr.state == macro.StateGameOver) {
+            this.radius = macro.GridSize
+            this.img = gameMgr.res.images['catched']
+        } else {
+            this.radius = macro.GridSize / 2
+            this.img = gameMgr.res.images['mom']
+        }
+        drawing.drawImg(context, -this.radius, -this.radius, this.radius, this.img)
         context.restore()
     }
 }

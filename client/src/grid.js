@@ -4,7 +4,7 @@ import macro from './macro'
 class Grid {
     draw(context, child) {
         context.save()
-        drawing.drawCover(context, 'rgb(255, 218, 229')
+        drawing.drawCover(context, 'rgb(238, 217, 255')
         const h = macro.GridSize / 2
         drawing.drawGrid(context)
         context.restore()

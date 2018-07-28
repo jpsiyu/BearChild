@@ -1,12 +1,13 @@
 import drawing from './drawing'
 import macro from './macro'
 import Element from './element'
+import gameMgr from './gameMgr'
 
 class Door extends Element {
-    constructor(x, y, img) {
+    constructor(x, y) {
         const radius = macro.GridSize
         super(x, y, radius)
-        this.img = img
+        this.img = gameMgr.res.images['door']
     }
 
     update() { }
