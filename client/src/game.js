@@ -137,10 +137,11 @@ class Game {
         this.grid.draw(this.context, this.child)
         this.child.draw(this.context)
         this.mom.draw(this.context)
-        this.door.draw(this.context)
         this.milks.forEach(milk => {
             milk.draw(this.context)
         })
+        this.grid.drawMask(this.context, this.child)
+        this.door.draw(this.context)
 
         this.levelIndicator.draw(this.context, this.level)
     }

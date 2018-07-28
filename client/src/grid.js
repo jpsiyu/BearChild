@@ -6,10 +6,25 @@ class Grid {
         context.save()
         drawing.drawCover(context, 'rgb(255, 218, 229')
         const h = macro.GridSize / 2
-        drawing.drawCoverUpRight(context, 'rgb(204, 243, 242)', child.x-h, child.y+h)
         drawing.drawGrid(context)
+        context.restore()
+    }
+
+    drawMask(context, child) {
+        context.save()
+        const h = macro.GridSize / 2
+        drawing.drawCoverRight(
+            context,
+            'rgb(240, 240, 240)',
+            child.x - h + macro.GridSize * macro.Visiable,
+        )
+        drawing.drawCoverTop(
+            context,
+            'rgb(240, 240, 240)',
+            child.y + h - macro.GridSize * macro.Visiable,
+        )
         context.restore()
     }
 }
 
-export {Grid}
+export { Grid }

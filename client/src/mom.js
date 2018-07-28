@@ -6,8 +6,8 @@ class Mom extends Element{
     constructor(x, y, img){
         const radius = macro.GridSize / 2
         super(x, y, radius)
-        this.chaseSpeed = 50
-        this.waitTime = 3
+        this.chaseSpeed = 100
+        this.waitTime = 1
         this.waitPass = 0
         this.img = img
     }

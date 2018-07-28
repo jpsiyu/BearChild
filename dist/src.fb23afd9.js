@@ -19756,7 +19756,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = {
     Width: 800,
     Height: 400,
-    GridSize: 40
+    GridSize: 80,
+    Visiable: 4
 };
 },{}],"../src/drawing.js":[function(require,module,exports) {
 'use strict';
@@ -19801,12 +19802,22 @@ var drawCover = function drawCover(context, color) {
     context.restore();
 };
 
-var drawCoverUpRight = function drawCoverUpRight(context, color, x, y) {
+var drawCoverRight = function drawCoverRight(context, color, x) {
     color = color || 'yellow';
     context.save();
     context.beginPath();
     context.fillStyle = color;
-    context.rect(x, 0, context.canvas.width - x, y);
+    context.rect(x, 0, context.canvas.width - x, context.canvas.height);
+    context.fill();
+    context.restore();
+};
+
+var drawCoverTop = function drawCoverTop(context, color, h) {
+    color = color || 'yellow';
+    context.save();
+    context.beginPath();
+    context.fillStyle = color;
+    context.rect(0, 0, _macro2.default.Width, h);
     context.fill();
     context.restore();
 };
@@ -19850,7 +19861,8 @@ exports.default = {
     drawImg: drawImg,
     drawReachable: drawReachable,
     drawCover: drawCover,
-    drawCoverUpRight: drawCoverUpRight,
+    drawCoverRight: drawCoverRight,
+    drawCoverTop: drawCoverTop,
     drawLabel: drawLabel
 };
 },{"./macro":"../src/macro.js"}],"../src/element.js":[function(require,module,exports) {
@@ -20072,8 +20084,8 @@ var Mom = function (_Element) {
 
         var _this = _possibleConstructorReturn(this, (Mom.__proto__ || Object.getPrototypeOf(Mom)).call(this, x, y, radius));
 
-        _this.chaseSpeed = 50;
-        _this.waitTime = 3;
+        _this.chaseSpeed = 100;
+        _this.waitTime = 1;
         _this.waitPass = 0;
         _this.img = img;
         return _this;
@@ -20144,8 +20156,16 @@ var Grid = function () {
             context.save();
             _drawing2.default.drawCover(context, 'rgb(255, 218, 229');
             var h = _macro2.default.GridSize / 2;
-            _drawing2.default.drawCoverUpRight(context, 'rgb(204, 243, 242)', child.x - h, child.y + h);
             _drawing2.default.drawGrid(context);
+            context.restore();
+        }
+    }, {
+        key: 'drawMask',
+        value: function drawMask(context, child) {
+            context.save();
+            var h = _macro2.default.GridSize / 2;
+            _drawing2.default.drawCoverRight(context, 'rgb(240, 240, 240)', child.x - h + _macro2.default.GridSize * _macro2.default.Visiable);
+            _drawing2.default.drawCoverTop(context, 'rgb(240, 240, 240)', child.y + h - _macro2.default.GridSize * _macro2.default.Visiable);
             context.restore();
         }
     }]);
@@ -20559,10 +20579,11 @@ var Game = function () {
             this.grid.draw(this.context, this.child);
             this.child.draw(this.context);
             this.mom.draw(this.context);
-            this.door.draw(this.context);
             this.milks.forEach(function (milk) {
                 milk.draw(_this3.context);
             });
+            this.grid.drawMask(this.context, this.child);
+            this.door.draw(this.context);
 
             this.levelIndicator.draw(this.context, this.level);
         }
@@ -20727,7 +20748,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49228' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49246' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

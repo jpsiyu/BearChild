@@ -30,12 +30,22 @@ const drawCover = (context, color) => {
     context.restore()
 }
 
-const drawCoverUpRight = (context, color, x, y) => {
+const drawCoverRight = (context, color, x) => {
     color = color || 'yellow'
     context.save()
     context.beginPath()
     context.fillStyle = color
-    context.rect(x, 0, context.canvas.width-x, y)
+    context.rect(x, 0, context.canvas.width-x, context.canvas.height)
+    context.fill()
+    context.restore()
+}
+
+const drawCoverTop = ( context, color, h) => {
+    color = color || 'yellow'
+    context.save()
+    context.beginPath()
+    context.fillStyle = color
+    context.rect(0, 0, macro.Width, h)
     context.fill()
     context.restore()
 }
@@ -78,6 +88,7 @@ export default {
     drawImg,
     drawReachable,
     drawCover,
-    drawCoverUpRight,
+    drawCoverRight,
+    drawCoverTop,
     drawLabel,
 }
