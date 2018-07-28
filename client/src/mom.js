@@ -1,7 +1,7 @@
 import Element from './element'
 import drawing from './drawing'
 import macro from './macro'
-import gameMgr from './gameMgr'
+import store from './store'
 
 class Mom extends Element {
     constructor(x, y) {
@@ -10,7 +10,7 @@ class Mom extends Element {
         this.chaseSpeed = 100
         this.waitTime = 1
         this.waitPass = 0
-        this.img = gameMgr.res.images['mom']
+        this.img = store.getImg('mom')
     }
 
     update(child, elapsed) {
@@ -32,12 +32,12 @@ class Mom extends Element {
     draw(context) {
         context.save()
         context.translate(this.x, this.y)
-        if (gameMgr.state == macro.StateGameOver) {
+        if (store.gameState() == macro.StateGameOver) {
             this.radius = macro.GridSize
-            this.img = gameMgr.res.images['catched']
+            this.img = store.getImg('catched')
         } else {
             this.radius = macro.GridSize / 2
-            this.img = gameMgr.res.images['mom']
+            this.img = store.getImg('mom')
         }
         drawing.drawImg(context, -this.radius, -this.radius, this.radius, this.img)
         context.restore()

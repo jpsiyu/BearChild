@@ -25,6 +25,10 @@ class ResMgr {
             }
         })
     }
+
+    getImg(name){
+        return this.images[name]
+    }
 }
 
 export default ResMgr

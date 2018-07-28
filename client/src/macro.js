@@ -8,4 +8,6 @@ export default {
     StateGameOver: 'StateGameOver',
     StateLevelUp: 'StateLevelUp',
     StateReachDoor: 'StateReachDoor',
+
+    ActionStateChange: 'ActionStateChange',
 }

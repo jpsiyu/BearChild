@@ -7,7 +7,7 @@ import { Grid } from './grid'
 import { NumberIndicator } from './indicator'
 import tool from './tool'
 import Milk from './milk'
-import gameMgr from './gameMgr'
+import store from './store'
 
 class Game {
     constructor(context) {
@@ -26,14 +26,14 @@ class Game {
             'Level ', 70, 10, { pt: 12 }
         )
 
-        gameMgr.res.loadImgs(() => {
+        store.getResMgr().loadImgs(() => {
             this.resetGame()
             window.requestAnimationFrame(this.frame)
         })
     }
 
     restartGame() {
-        gameMgr.state = macro.StateGame
+        store.changeState(macro.StateGame)
         this.level = 1
         this.resetGame()
     }
@@ -74,10 +74,10 @@ class Game {
     }
 
     levelUp() {
-        gameMgr.state = macro.StateLevelUp
+        store.changeState(macro.StateLevelUp)
         this.level += 1
         this.resetGame()
-        setTimeout(() => { gameMgr.state = macro.StateGame }, 2 * 1000)
+        setTimeout(() => { store.changeState(macro.StateGame) }, 2 * 1000)
     }
 
     reachDoor() {
@@ -112,15 +112,15 @@ class Game {
     }
 
     update(elapsed) {
-        switch (gameMgr.state) {
+        switch (store.gameState()) {
             case macro.StateGame:
                 if (this.reachDoor()) {
-                    gameMgr.state = macro.StateReachDoor
+                    store.changeState(macro.StateReachDoor)
                     setTimeout(() => { this.levelUp() }, 2 * 1000)
                     return
                 }
                 if (this.momCatchChild()) {
-                    gameMgr.state = macro.StateGameOver
+                    store.changeState(macro.StateGameOver)
                     return
                 }
                 if (this.childCatchMilk()) {
@@ -130,6 +130,8 @@ class Game {
                 this.child.update(elapsed)
                 break
             case macro.StateReachDoor:
+                this.child.update(elapsed)
+                break
             case macro.StateGameOver:
             case macro.StateLevelUp:
                 break
@@ -137,7 +139,7 @@ class Game {
     }
 
     draw() {
-        switch (gameMgr.state) {
+        switch (store.gameState()) {
             case macro.StateLevelUp:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 drawing.drawLabel(
@@ -160,8 +162,8 @@ class Game {
                 this.door.draw(this.context)
 
                 this.levelIndicator.draw(this.context, this.level)
-                if (gameMgr.state !== macro.StateGameOver) this.child.draw(this.context)
-                if (gameMgr.state === macro.StateGameOver) this.drawGameOver()
+                this.child.draw(this.context)
+                if (store.gameState() === macro.StateGameOver) this.drawGameOver()
                 break
         }
     }
@@ -175,7 +177,7 @@ class Game {
     }
 
     keyHandler(key) {
-        switch (gameMgr.state) {
+        switch (store.gameState()) {
             case macro.StateGame:
                 this.child.move(this.context, key)
                 break

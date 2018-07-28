@@ -1,13 +1,13 @@
 import drawing from './drawing'
 import macro from './macro'
 import Element from './element'
-import gameMgr from './gameMgr'
+import store from './store'
 
 class Milk extends Element {
     constructor(x, y) {
         const radius = macro.GridSize / 3
         super(x, y, radius)
-        this.img = gameMgr.res.images['milk']
+        this.img = store.getImg('milk')
     }
 
     update() { }
