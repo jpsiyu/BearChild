@@ -2,6 +2,7 @@ import { createStore, combineReducers } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import ResMgr from './resMgr'
 import Music from './music'
+import Map from './map'
 import macro from './macro'
 import pjson from '../../package.json'
 
@@ -22,10 +23,15 @@ const musicReducer = (state = new Music(), action) => {
     return state
 }
 
+const mapReducer = (state = new Map(), action) => {
+    return state
+}
+
 const appReducer = combineReducers({
     resMgr: resReducer,
     gameState: gameStateReducer,
     music: musicReducer,
+    map: mapReducer,
 })
 
 
@@ -66,6 +72,11 @@ const getMusic = () => {
     return allState.music
 }
 
+const getMap = () => {
+    const allState = store.getState()
+    return allState.map
+}
+
 export default {
     getStore,
     gameState,
@@ -73,4 +84,5 @@ export default {
     getResMgr,
     getImg,
     getMusic,
+    getMap,
 }

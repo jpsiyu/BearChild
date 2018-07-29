@@ -3,12 +3,13 @@ import macro from './macro'
 import Element from './element'
 import store from './store'
 import Sprite from './sprite'
+import tool from './tool'
 
 class Child extends Element {
     constructor(x, y) {
         const radius = macro.GridSize / 2
         super(x, y, radius)
-        this.sprite = new Sprite(2, 2, store.getImg('child-roll'), {frameUpdateTime : 1})
+        this.sprite = new Sprite(2, 2, store.getImg('child-roll'), { frameUpdateTime: 1 })
 
         this.drinkMilk = false
         this.drinkMilkTime = 2
@@ -24,7 +25,7 @@ class Child extends Element {
                 if (this.drinkMilk) {
                     if (this.pass < this.drinkMilkTime) {
                         this.pass += elapsed
-                        this.angle = -0.25 * Math.PI * Math.sin(this.pass * 8)
+                        this.angle = -0.05 * Math.PI * Math.sin(this.pass * 8)
                     }
                     else {
                         this.drinkMilk = false
@@ -53,7 +54,7 @@ class Child extends Element {
                 context.translate(this.x, this.y)
                 if (this.drinkMilk) {
                     context.rotate(this.angle)
-                    this.img = store.getImg('drink') 
+                    this.img = store.getImg('drink')
                     drawing.drawImg(context, -macro.GridSize / 2, -macro.GridSize / 2, this.radius, this.img)
 
                 } else {
@@ -68,7 +69,8 @@ class Child extends Element {
         if (this.drinkMilk) return
         switch (keyCode) {
             case 'ArrowUp':
-                this.y -= macro.GridSize
+                if (!this.checkPosInFense({ x: this.x, y: this.y - macro.GridSize }))
+                    this.y -= macro.GridSize
                 break
             case 'ArrowDown':
                 //this.y += macro.GridSize
@@ -77,10 +79,20 @@ class Child extends Element {
                 //this.x -= macro.GridSize
                 break
             case 'ArrowRight':
-                this.x += macro.GridSize
+                if (!this.checkPosInFense({ x: this.x + macro.GridSize, y: this.y }))
+                    this.x += macro.GridSize
                 break
         }
         this.moveLimit(context)
+    }
+
+    checkPosInFense(pos) {
+        let inFense = false
+        store.getMap().fences.forEach(fence => {
+            if (tool.distancePos(pos, fence.pos()) < fence.radius)
+                inFense = true
+        })
+        return inFense
     }
 
     moveLimit(context) {

@@ -19880,15 +19880,28 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Element = function Element(x, y, radius) {
-    _classCallCheck(this, Element);
+var Element = function () {
+    function Element(x, y, radius) {
+        _classCallCheck(this, Element);
 
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-};
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
+
+    _createClass(Element, [{
+        key: "pos",
+        value: function pos() {
+            return { x: this.x, y: this.y };
+        }
+    }]);
+
+    return Element;
+}();
 
 exports.default = Element;
 },{}],"../../node_modules/symbol-observable/es/ponyfill.js":[function(require,module,exports) {
@@ -20588,7 +20601,7 @@ var ResMgr = function () {
     function ResMgr() {
         _classCallCheck(this, ResMgr);
 
-        this.names = ['door', 'milk', 'drink', 'catched', 'mom-run', 'child-roll'];
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll'];
         this.images = {};
     }
 
@@ -20655,7 +20668,266 @@ var Music = function () {
 }();
 
 exports.default = Music;
-},{}],"../../package.json":[function(require,module,exports) {
+},{}],"../src/milk.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+var _store = require('./store');
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Milk = function (_Element) {
+    _inherits(Milk, _Element);
+
+    function Milk(x, y) {
+        _classCallCheck(this, Milk);
+
+        var radius = _macro2.default.GridSize / 3;
+
+        var _this = _possibleConstructorReturn(this, (Milk.__proto__ || Object.getPrototypeOf(Milk)).call(this, x, y, radius));
+
+        _this.img = _store2.default.getImg('milk');
+        return _this;
+    }
+
+    _createClass(Milk, [{
+        key: 'update',
+        value: function update() {}
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            context.save();
+            context.translate(this.x, this.y);
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+            context.restore();
+        }
+    }]);
+
+    return Milk;
+}(_element2.default);
+
+exports.default = Milk;
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./store":"../src/store.js"}],"../src/fence.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+var _store = require('./store');
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Fence = function (_Element) {
+    _inherits(Fence, _Element);
+
+    function Fence(x, y) {
+        _classCallCheck(this, Fence);
+
+        var radius = _macro2.default.GridSize / 2;
+
+        var _this = _possibleConstructorReturn(this, (Fence.__proto__ || Object.getPrototypeOf(Fence)).call(this, x, y, radius));
+
+        _this.img = _store2.default.getImg('fence');
+        return _this;
+    }
+
+    _createClass(Fence, [{
+        key: 'update',
+        value: function update() {}
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            context.save();
+            context.translate(this.x, this.y);
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+            context.restore();
+        }
+    }]);
+
+    return Fence;
+}(_element2.default);
+
+exports.default = Fence;
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./store":"../src/store.js"}],"../src/tool.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var grid2coord = function grid2coord(row, col) {
+    var x = _macro2.default.GridSize / 2 + col * _macro2.default.GridSize;
+    var y = _macro2.default.GridSize / 2 + row * _macro2.default.GridSize;
+    return { x: x, y: y };
+};
+
+var maxRow = function maxRow() {
+    return _macro2.default.Height / _macro2.default.GridSize - 1;
+};
+
+var maxCol = function maxCol() {
+    return _macro2.default.Width / _macro2.default.GridSize - 1;
+};
+
+var distance = function distance(obj1, obj2) {
+    var dis = Math.sqrt(Math.pow(obj1.x - obj2.x, 2) + Math.pow(obj1.y - obj2.y, 2));
+    return dis;
+};
+
+var distancePos = function distancePos(pos1, pos2) {
+    var dis = Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
+    return dis;
+};
+
+exports.default = {
+    grid2coord: grid2coord,
+    maxRow: maxRow,
+    maxCol: maxCol,
+    distance: distance,
+    distancePos: distancePos
+};
+},{"./macro":"../src/macro.js"}],"../src/map.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _milk = require('./milk');
+
+var _milk2 = _interopRequireDefault(_milk);
+
+var _fence = require('./fence');
+
+var _fence2 = _interopRequireDefault(_fence);
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Map = function () {
+    function Map() {
+        _classCallCheck(this, Map);
+
+        this.milks = [];
+        this.fences = [];
+        this.posList = [];
+        this.milkNum = 14;
+        this.fenceNum = 2;
+    }
+
+    _createClass(Map, [{
+        key: 'reset',
+        value: function reset() {
+            this.posList = [];
+            this.randomMilk();
+            this.randomFence();
+        }
+    }, {
+        key: 'randomFence',
+        value: function randomFence() {
+            this.fences = [];
+            var inLimit = function inLimit(row, col) {
+                return col > 4 && col < _tool2.default.maxCol() - 4;
+            };
+            var curLen = this.posList.length;
+            while (this.posList.length < curLen + this.fenceNum) {
+                var row = Math.round(Math.random() * _tool2.default.maxRow());
+                var col = Math.round(Math.random() * _tool2.default.maxCol());
+                var g = [row, col];
+                if (!this.posList.includes(g) && inLimit(row, col)) {
+                    this.posList.push(g);
+                    var pos = _tool2.default.grid2coord(row, col);
+                    this.fences.push(new _fence2.default(pos.x, pos.y));
+                }
+            }
+        }
+    }, {
+        key: 'randomMilk',
+        value: function randomMilk() {
+            this.milks = [];
+            var inLimit = function inLimit(row, col) {
+                return col > 2 && col < _tool2.default.maxCol() - 2;
+            };
+            var curLen = this.posList.length;
+            while (this.posList.length < curLen + this.milkNum) {
+                var row = Math.round(Math.random() * _tool2.default.maxRow());
+                var col = Math.round(Math.random() * _tool2.default.maxCol());
+                var g = [row, col];
+                if (!this.posList.includes(g) && inLimit(row, col)) {
+                    this.posList.push(g);
+                    var pos = _tool2.default.grid2coord(row, col);
+                    this.milks.push(new _milk2.default(pos.x, pos.y));
+                }
+            }
+        }
+    }]);
+
+    return Map;
+}();
+
+exports.default = Map;
+},{"./milk":"../src/milk.js","./fence":"../src/fence.js","./tool":"../src/tool.js"}],"../../package.json":[function(require,module,exports) {
 module.exports = {
   "name": "BearChild",
   "version": "1.0.0",
@@ -20698,6 +20970,10 @@ var _music = require('./music');
 
 var _music2 = _interopRequireDefault(_music);
 
+var _map = require('./map');
+
+var _map2 = _interopRequireDefault(_map);
+
 var _macro = require('./macro');
 
 var _macro2 = _interopRequireDefault(_macro);
@@ -20734,10 +21010,18 @@ var musicReducer = function musicReducer() {
     return state;
 };
 
+var mapReducer = function mapReducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new _map2.default();
+    var action = arguments[1];
+
+    return state;
+};
+
 var appReducer = (0, _redux.combineReducers)({
     resMgr: resReducer,
     gameState: gameStateReducer,
-    music: musicReducer
+    music: musicReducer,
+    map: mapReducer
 });
 
 var build = function build() {
@@ -20774,15 +21058,21 @@ var getMusic = function getMusic() {
     return allState.music;
 };
 
+var getMap = function getMap() {
+    var allState = store.getState();
+    return allState.map;
+};
+
 exports.default = {
     getStore: getStore,
     gameState: gameState,
     changeState: changeState,
     getResMgr: getResMgr,
     getImg: getImg,
-    getMusic: getMusic
+    getMusic: getMusic,
+    getMap: getMap
 };
-},{"redux":"../../node_modules/redux/es/redux.js","redux-devtools-extension":"../../node_modules/redux-devtools-extension/index.js","./resMgr":"../src/resMgr.js","./music":"../src/music.js","./macro":"../src/macro.js","../../package.json":"../../package.json"}],"../src/sprite.js":[function(require,module,exports) {
+},{"redux":"../../node_modules/redux/es/redux.js","redux-devtools-extension":"../../node_modules/redux-devtools-extension/index.js","./resMgr":"../src/resMgr.js","./music":"../src/music.js","./map":"../src/map.js","./macro":"../src/macro.js","../../package.json":"../../package.json"}],"../src/sprite.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20890,6 +21180,10 @@ var _sprite = require('./sprite');
 
 var _sprite2 = _interopRequireDefault(_sprite);
 
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20926,7 +21220,7 @@ var Child = function (_Element) {
                     if (this.drinkMilk) {
                         if (this.pass < this.drinkMilkTime) {
                             this.pass += elapsed;
-                            this.angle = -0.25 * Math.PI * Math.sin(this.pass * 8);
+                            this.angle = -0.05 * Math.PI * Math.sin(this.pass * 8);
                         } else {
                             this.drinkMilk = false;
                             this.pass = 0;
@@ -20970,7 +21264,7 @@ var Child = function (_Element) {
             if (this.drinkMilk) return;
             switch (keyCode) {
                 case 'ArrowUp':
-                    this.y -= _macro2.default.GridSize;
+                    if (!this.checkPosInFense({ x: this.x, y: this.y - _macro2.default.GridSize })) this.y -= _macro2.default.GridSize;
                     break;
                 case 'ArrowDown':
                     //this.y += macro.GridSize
@@ -20979,10 +21273,19 @@ var Child = function (_Element) {
                     //this.x -= macro.GridSize
                     break;
                 case 'ArrowRight':
-                    this.x += _macro2.default.GridSize;
+                    if (!this.checkPosInFense({ x: this.x + _macro2.default.GridSize, y: this.y })) this.x += _macro2.default.GridSize;
                     break;
             }
             this.moveLimit(context);
+        }
+    }, {
+        key: 'checkPosInFense',
+        value: function checkPosInFense(pos) {
+            var inFense = false;
+            _store2.default.getMap().fences.forEach(function (fence) {
+                if (_tool2.default.distancePos(pos, fence.pos()) < fence.radius) inFense = true;
+            });
+            return inFense;
         }
     }, {
         key: 'moveLimit',
@@ -21001,7 +21304,7 @@ var Child = function (_Element) {
 }(_element2.default);
 
 exports.default = Child;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./store":"../src/store.js","./sprite":"../src/sprite.js"}],"../src/door.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./store":"../src/store.js","./sprite":"../src/sprite.js","./tool":"../src/tool.js"}],"../src/door.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21289,109 +21592,7 @@ var NumberIndicator = function () {
 
 exports.Indicator = Indicator;
 exports.NumberIndicator = NumberIndicator;
-},{}],"../src/tool.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _macro = require('./macro');
-
-var _macro2 = _interopRequireDefault(_macro);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var grid2coord = function grid2coord(row, col) {
-    var x = _macro2.default.GridSize / 2 + col * _macro2.default.GridSize;
-    var y = _macro2.default.GridSize / 2 + row * _macro2.default.GridSize;
-    return { x: x, y: y };
-};
-
-var maxRow = function maxRow() {
-    return _macro2.default.Height / _macro2.default.GridSize - 1;
-};
-
-var maxCol = function maxCol() {
-    return _macro2.default.Width / _macro2.default.GridSize - 1;
-};
-
-var distance = function distance(obj1, obj2) {
-    var dis = Math.sqrt(Math.pow(obj1.x - obj2.x, 2) + Math.pow(obj1.y - obj2.y, 2));
-    return dis;
-};
-
-exports.default = {
-    grid2coord: grid2coord,
-    maxRow: maxRow,
-    maxCol: maxCol,
-    distance: distance
-};
-},{"./macro":"../src/macro.js"}],"../src/milk.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _drawing = require('./drawing');
-
-var _drawing2 = _interopRequireDefault(_drawing);
-
-var _macro = require('./macro');
-
-var _macro2 = _interopRequireDefault(_macro);
-
-var _element = require('./element');
-
-var _element2 = _interopRequireDefault(_element);
-
-var _store = require('./store');
-
-var _store2 = _interopRequireDefault(_store);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Milk = function (_Element) {
-    _inherits(Milk, _Element);
-
-    function Milk(x, y) {
-        _classCallCheck(this, Milk);
-
-        var radius = _macro2.default.GridSize / 3;
-
-        var _this = _possibleConstructorReturn(this, (Milk.__proto__ || Object.getPrototypeOf(Milk)).call(this, x, y, radius));
-
-        _this.img = _store2.default.getImg('milk');
-        return _this;
-    }
-
-    _createClass(Milk, [{
-        key: 'update',
-        value: function update() {}
-    }, {
-        key: 'draw',
-        value: function draw(context) {
-            context.save();
-            context.translate(this.x, this.y);
-            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
-            context.restore();
-        }
-    }]);
-
-    return Milk;
-}(_element2.default);
-
-exports.default = Milk;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./store":"../src/store.js"}],"../src/game.js":[function(require,module,exports) {
+},{}],"../src/game.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21428,10 +21629,6 @@ var _tool = require('./tool');
 
 var _tool2 = _interopRequireDefault(_tool);
 
-var _milk = require('./milk');
-
-var _milk2 = _interopRequireDefault(_milk);
-
 var _store = require('./store');
 
 var _store2 = _interopRequireDefault(_store);
@@ -21451,7 +21648,6 @@ var Game = function () {
         this.frame = this.frame.bind(this);
         this.fps = 0;
         this.level = 1;
-        this.milks = [];
 
         this.context.canvas.focus();
         window.addEventListener('keydown', function (ev) {
@@ -21491,26 +21687,7 @@ var Game = function () {
 
             pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 4);
 
-            this.randomMilk();
-        }
-    }, {
-        key: 'randomMilk',
-        value: function randomMilk() {
-            this.milks = [];
-            var posList = [];
-            var inLimit = function inLimit(row, col) {
-                return col > 2 && col < _tool2.default.maxCol() - 2;
-            };
-            while (posList.length < 14) {
-                var row = Math.round(Math.random() * _tool2.default.maxRow());
-                var col = Math.round(Math.random() * _tool2.default.maxCol());
-                var g = [row, col];
-                if (!posList.includes(g) && inLimit(row, col)) {
-                    posList.push(g);
-                    var pos = _tool2.default.grid2coord(row, col);
-                    this.milks.push(new _milk2.default(pos.x, pos.y));
-                }
-            }
+            _store2.default.getMap().reset();
         }
     }, {
         key: 'levelUp',
@@ -21540,11 +21717,11 @@ var Game = function () {
             var _this2 = this;
 
             var drink = false;
-            this.milks.forEach(function (milk, i) {
+            _store2.default.getMap().milks.forEach(function (milk, i) {
                 var dis = _tool2.default.distance(_this2.child, milk);
                 if (dis < _this2.child.radius + milk.radius) {
                     drink = true;
-                    _this2.milks.splice(i, 1);
+                    _store2.default.getMap().milks.splice(i, 1);
                 }
             });
             return drink;
@@ -21607,15 +21784,18 @@ var Game = function () {
                 case _macro2.default.StateReachDoor:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     this.grid.draw(this.context, this.child);
-                    this.milks.forEach(function (milk) {
+                    _store2.default.getMap().milks.forEach(function (milk) {
                         milk.draw(_this4.context);
+                    });
+                    _store2.default.getMap().fences.forEach(function (fence) {
+                        fence.draw(_this4.context);
                     });
                     this.mom.draw(this.context);
                     this.grid.drawMask(this.context, this.child);
                     this.door.draw(this.context);
 
                     this.levelIndicator.draw(this.context, this.level);
-                    this.fpsIndicator.draw(this.context, this.fps);
+                    //this.fpsIndicator.draw(this.context, this.fps) 
                     this.child.draw(this.context);
                     if (_store2.default.gameState() === _macro2.default.StateGameOver) this.drawGameOver();
                     break;
@@ -21648,7 +21828,7 @@ var Game = function () {
 }();
 
 exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./milk":"../src/milk.js","./store":"../src/store.js"}],"../src/gameCpt.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./store":"../src/store.js"}],"../src/gameCpt.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21785,7 +21965,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49265' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49614' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

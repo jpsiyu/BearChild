@@ -2,6 +2,7 @@ class ResMgr {
     constructor() {
         this.names= [
             'door',
+            'fence',
             'milk',
             'drink',
             'catched',

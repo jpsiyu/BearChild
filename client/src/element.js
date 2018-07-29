@@ -4,6 +4,10 @@ class Element {
         this.y = y
         this.radius = radius
     }
+
+    pos() {
+        return { x: this.x, y: this.y }
+    }
 }
 
 export default Element

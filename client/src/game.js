@@ -6,7 +6,6 @@ import macro from './macro'
 import { Grid } from './grid'
 import { NumberIndicator } from './indicator'
 import tool from './tool'
-import Milk from './milk'
 import store from './store'
 
 class Game {
@@ -16,7 +15,6 @@ class Game {
         this.frame = this.frame.bind(this)
         this.fps = 0
         this.level = 1
-        this.milks = []
 
         this.context.canvas.focus()
         window.addEventListener('keydown', ev => {
@@ -60,25 +58,7 @@ class Game {
 
         pos = tool.grid2coord(tool.maxRow(), 4)
 
-        this.randomMilk()
-    }
-
-    randomMilk() {
-        this.milks = []
-        const posList = []
-        const inLimit = (row, col) => {
-            return col > 2 && col < tool.maxCol() - 2
-        }
-        while (posList.length < 14) {
-            const row = Math.round(Math.random() * tool.maxRow())
-            const col = Math.round(Math.random() * tool.maxCol())
-            const g = [row, col]
-            if (!posList.includes(g) && inLimit(row, col)) {
-                posList.push(g)
-                const pos = tool.grid2coord(row, col)
-                this.milks.push(new Milk(pos.x, pos.y))
-            }
-        }
+        store.getMap().reset()
     }
 
     levelUp() {
@@ -100,11 +80,11 @@ class Game {
 
     childCatchMilk() {
         let drink = false
-        this.milks.forEach((milk, i) => {
+        store.getMap().milks.forEach((milk, i) => {
             const dis = tool.distance(this.child, milk)
             if (dis < (this.child.radius + milk.radius)) {
                 drink = true
-                this.milks.splice(i, 1)
+                store.getMap().milks.splice(i, 1)
             }
         })
         return drink
@@ -163,15 +143,18 @@ class Game {
             case macro.StateReachDoor:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 this.grid.draw(this.context, this.child)
-                this.milks.forEach(milk => {
+                store.getMap().milks.forEach(milk => {
                     milk.draw(this.context)
+                })
+                store.getMap().fences.forEach(fence => {
+                    fence.draw(this.context)
                 })
                 this.mom.draw(this.context)
                 this.grid.drawMask(this.context, this.child)
                 this.door.draw(this.context)
 
                 this.levelIndicator.draw(this.context, this.level)
-                this.fpsIndicator.draw(this.context, this.fps) 
+                //this.fpsIndicator.draw(this.context, this.fps) 
                 this.child.draw(this.context)
                 if (store.gameState() === macro.StateGameOver) this.drawGameOver()
                 break
