@@ -1,12 +1,12 @@
 class ResMgr {
     constructor() {
         this.names= [
-            'child',
             'door',
             'milk',
-            'mom',
             'drink',
             'catched',
+            'mom-run',
+            'child-roll',
         ]
         this.images = {}
     }

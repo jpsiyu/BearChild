@@ -14,6 +14,7 @@ class Game {
         this.context = context
         this.previous = undefined
         this.frame = this.frame.bind(this)
+        this.fps = 0
         this.level = 1
         this.milks = []
 
@@ -24,6 +25,10 @@ class Game {
 
         this.levelIndicator = new NumberIndicator(
             'Level ', 70, 10, { pt: 12 }
+        )
+
+        this.fpsIndicator = new NumberIndicator(
+            'fps ', 200, 10, { pt: 12, digits: 2 }
         )
 
         store.getResMgr().loadImgs(() => {
@@ -52,6 +57,8 @@ class Game {
             this.context.canvas.width - macro.GridSize,
             macro.GridSize,
         )
+
+        pos = tool.grid2coord(tool.maxRow(), 4)
 
         this.randomMilk()
     }
@@ -113,6 +120,7 @@ class Game {
     }
 
     update(elapsed) {
+        this.fps = 1 / elapsed
         switch (store.gameState()) {
             case macro.StateGame:
                 if (this.reachDoor()) {
@@ -163,6 +171,7 @@ class Game {
                 this.door.draw(this.context)
 
                 this.levelIndicator.draw(this.context, this.level)
+                this.fpsIndicator.draw(this.context, this.fps) 
                 this.child.draw(this.context)
                 if (store.gameState() === macro.StateGameOver) this.drawGameOver()
                 break

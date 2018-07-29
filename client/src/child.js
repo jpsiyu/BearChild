@@ -2,12 +2,13 @@ import drawing from './drawing'
 import macro from './macro'
 import Element from './element'
 import store from './store'
+import Sprite from './sprite'
 
 class Child extends Element {
     constructor(x, y) {
         const radius = macro.GridSize / 2
         super(x, y, radius)
-        this.img = store.getImg('child')
+        this.sprite = new Sprite(2, 2, store.getImg('child-roll'), {frameUpdateTime : 1})
 
         this.drinkMilk = false
         this.drinkMilkTime = 2
@@ -32,11 +33,12 @@ class Child extends Element {
                 } else {
                     this.angle = 0
                 }
+                this.sprite.update(elapsed)
                 break
             case macro.StateReachDoor:
                 this.jumpPos = this.jumpPos || this.y
                 this.pass += elapsed
-                this.y = this.jumpPos + 10*Math.sin(this.pass * 20)
+                this.y = this.jumpPos + 10 * Math.sin(this.pass * 20)
                 break
         }
     }
@@ -49,9 +51,14 @@ class Child extends Element {
             case macro.StateReachDoor:
                 context.save()
                 context.translate(this.x, this.y)
-                context.rotate(this.angle)
-                this.img = this.drinkMilk ? store.getImg('drink') : store.getImg('child')
-                drawing.drawImg(context, -macro.GridSize / 2, -macro.GridSize / 2, this.radius, this.img)
+                if (this.drinkMilk) {
+                    context.rotate(this.angle)
+                    this.img = store.getImg('drink') 
+                    drawing.drawImg(context, -macro.GridSize / 2, -macro.GridSize / 2, this.radius, this.img)
+
+                } else {
+                    this.sprite.draw(context)
+                }
                 context.restore()
                 break
         }

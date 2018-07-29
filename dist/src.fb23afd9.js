@@ -20588,7 +20588,7 @@ var ResMgr = function () {
     function ResMgr() {
         _classCallCheck(this, ResMgr);
 
-        this.names = ['child', 'door', 'milk', 'mom', 'drink', 'catched'];
+        this.names = ['door', 'milk', 'drink', 'catched', 'mom-run', 'child-roll'];
         this.images = {};
     }
 
@@ -20782,7 +20782,86 @@ exports.default = {
     getImg: getImg,
     getMusic: getMusic
 };
-},{"redux":"../../node_modules/redux/es/redux.js","redux-devtools-extension":"../../node_modules/redux-devtools-extension/index.js","./resMgr":"../src/resMgr.js","./music":"../src/music.js","./macro":"../src/macro.js","../../package.json":"../../package.json"}],"../src/child.js":[function(require,module,exports) {
+},{"redux":"../../node_modules/redux/es/redux.js","redux-devtools-extension":"../../node_modules/redux-devtools-extension/index.js","./resMgr":"../src/resMgr.js","./music":"../src/music.js","./macro":"../src/macro.js","../../package.json":"../../package.json"}],"../src/sprite.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _store = require('./store');
+
+var _store2 = _interopRequireDefault(_store);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Sprite = function () {
+    function Sprite(row, col, image) {
+        var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+        _classCallCheck(this, Sprite);
+
+        this.row = row;
+        this.col = col;
+
+        this.radius = _macro2.default.GridSize / 2;
+        this.img = image;
+
+        this.frameIndex = 0;
+        this.frameNum = this.row * this.col;
+        this.frameSize = this.img.width / this.row;
+        this.frameUpdateTime = options.frameUpdateTime || 0.1;
+        this.pass = 0;
+    }
+
+    _createClass(Sprite, [{
+        key: 'update',
+        value: function update(elapsed) {
+            if (this.pass < this.frameUpdateTime) {
+                this.pass += elapsed;
+            } else {
+                this.frameIndex = (this.frameIndex + 1) % this.frameNum;
+                this.pass = 0;
+            }
+        }
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            context.save();
+            var r = this.calRowIndex();
+            var c = this.calColIndex();
+            context.drawImage(this.img, c * this.frameSize, r * this.frameSize, this.frameSize, this.frameSize, -this.radius, -this.radius, 2 * this.radius, 2 * this.radius);
+            context.restore();
+        }
+    }, {
+        key: 'calRowIndex',
+        value: function calRowIndex() {
+            return Math.floor(this.frameIndex / this.row);
+        }
+    }, {
+        key: 'calColIndex',
+        value: function calColIndex() {
+            return this.frameIndex % this.row;
+        }
+    }]);
+
+    return Sprite;
+}();
+
+exports.default = Sprite;
+},{"./store":"../src/store.js","./macro":"../src/macro.js","./drawing":"../src/drawing.js"}],"../src/child.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20807,6 +20886,10 @@ var _store = require('./store');
 
 var _store2 = _interopRequireDefault(_store);
 
+var _sprite = require('./sprite');
+
+var _sprite2 = _interopRequireDefault(_sprite);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20825,7 +20908,7 @@ var Child = function (_Element) {
 
         var _this = _possibleConstructorReturn(this, (Child.__proto__ || Object.getPrototypeOf(Child)).call(this, x, y, radius));
 
-        _this.img = _store2.default.getImg('child');
+        _this.sprite = new _sprite2.default(2, 2, _store2.default.getImg('child-roll'), { frameUpdateTime: 1 });
 
         _this.drinkMilk = false;
         _this.drinkMilkTime = 2;
@@ -20851,6 +20934,7 @@ var Child = function (_Element) {
                     } else {
                         this.angle = 0;
                     }
+                    this.sprite.update(elapsed);
                     break;
                 case _macro2.default.StateReachDoor:
                     this.jumpPos = this.jumpPos || this.y;
@@ -20869,9 +20953,13 @@ var Child = function (_Element) {
                 case _macro2.default.StateReachDoor:
                     context.save();
                     context.translate(this.x, this.y);
-                    context.rotate(this.angle);
-                    this.img = this.drinkMilk ? _store2.default.getImg('drink') : _store2.default.getImg('child');
-                    _drawing2.default.drawImg(context, -_macro2.default.GridSize / 2, -_macro2.default.GridSize / 2, this.radius, this.img);
+                    if (this.drinkMilk) {
+                        context.rotate(this.angle);
+                        this.img = _store2.default.getImg('drink');
+                        _drawing2.default.drawImg(context, -_macro2.default.GridSize / 2, -_macro2.default.GridSize / 2, this.radius, this.img);
+                    } else {
+                        this.sprite.draw(context);
+                    }
                     context.restore();
                     break;
             }
@@ -20913,7 +21001,7 @@ var Child = function (_Element) {
 }(_element2.default);
 
 exports.default = Child;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./store":"../src/store.js"}],"../src/door.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./store":"../src/store.js","./sprite":"../src/sprite.js"}],"../src/door.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21002,6 +21090,10 @@ var _store = require('./store');
 
 var _store2 = _interopRequireDefault(_store);
 
+var _sprite = require('./sprite');
+
+var _sprite2 = _interopRequireDefault(_sprite);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21023,13 +21115,16 @@ var Mom = function (_Element) {
         _this.chaseSpeed = 100;
         _this.waitTime = 1;
         _this.waitPass = 0;
-        _this.img = _store2.default.getImg('mom');
+        _this.sprite = new _sprite2.default(2, 2, _store2.default.getImg('mom-run'));
+        _this.img = _store2.default.getImg('catched');
+
         return _this;
     }
 
     _createClass(Mom, [{
         key: 'update',
         value: function update(child, elapsed) {
+            this.sprite.update(elapsed);
             if (this.waitPass < this.waitTime) {
                 this.waitPass += elapsed;
                 return;
@@ -21050,14 +21145,17 @@ var Mom = function (_Element) {
         value: function draw(context) {
             context.save();
             context.translate(this.x, this.y);
-            if (_store2.default.gameState() == _macro2.default.StateGameOver) {
-                this.radius = _macro2.default.GridSize;
-                this.img = _store2.default.getImg('catched');
-            } else {
-                this.radius = _macro2.default.GridSize / 2;
-                this.img = _store2.default.getImg('mom');
+            switch (_store2.default.gameState()) {
+                case _macro2.default.StateGame:
+                case _macro2.default.StateReachDoor:
+                    this.sprite.draw(context);
+                    break;
+                case _macro2.default.StateGameOver:
+                    this.radius = _macro2.default.GridSize;
+                    _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+                    break;
             }
-            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+
             context.restore();
         }
     }]);
@@ -21066,7 +21164,7 @@ var Mom = function (_Element) {
 }(_element2.default);
 
 exports.default = Mom;
-},{"./element":"../src/element.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js","./store":"../src/store.js"}],"../src/grid.js":[function(require,module,exports) {
+},{"./element":"../src/element.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js","./store":"../src/store.js","./sprite":"../src/sprite.js"}],"../src/grid.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21351,6 +21449,7 @@ var Game = function () {
         this.context = context;
         this.previous = undefined;
         this.frame = this.frame.bind(this);
+        this.fps = 0;
         this.level = 1;
         this.milks = [];
 
@@ -21360,6 +21459,8 @@ var Game = function () {
         });
 
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
+
+        this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
 
         _store2.default.getResMgr().loadImgs(function () {
             _this.resetGame();
@@ -21387,6 +21488,8 @@ var Game = function () {
             this.mom = new _mom2.default(pos.x, pos.y);
 
             this.door = new _door2.default(this.context.canvas.width - _macro2.default.GridSize, _macro2.default.GridSize);
+
+            pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 4);
 
             this.randomMilk();
         }
@@ -21461,6 +21564,7 @@ var Game = function () {
         value: function update(elapsed) {
             var _this3 = this;
 
+            this.fps = 1 / elapsed;
             switch (_store2.default.gameState()) {
                 case _macro2.default.StateGame:
                     if (this.reachDoor()) {
@@ -21511,6 +21615,7 @@ var Game = function () {
                     this.door.draw(this.context);
 
                     this.levelIndicator.draw(this.context, this.level);
+                    this.fpsIndicator.draw(this.context, this.fps);
                     this.child.draw(this.context);
                     if (_store2.default.gameState() === _macro2.default.StateGameOver) this.drawGameOver();
                     break;
@@ -21680,7 +21785,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '59274' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49265' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

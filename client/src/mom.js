@@ -2,6 +2,7 @@ import Element from './element'
 import drawing from './drawing'
 import macro from './macro'
 import store from './store'
+import Sprite from './sprite'
 
 class Mom extends Element {
     constructor(x, y) {
@@ -10,10 +11,13 @@ class Mom extends Element {
         this.chaseSpeed = 100
         this.waitTime = 1
         this.waitPass = 0
-        this.img = store.getImg('mom')
+        this.sprite = new Sprite(2, 2, store.getImg('mom-run'))
+        this.img = store.getImg('catched')
+
     }
 
     update(child, elapsed) {
+        this.sprite.update(elapsed)
         if (this.waitPass < this.waitTime) {
             this.waitPass += elapsed
             return
@@ -32,14 +36,17 @@ class Mom extends Element {
     draw(context) {
         context.save()
         context.translate(this.x, this.y)
-        if (store.gameState() == macro.StateGameOver) {
-            this.radius = macro.GridSize
-            this.img = store.getImg('catched')
-        } else {
-            this.radius = macro.GridSize / 2
-            this.img = store.getImg('mom')
+        switch (store.gameState()) {
+            case macro.StateGame:
+            case macro.StateReachDoor:
+                this.sprite.draw(context)
+                break
+            case macro.StateGameOver:
+                this.radius = macro.GridSize
+                drawing.drawImg(context, -this.radius, -this.radius, this.radius, this.img)
+                break
         }
-        drawing.drawImg(context, -this.radius, -this.radius, this.radius, this.img)
+
         context.restore()
     }
 }
