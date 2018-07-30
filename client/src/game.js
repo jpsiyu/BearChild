@@ -28,7 +28,7 @@ class Game {
             this.button.handleClick(pos)
         })
         this.context.canvas.addEventListener('touchstart', event => {
-            const pos = this.getMousePos(event)
+            const pos = this.getTouchPos(event)
             console.log('touch', pos)
             event.preventDefault()
         })
@@ -68,7 +68,6 @@ class Game {
     }
 
     resetGame() {
-        console.log('*********')
         storeState().music.playBg()
         this.grid = new Grid()
 
@@ -217,6 +216,14 @@ class Game {
         return {
             x: event.clientX - rect.left,
             y: event.clientY - rect.top
+        }
+    }
+
+    getTouchPos(event) {
+        const rect = this.context.canvas.getBoundingClientRect()
+        return {
+            x: event.touches[0].clientX - rect.left,
+            y: event.touches[0].clientY - rect.top
         }
     }
 }

@@ -21797,7 +21797,7 @@ var Game = function () {
             _this.button.handleClick(pos);
         });
         this.context.canvas.addEventListener('touchstart', function (event) {
-            var pos = _this.getMousePos(event);
+            var pos = _this.getTouchPos(event);
             console.log('touch', pos);
             event.preventDefault();
         });
@@ -21839,7 +21839,6 @@ var Game = function () {
     }, {
         key: 'resetGame',
         value: function resetGame() {
-            console.log('*********');
             (0, _store.storeState)().music.playBg();
             this.grid = new _grid.Grid();
 
@@ -21998,6 +21997,15 @@ var Game = function () {
             return {
                 x: event.clientX - rect.left,
                 y: event.clientY - rect.top
+            };
+        }
+    }, {
+        key: 'getTouchPos',
+        value: function getTouchPos(event) {
+            var rect = this.context.canvas.getBoundingClientRect();
+            return {
+                x: event.touches[0].clientX - rect.left,
+                y: event.touches[0].clientY - rect.top
             };
         }
     }]);
