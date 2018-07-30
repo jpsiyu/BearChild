@@ -20586,7 +20586,63 @@ exports.devToolsEnhancer = (
     function() { return function(noop) { return noop; } }
 );
 
-},{"redux":"../../node_modules/redux/es/redux.js"}],"../src/music.js":[function(require,module,exports) {
+},{"redux":"../../node_modules/redux/es/redux.js"}],"../src/resMgr.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _store = require('./store');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ResMgr = function () {
+    function ResMgr() {
+        _classCallCheck(this, ResMgr);
+
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll'];
+        this.images = {};
+    }
+
+    _createClass(ResMgr, [{
+        key: 'loadRes',
+        value: function loadRes(callback) {
+            this.loadImgs(function () {
+                (0, _store.storeState)().music.loadMusics(callback);
+            });
+        }
+    }, {
+        key: 'loadImgs',
+        value: function loadImgs(callback) {
+            var _this = this;
+
+            var loadNum = 0;
+            this.names.forEach(function (name) {
+                var img = new Image();
+                var path = name + '.png';
+                img.src = path;
+                img.onload = function () {
+                    _this.images[name] = img;
+                    loadNum++;
+                    if (loadNum === _this.names.length) callback();
+                };
+            });
+        }
+    }, {
+        key: 'getImg',
+        value: function getImg(name) {
+            return this.images[name];
+        }
+    }]);
+
+    return ResMgr;
+}();
+
+exports.default = ResMgr;
+},{"./store":"../src/store.js"}],"../src/music.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20625,6 +20681,8 @@ var Music = function () {
         key: 'playBg',
         value: function playBg() {
             var bgMusic = this.musics['bg'];
+            if (!bgMusic) return;
+
             if (!bgMusic.loop) bgMusic.loop = true;
             bgMusic.volume = 0.2;
             bgMusic.play();
@@ -20633,7 +20691,7 @@ var Music = function () {
         key: 'pauseBg',
         value: function pauseBg() {
             var bgMusic = this.musics['bg'];
-            bgMusic.pause();
+            if (bgMusic) bgMusic.pause();
         }
     }]);
 
@@ -20641,70 +20699,7 @@ var Music = function () {
 }();
 
 exports.default = Music;
-},{}],"../src/resMgr.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _music = require('./music');
-
-var _music2 = _interopRequireDefault(_music);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ResMgr = function () {
-    function ResMgr() {
-        _classCallCheck(this, ResMgr);
-
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll'];
-        this.images = {};
-        this.music = new _music2.default();
-    }
-
-    _createClass(ResMgr, [{
-        key: 'loadRes',
-        value: function loadRes(callback) {
-            var _this = this;
-
-            this.loadImgs(function () {
-                _this.music.loadMusics(callback);
-            });
-        }
-    }, {
-        key: 'loadImgs',
-        value: function loadImgs(callback) {
-            var _this2 = this;
-
-            var loadNum = 0;
-            this.names.forEach(function (name) {
-                var img = new Image();
-                var path = name + '.png';
-                img.src = path;
-                img.onload = function () {
-                    _this2.images[name] = img;
-                    loadNum++;
-                    if (loadNum === _this2.names.length) callback();
-                };
-            });
-        }
-    }, {
-        key: 'getImg',
-        value: function getImg(name) {
-            return this.images[name];
-        }
-    }]);
-
-    return ResMgr;
-}();
-
-exports.default = ResMgr;
-},{"./music":"../src/music.js"}],"../src/milk.js":[function(require,module,exports) {
+},{}],"../src/milk.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21001,6 +20996,10 @@ var _resMgr = require('./resMgr');
 
 var _resMgr2 = _interopRequireDefault(_resMgr);
 
+var _music = require('./music');
+
+var _music2 = _interopRequireDefault(_music);
+
 var _map = require('./map');
 
 var _map2 = _interopRequireDefault(_map);
@@ -21017,6 +21016,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var resReducer = function resReducer() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new _resMgr2.default();
+    var action = arguments[1];
+
+    return state;
+};
+
+var musicReducer = function musicReducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new _music2.default();
     var action = arguments[1];
 
     return state;
@@ -21044,7 +21050,8 @@ var mapReducer = function mapReducer() {
 var appReducer = (0, _redux.combineReducers)({
     resMgr: resReducer,
     gameState: gameStateReducer,
-    map: mapReducer
+    map: mapReducer,
+    music: musicReducer
 });
 
 var build = function build() {
@@ -21069,7 +21076,7 @@ var storeState = function storeState() {
 
 exports.storeState = storeState;
 exports.changeState = changeState;
-},{"redux":"../../node_modules/redux/es/redux.js","redux-devtools-extension":"../../node_modules/redux-devtools-extension/index.js","./resMgr":"../src/resMgr.js","./map":"../src/map.js","./macro":"../src/macro.js","../../package.json":"../../package.json"}],"../src/sprite.js":[function(require,module,exports) {
+},{"redux":"../../node_modules/redux/es/redux.js","redux-devtools-extension":"../../node_modules/redux-devtools-extension/index.js","./resMgr":"../src/resMgr.js","./music":"../src/music.js","./map":"../src/map.js","./macro":"../src/macro.js","../../package.json":"../../package.json"}],"../src/sprite.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21643,6 +21650,14 @@ var Game = function () {
             _this.resetGame();
             window.requestAnimationFrame(_this.frame);
         });
+
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
+                (0, _store.storeState)().music.pauseBg();
+            } else {
+                (0, _store.storeState)().music.playBg();
+            }
+        });
     }
 
     _createClass(Game, [{
@@ -21655,7 +21670,7 @@ var Game = function () {
     }, {
         key: 'resetGame',
         value: function resetGame() {
-            (0, _store.storeState)().resMgr.music.playBg();
+            (0, _store.storeState)().music.playBg();
             this.grid = new _grid.Grid();
 
             var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 2);
@@ -21946,7 +21961,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '60722' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '54952' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

@@ -33,6 +33,15 @@ class Game {
             this.resetGame()
             window.requestAnimationFrame(this.frame)
         })
+
+        document.addEventListener('visibilitychange', () => { 
+            if(document.hidden){
+                storeState().music.pauseBg()
+            }
+            else{
+                storeState().music.playBg()
+            }
+        })
     }
 
     restartGame() {
@@ -42,7 +51,7 @@ class Game {
     }
 
     resetGame() {
-        storeState().resMgr.music.playBg()
+        storeState().music.playBg()
         this.grid = new Grid()
 
         let pos = tool.grid2coord(tool.maxRow(), 2)

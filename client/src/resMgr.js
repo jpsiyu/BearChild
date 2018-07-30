@@ -1,4 +1,4 @@
-import Music from './music'
+import {storeState} from './store'
 
 class ResMgr {
     constructor() {
@@ -12,12 +12,11 @@ class ResMgr {
             'child-roll',
         ]
         this.images = {}
-        this.music = new Music()
     }
 
     loadRes(callback){
         this.loadImgs( () => {
-            this.music.loadMusics(callback)
+            storeState().music.loadMusics(callback)
         })
     }
 

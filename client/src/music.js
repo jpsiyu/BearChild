@@ -21,6 +21,8 @@ class Music {
 
     playBg() {
         const bgMusic = this.musics['bg']
+        if(!bgMusic) return
+
         if (!bgMusic.loop) bgMusic.loop = true
         bgMusic.volume = 0.2
         bgMusic.play()
@@ -28,7 +30,8 @@ class Music {
 
     pauseBg() {
         const bgMusic = this.musics['bg']
-        bgMusic.pause()
+        if(bgMusic)
+            bgMusic.pause()
     }
 }
 
