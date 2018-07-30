@@ -66,6 +66,7 @@ class Game {
     }
 
     resetGame() {
+        console.log('*********')
         storeState().music.playBg()
         this.grid = new Grid()
 

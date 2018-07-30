@@ -21837,6 +21837,7 @@ var Game = function () {
     }, {
         key: 'resetGame',
         value: function resetGame() {
+            console.log('*********');
             (0, _store.storeState)().music.playBg();
             this.grid = new _grid.Grid();
 
