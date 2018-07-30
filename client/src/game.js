@@ -6,7 +6,8 @@ import macro from './macro'
 import { Grid } from './grid'
 import { NumberIndicator } from './indicator'
 import tool from './tool'
-import {storeState, changeState} from './store'
+import { storeState, changeState } from './store'
+import Button from './button'
 
 class Game {
     constructor(context) {
@@ -15,10 +16,16 @@ class Game {
         this.frame = this.frame.bind(this)
         this.fps = 0
         this.level = 1
+        this.pause = false
+        this.child = undefined
 
         this.context.canvas.focus()
         window.addEventListener('keydown', ev => {
             this.keyHandler(ev.key)
+        })
+        this.context.canvas.addEventListener('click', event => {
+            const pos = this.getMousePos(event)
+            this.button.handleClick(pos)
         })
 
         this.levelIndicator = new NumberIndicator(
@@ -29,16 +36,21 @@ class Game {
             'fps ', 200, 10, { pt: 12, digits: 2 }
         )
 
+        let pos = tool.grid2coord(tool.maxRow(), tool.maxCol())
+        this.button = new Button(pos.x, pos.y, () => { return this.child })
+
         storeState().resMgr.loadRes(() => {
             this.resetGame()
             window.requestAnimationFrame(this.frame)
         })
 
-        document.addEventListener('visibilitychange', () => { 
-            if(document.hidden){
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.pause = true
                 storeState().music.pauseBg()
             }
-            else{
+            else {
+                this.pause = false
                 storeState().music.playBg()
             }
         })
@@ -109,6 +121,7 @@ class Game {
     }
 
     update(elapsed) {
+        if (this.pause) return
         this.fps = 1 / elapsed
         switch (storeState().gameState) {
             case macro.StateGame:
@@ -124,7 +137,7 @@ class Game {
                 if (this.childCatchMilk()) {
                     this.child.drinkMilk = true
                 }
-                this.mom.update(this.child, elapsed)
+                //this.mom.update(this.child, elapsed)
                 this.child.update(elapsed)
                 break
             case macro.StateReachDoor:
@@ -137,6 +150,7 @@ class Game {
     }
 
     draw() {
+        if (this.pause) return
         switch (storeState().gameState) {
             case macro.StateLevelUp:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
@@ -163,6 +177,7 @@ class Game {
                 this.door.draw(this.context)
 
                 this.levelIndicator.draw(this.context, this.level)
+                this.button.draw(this.context)
                 //this.fpsIndicator.draw(this.context, this.fps) 
                 this.child.draw(this.context)
                 if (storeState().gameState === macro.StateGameOver) this.drawGameOver()
@@ -188,6 +203,14 @@ class Game {
                     this.restartGame()
                 break
 
+        }
+    }
+
+    getMousePos(event) {
+        const rect = this.context.canvas.getBoundingClientRect()
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
         }
     }
 }

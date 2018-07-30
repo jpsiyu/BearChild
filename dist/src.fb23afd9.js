@@ -19829,6 +19829,22 @@ var drawCoverTop = function drawCoverTop(context, color, h) {
     context.restore();
 };
 
+var drawButton = function drawButton(context, radius, text) {
+    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+    context.save();
+    context.beginPath();
+    context.fillStyle = 'white';
+    context.arc(0, 0, radius, 0, 2 * Math.PI);
+    context.fill();
+    var fontSize = options.pt || 15;
+    context.font = fontSize + 'pt Arial';
+    context.fillStyle = 'black';
+    context.textAlign = 'center';
+    context.fillText(text, 0, fontSize / 2);
+    context.restore();
+};
+
 var drawImg = function drawImg(context, x, y, radius, img) {
     var guide = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
 
@@ -19871,7 +19887,8 @@ exports.default = {
     drawCover: drawCover,
     drawCoverRight: drawCoverRight,
     drawCoverTop: drawCoverTop,
-    drawLabel: drawLabel
+    drawLabel: drawLabel,
+    drawButton: drawButton
 };
 },{"./macro":"../src/macro.js"}],"../src/element.js":[function(require,module,exports) {
 "use strict";
@@ -21255,22 +21272,27 @@ var Child = function (_Element) {
     }, {
         key: 'move',
         value: function move(context, keyCode) {
-            if (this.drinkMilk) return;
             switch (keyCode) {
                 case 'ArrowUp':
-                    if (!this.checkPosInFense({ x: this.x, y: this.y - _macro2.default.GridSize })) this.y -= _macro2.default.GridSize;
-                    break;
-                case 'ArrowDown':
-                    //this.y += macro.GridSize
-                    break;
-                case 'ArrowLeft':
-                    //this.x -= macro.GridSize
+                    this.moveUp();
                     break;
                 case 'ArrowRight':
-                    if (!this.checkPosInFense({ x: this.x + _macro2.default.GridSize, y: this.y })) this.x += _macro2.default.GridSize;
+                    this.moveRight();
                     break;
             }
             this.moveLimit(context);
+        }
+    }, {
+        key: 'moveRight',
+        value: function moveRight() {
+            if (this.drinkMilk) return;
+            if (!this.checkPosInFense({ x: this.x + _macro2.default.GridSize, y: this.y })) this.x += _macro2.default.GridSize;
+        }
+    }, {
+        key: 'moveUp',
+        value: function moveUp() {
+            if (this.drinkMilk) return;
+            if (!this.checkPosInFense({ x: this.x, y: this.y - _macro2.default.GridSize })) this.y -= _macro2.default.GridSize;
         }
     }, {
         key: 'checkPosInFense',
@@ -21582,7 +21604,106 @@ var NumberIndicator = function () {
 
 exports.Indicator = Indicator;
 exports.NumberIndicator = NumberIndicator;
-},{}],"../src/game.js":[function(require,module,exports) {
+},{}],"../src/button.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Button = function (_Element) {
+    _inherits(Button, _Element);
+
+    function Button(x, y, childHandler) {
+        _classCallCheck(this, Button);
+
+        var radius = _macro2.default.GridSize / 2;
+
+        var _this = _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, x, y, radius));
+
+        _this.childHandler = childHandler;
+        _this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 1, _tool2.default.maxCol());
+        _this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow(), _tool2.default.maxCol());
+        return _this;
+    }
+
+    _createClass(Button, [{
+        key: 'update',
+        value: function update() {}
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            this.drawArrow(context, this.posArrowUp, '↑');
+            this.drawArrow(context, this.posArrowRight, '→');
+        }
+    }, {
+        key: 'drawArrow',
+        value: function drawArrow(context, pos, arrow) {
+            context.save();
+            context.translate(pos.x, pos.y);
+            _drawing2.default.drawButton(context, this.radius, arrow);
+            context.restore();
+        }
+    }, {
+        key: 'arrowRightClick',
+        value: function arrowRightClick() {
+            var c = this.childHandler();
+            if (c) {
+                c.moveRight();
+            }
+        }
+    }, {
+        key: 'arrowUpClick',
+        value: function arrowUpClick() {
+            var c = this.childHandler();
+            if (c) {
+                c.moveUp();
+            }
+        }
+    }, {
+        key: 'handleClick',
+        value: function handleClick(pos) {
+            var distance = void 0;
+
+            distance = _tool2.default.distancePos(pos, this.posArrowUp);
+            if (distance < this.radius) this.arrowUpClick();
+
+            distance = _tool2.default.distancePos(pos, this.posArrowRight);
+            if (distance < this.radius) this.arrowRightClick();
+        }
+    }]);
+
+    return Button;
+}(_element2.default);
+
+exports.default = Button;
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js"}],"../src/game.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21621,6 +21742,10 @@ var _tool2 = _interopRequireDefault(_tool);
 
 var _store = require('./store');
 
+var _button = require('./button');
+
+var _button2 = _interopRequireDefault(_button);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21636,15 +21761,26 @@ var Game = function () {
         this.frame = this.frame.bind(this);
         this.fps = 0;
         this.level = 1;
+        this.pause = false;
+        this.child = undefined;
 
         this.context.canvas.focus();
         window.addEventListener('keydown', function (ev) {
             _this.keyHandler(ev.key);
         });
+        this.context.canvas.addEventListener('click', function (event) {
+            var pos = _this.getMousePos(event);
+            _this.button.handleClick(pos);
+        });
 
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
 
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
+
+        var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), _tool2.default.maxCol());
+        this.button = new _button2.default(pos.x, pos.y, function () {
+            return _this.child;
+        });
 
         (0, _store.storeState)().resMgr.loadRes(function () {
             _this.resetGame();
@@ -21653,8 +21789,10 @@ var Game = function () {
 
         document.addEventListener('visibilitychange', function () {
             if (document.hidden) {
+                _this.pause = true;
                 (0, _store.storeState)().music.pauseBg();
             } else {
+                _this.pause = false;
                 (0, _store.storeState)().music.playBg();
             }
         });
@@ -21737,6 +21875,7 @@ var Game = function () {
         value: function update(elapsed) {
             var _this3 = this;
 
+            if (this.pause) return;
             this.fps = 1 / elapsed;
             switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateGame:
@@ -21754,7 +21893,7 @@ var Game = function () {
                     if (this.childCatchMilk()) {
                         this.child.drinkMilk = true;
                     }
-                    this.mom.update(this.child, elapsed);
+                    //this.mom.update(this.child, elapsed)
                     this.child.update(elapsed);
                     break;
                 case _macro2.default.StateReachDoor:
@@ -21770,6 +21909,7 @@ var Game = function () {
         value: function draw() {
             var _this4 = this;
 
+            if (this.pause) return;
             switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateLevelUp:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
@@ -21791,6 +21931,7 @@ var Game = function () {
                     this.door.draw(this.context);
 
                     this.levelIndicator.draw(this.context, this.level);
+                    this.button.draw(this.context);
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.child.draw(this.context);
                     if ((0, _store.storeState)().gameState === _macro2.default.StateGameOver) this.drawGameOver();
@@ -21818,13 +21959,22 @@ var Game = function () {
 
             }
         }
+    }, {
+        key: 'getMousePos',
+        value: function getMousePos(event) {
+            var rect = this.context.canvas.getBoundingClientRect();
+            return {
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top
+            };
+        }
     }]);
 
     return Game;
 }();
 
 exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./store":"../src/store.js"}],"../src/gameCpt.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./store":"../src/store.js","./button":"../src/button.js"}],"../src/gameCpt.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

@@ -1,7 +1,7 @@
 import drawing from './drawing'
 import macro from './macro'
 import Element from './element'
-import {storeState} from './store'
+import { storeState } from './store'
 import Sprite from './sprite'
 import tool from './tool'
 
@@ -20,7 +20,7 @@ class Child extends Element {
 
 
     update(elapsed) {
-        switch ( storeState().gameState) {
+        switch (storeState().gameState) {
             case macro.StateGame:
                 if (this.drinkMilk) {
                     if (this.pass < this.drinkMilkTime) {
@@ -66,24 +66,27 @@ class Child extends Element {
     }
 
     move(context, keyCode) {
-        if (this.drinkMilk) return
         switch (keyCode) {
             case 'ArrowUp':
-                if (!this.checkPosInFense({ x: this.x, y: this.y - macro.GridSize }))
-                    this.y -= macro.GridSize
-                break
-            case 'ArrowDown':
-                //this.y += macro.GridSize
-                break
-            case 'ArrowLeft':
-                //this.x -= macro.GridSize
+                this.moveUp()
                 break
             case 'ArrowRight':
-                if (!this.checkPosInFense({ x: this.x + macro.GridSize, y: this.y }))
-                    this.x += macro.GridSize
+                this.moveRight()
                 break
         }
         this.moveLimit(context)
+    }
+
+    moveRight() {
+        if (this.drinkMilk) return
+        if (!this.checkPosInFense({ x: this.x + macro.GridSize, y: this.y }))
+            this.x += macro.GridSize
+    }
+
+    moveUp() {
+        if (this.drinkMilk) return
+        if (!this.checkPosInFense({ x: this.x, y: this.y - macro.GridSize }))
+            this.y -= macro.GridSize
     }
 
     checkPosInFense(pos) {

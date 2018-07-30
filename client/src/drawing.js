@@ -50,6 +50,20 @@ const drawCoverTop = ( context, color, h) => {
     context.restore()
 }
 
+const drawButton = (context, radius, text, options={}) => {
+    context.save()
+    context.beginPath()
+    context.fillStyle = 'white'
+    context.arc(0, 0, radius, 0, 2*Math.PI)
+    context.fill()
+    const fontSize = options.pt || 15
+    context.font = `${fontSize}pt Arial`
+    context.fillStyle = 'black'
+    context.textAlign = 'center'
+    context.fillText(text, 0, fontSize/2)
+    context.restore()
+}
+
 const drawImg = (context, x, y, radius, img, guide=false) => {
     context.save()
     if(img && img.complete)
@@ -92,4 +106,5 @@ export default {
     drawCoverRight,
     drawCoverTop,
     drawLabel,
+    drawButton,
 }

@@ -7,7 +7,7 @@ class GameCpt extends React.Component {
         super()
     }
 
-    componentDidMount(){
+    componentDidMount() {
         const context = this.refs.canvas.getContext('2d')
         const game = new Game(context)
     }
@@ -15,7 +15,7 @@ class GameCpt extends React.Component {
     render() {
         return <canvas
             ref='canvas'
-            style={{backgroundColor:'black'}}
+            style={{ backgroundColor: 'black' }}
             width={macro.Width}
             height={macro.Height}>
         </canvas>
