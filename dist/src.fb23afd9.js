@@ -21629,6 +21629,8 @@ var _tool = require('./tool');
 
 var _tool2 = _interopRequireDefault(_tool);
 
+var _store = require('./store');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21640,7 +21642,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Button = function (_Element) {
     _inherits(Button, _Element);
 
-    function Button(x, y, childHandler) {
+    function Button(x, y, childHandler, restartHandler) {
         _classCallCheck(this, Button);
 
         var radius = _macro2.default.GridSize / 2;
@@ -21648,8 +21650,10 @@ var Button = function (_Element) {
         var _this = _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, x, y, radius));
 
         _this.childHandler = childHandler;
+        _this.restartHandler = restartHandler;
         _this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 1, _tool2.default.maxCol());
         _this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow(), _tool2.default.maxCol());
+        _this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow(), _tool2.default.maxCol());
         return _this;
     }
 
@@ -21659,8 +21663,15 @@ var Button = function (_Element) {
     }, {
         key: 'draw',
         value: function draw(context) {
-            this.drawArrow(context, this.posArrowUp, '↑');
-            this.drawArrow(context, this.posArrowRight, '→');
+            switch ((0, _store.storeState)().gameState) {
+                case _macro2.default.StateGameOver:
+                    this.drawArrow(context, this.posArrowReload, '↺');
+                    break;
+                case _macro2.default.StateGame:
+                    this.drawArrow(context, this.posArrowUp, '↑');
+                    this.drawArrow(context, this.posArrowRight, '→');
+                    break;
+            }
         }
     }, {
         key: 'drawArrow',
@@ -21687,15 +21698,27 @@ var Button = function (_Element) {
             }
         }
     }, {
+        key: 'arrowReloadClick',
+        value: function arrowReloadClick() {
+            this.restartHandler();
+        }
+    }, {
         key: 'handleClick',
         value: function handleClick(pos) {
             var distance = void 0;
+            switch ((0, _store.storeState)().gameState) {
+                case _macro2.default.StateGame:
+                    distance = _tool2.default.distancePos(pos, this.posArrowUp);
+                    if (distance < this.radius) this.arrowUpClick();
 
-            distance = _tool2.default.distancePos(pos, this.posArrowUp);
-            if (distance < this.radius) this.arrowUpClick();
-
-            distance = _tool2.default.distancePos(pos, this.posArrowRight);
-            if (distance < this.radius) this.arrowRightClick();
+                    distance = _tool2.default.distancePos(pos, this.posArrowRight);
+                    if (distance < this.radius) this.arrowRightClick();
+                    break;
+                case _macro2.default.StateGameOver:
+                    distance = _tool2.default.distancePos(pos, this.posArrowReload);
+                    if (distance < this.radius) this.arrowReloadClick();
+                    break;
+            }
         }
     }]);
 
@@ -21703,7 +21726,7 @@ var Button = function (_Element) {
 }(_element2.default);
 
 exports.default = Button;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js"}],"../src/game.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js","./store":"../src/store.js"}],"../src/game.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21780,6 +21803,8 @@ var Game = function () {
         var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), _tool2.default.maxCol());
         this.button = new _button2.default(pos.x, pos.y, function () {
             return _this.child;
+        }, function () {
+            _this.restartGame();
         });
 
         (0, _store.storeState)().resMgr.loadRes(function () {
@@ -21893,7 +21918,7 @@ var Game = function () {
                     if (this.childCatchMilk()) {
                         this.child.drinkMilk = true;
                     }
-                    //this.mom.update(this.child, elapsed)
+                    this.mom.update(this.child, elapsed);
                     this.child.update(elapsed);
                     break;
                 case _macro2.default.StateReachDoor:

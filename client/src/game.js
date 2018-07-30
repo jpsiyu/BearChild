@@ -37,7 +37,7 @@ class Game {
         )
 
         let pos = tool.grid2coord(tool.maxRow(), tool.maxCol())
-        this.button = new Button(pos.x, pos.y, () => { return this.child })
+        this.button = new Button(pos.x, pos.y, () => { return this.child }, () => { this.restartGame() })
 
         storeState().resMgr.loadRes(() => {
             this.resetGame()
@@ -137,7 +137,7 @@ class Game {
                 if (this.childCatchMilk()) {
                     this.child.drinkMilk = true
                 }
-                //this.mom.update(this.child, elapsed)
+                this.mom.update(this.child, elapsed)
                 this.child.update(elapsed)
                 break
             case macro.StateReachDoor:
