@@ -21796,6 +21796,9 @@ var Game = function () {
             var pos = _this.getMousePos(event);
             _this.button.handleClick(pos);
         });
+        this.context.canvas.addEventListener('touchstart', function (event) {
+            event.preventDefault();
+        });
 
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
 

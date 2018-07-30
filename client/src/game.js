@@ -27,6 +27,9 @@ class Game {
             const pos = this.getMousePos(event)
             this.button.handleClick(pos)
         })
+        this.context.canvas.addEventListener('touchstart', event => {
+            event.preventDefault()
+        })
 
         this.levelIndicator = new NumberIndicator(
             'Level ', 70, 10, { pt: 12 }
