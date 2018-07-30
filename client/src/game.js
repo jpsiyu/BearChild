@@ -28,6 +28,8 @@ class Game {
             this.button.handleClick(pos)
         })
         this.context.canvas.addEventListener('touchstart', event => {
+            const pos = this.getMousePos(event)
+            console.log('touch', pos)
             event.preventDefault()
         })
 

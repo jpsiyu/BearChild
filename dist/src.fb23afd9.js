@@ -21797,6 +21797,8 @@ var Game = function () {
             _this.button.handleClick(pos);
         });
         this.context.canvas.addEventListener('touchstart', function (event) {
+            var pos = _this.getMousePos(event);
+            console.log('touch', pos);
             event.preventDefault();
         });
 
