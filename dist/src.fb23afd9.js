@@ -20936,10 +20936,12 @@ module.exports = {
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server/app.js --watch ./server -V",
-    "watch": "parcel watch client/public/index.html"
+    "watch": "parcel watch client/public/index.html --public-url /bearchild"
   },
   "keywords": [],
   "production": false,
+  "port": 3001,
+  "prefix": "/bearchild",
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -21965,7 +21967,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49614' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '63082' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -22107,4 +22109,4 @@ function hmrAccept(bundle, id) {
   });
 }
 },{}]},{},["../../node_modules/parcel/src/builtins/hmr-runtime.js","../src/index.js"], null)
-//# sourceMappingURL=/src.fb23afd9.map
+//# sourceMappingURL=/bearchild/src.fb23afd9.map
