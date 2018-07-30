@@ -20628,7 +20628,8 @@ var ResMgr = function () {
         key: 'loadRes',
         value: function loadRes(callback) {
             this.loadImgs(function () {
-                (0, _store.storeState)().music.loadMusics(callback);
+                callback();
+                //storeState().music.loadMusics(callback)
             });
         }
     }, {

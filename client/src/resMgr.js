@@ -16,7 +16,8 @@ class ResMgr {
 
     loadRes(callback){
         this.loadImgs( () => {
-            storeState().music.loadMusics(callback)
+            callback()
+            //storeState().music.loadMusics(callback)
         })
     }
 
