@@ -1,6 +1,4 @@
-import store from './store'
 import macro from './macro'
-import drawing from './drawing'
 
 class Sprite{
     constructor(row, col, image, options={}) {

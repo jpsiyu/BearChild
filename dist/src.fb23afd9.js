@@ -20586,54 +20586,7 @@ exports.devToolsEnhancer = (
     function() { return function(noop) { return noop; } }
 );
 
-},{"redux":"../../node_modules/redux/es/redux.js"}],"../src/resMgr.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ResMgr = function () {
-    function ResMgr() {
-        _classCallCheck(this, ResMgr);
-
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll'];
-        this.images = {};
-    }
-
-    _createClass(ResMgr, [{
-        key: 'loadImgs',
-        value: function loadImgs(callback) {
-            var _this = this;
-
-            var loadNum = 0;
-            this.names.forEach(function (name) {
-                var img = new Image();
-                var path = name + '.png';
-                img.src = path;
-                img.onload = function () {
-                    _this.images[name] = img;
-                    loadNum++;
-                    if (loadNum === _this.names.length) callback();
-                };
-            });
-        }
-    }, {
-        key: 'getImg',
-        value: function getImg(name) {
-            return this.images[name];
-        }
-    }]);
-
-    return ResMgr;
-}();
-
-exports.default = ResMgr;
-},{}],"../src/music.js":[function(require,module,exports) {
+},{"redux":"../../node_modules/redux/es/redux.js"}],"../src/music.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20648,19 +20601,39 @@ var Music = function () {
     function Music() {
         _classCallCheck(this, Music);
 
-        this.bg = new Audio('bg.mp3');
-        this.bg.loop = true;
+        this.names = ['bg'];
+        this.musics = {};
     }
 
     _createClass(Music, [{
+        key: 'loadMusics',
+        value: function loadMusics(callback) {
+            var _this = this;
+
+            var readyNum = 0;
+            var totalNum = this.names.length;
+            this.names.forEach(function (name) {
+                var m = new Audio(name + '.mp3');
+                m.oncanplay = function () {
+                    readyNum++;
+                    _this.musics[name] = m;
+                    if (readyNum === totalNum && callback) callback();
+                };
+            });
+        }
+    }, {
         key: 'playBg',
         value: function playBg() {
-            this.bg.play();
+            var bgMusic = this.musics['bg'];
+            if (!bgMusic.loop) bgMusic.loop = true;
+            bgMusic.volume = 0.2;
+            bgMusic.play();
         }
     }, {
         key: 'pauseBg',
         value: function pauseBg() {
-            this.bg.pause();
+            var bgMusic = this.musics['bg'];
+            bgMusic.pause();
         }
     }]);
 
@@ -20668,7 +20641,70 @@ var Music = function () {
 }();
 
 exports.default = Music;
-},{}],"../src/milk.js":[function(require,module,exports) {
+},{}],"../src/resMgr.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _music = require('./music');
+
+var _music2 = _interopRequireDefault(_music);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ResMgr = function () {
+    function ResMgr() {
+        _classCallCheck(this, ResMgr);
+
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll'];
+        this.images = {};
+        this.music = new _music2.default();
+    }
+
+    _createClass(ResMgr, [{
+        key: 'loadRes',
+        value: function loadRes(callback) {
+            var _this = this;
+
+            this.loadImgs(function () {
+                _this.music.loadMusics(callback);
+            });
+        }
+    }, {
+        key: 'loadImgs',
+        value: function loadImgs(callback) {
+            var _this2 = this;
+
+            var loadNum = 0;
+            this.names.forEach(function (name) {
+                var img = new Image();
+                var path = name + '.png';
+                img.src = path;
+                img.onload = function () {
+                    _this2.images[name] = img;
+                    loadNum++;
+                    if (loadNum === _this2.names.length) callback();
+                };
+            });
+        }
+    }, {
+        key: 'getImg',
+        value: function getImg(name) {
+            return this.images[name];
+        }
+    }]);
+
+    return ResMgr;
+}();
+
+exports.default = ResMgr;
+},{"./music":"../src/music.js"}],"../src/milk.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20691,8 +20727,6 @@ var _element2 = _interopRequireDefault(_element);
 
 var _store = require('./store');
 
-var _store2 = _interopRequireDefault(_store);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20711,7 +20745,7 @@ var Milk = function (_Element) {
 
         var _this = _possibleConstructorReturn(this, (Milk.__proto__ || Object.getPrototypeOf(Milk)).call(this, x, y, radius));
 
-        _this.img = _store2.default.getImg('milk');
+        _this.img = (0, _store.storeState)().resMgr.getImg('milk');
         return _this;
     }
 
@@ -20755,8 +20789,6 @@ var _element2 = _interopRequireDefault(_element);
 
 var _store = require('./store');
 
-var _store2 = _interopRequireDefault(_store);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20775,7 +20807,7 @@ var Fence = function (_Element) {
 
         var _this = _possibleConstructorReturn(this, (Fence.__proto__ || Object.getPrototypeOf(Fence)).call(this, x, y, radius));
 
-        _this.img = _store2.default.getImg('fence');
+        _this.img = (0, _store.storeState)().resMgr.getImg('fence');
         return _this;
     }
 
@@ -20959,6 +20991,7 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.changeState = exports.storeState = undefined;
 
 var _redux = require('redux');
 
@@ -20967,10 +21000,6 @@ var _reduxDevtoolsExtension = require('redux-devtools-extension');
 var _resMgr = require('./resMgr');
 
 var _resMgr2 = _interopRequireDefault(_resMgr);
-
-var _music = require('./music');
-
-var _music2 = _interopRequireDefault(_music);
 
 var _map = require('./map');
 
@@ -21005,13 +21034,6 @@ var gameStateReducer = function gameStateReducer() {
     }
 };
 
-var musicReducer = function musicReducer() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new _music2.default();
-    var action = arguments[1];
-
-    return state;
-};
-
 var mapReducer = function mapReducer() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new _map2.default();
     var action = arguments[1];
@@ -21022,7 +21044,6 @@ var mapReducer = function mapReducer() {
 var appReducer = (0, _redux.combineReducers)({
     resMgr: resReducer,
     gameState: gameStateReducer,
-    music: musicReducer,
     map: mapReducer
 });
 
@@ -21030,51 +21051,25 @@ var build = function build() {
     if (_package2.default.production) return (0, _redux.createStore)(appReducer);else return (0, _redux.createStore)(appReducer, (0, _reduxDevtoolsExtension.composeWithDevTools)());
 };
 
-var store = build();
-
+var store = undefined;
 var getStore = function getStore() {
+    if (!store) store = new build();
     return store;
 };
 
-var gameState = function gameState() {
-    var allState = store.getState();
-    return allState.gameState;
-};
-
 var changeState = function changeState(newState) {
+    var store = getStore();
     store.dispatch({ type: _macro2.default.ActionStateChange, payload: newState });
 };
 
-var getResMgr = function getResMgr() {
-    var allState = store.getState();
-    return allState.resMgr;
+var storeState = function storeState() {
+    var store = getStore();
+    return store.getState();
 };
 
-var getImg = function getImg(name) {
-    var res = getResMgr();
-    return res.getImg(name);
-};
-
-var getMusic = function getMusic() {
-    var allState = store.getState();
-    return allState.music;
-};
-
-var getMap = function getMap() {
-    var allState = store.getState();
-    return allState.map;
-};
-
-exports.default = {
-    getStore: getStore,
-    gameState: gameState,
-    changeState: changeState,
-    getResMgr: getResMgr,
-    getImg: getImg,
-    getMusic: getMusic,
-    getMap: getMap
-};
-},{"redux":"../../node_modules/redux/es/redux.js","redux-devtools-extension":"../../node_modules/redux-devtools-extension/index.js","./resMgr":"../src/resMgr.js","./music":"../src/music.js","./map":"../src/map.js","./macro":"../src/macro.js","../../package.json":"../../package.json"}],"../src/sprite.js":[function(require,module,exports) {
+exports.storeState = storeState;
+exports.changeState = changeState;
+},{"redux":"../../node_modules/redux/es/redux.js","redux-devtools-extension":"../../node_modules/redux-devtools-extension/index.js","./resMgr":"../src/resMgr.js","./map":"../src/map.js","./macro":"../src/macro.js","../../package.json":"../../package.json"}],"../src/sprite.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21083,17 +21078,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _store = require('./store');
-
-var _store2 = _interopRequireDefault(_store);
-
 var _macro = require('./macro');
 
 var _macro2 = _interopRequireDefault(_macro);
-
-var _drawing = require('./drawing');
-
-var _drawing2 = _interopRequireDefault(_drawing);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21153,7 +21140,7 @@ var Sprite = function () {
 }();
 
 exports.default = Sprite;
-},{"./store":"../src/store.js","./macro":"../src/macro.js","./drawing":"../src/drawing.js"}],"../src/child.js":[function(require,module,exports) {
+},{"./macro":"../src/macro.js"}],"../src/child.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21175,8 +21162,6 @@ var _element = require('./element');
 var _element2 = _interopRequireDefault(_element);
 
 var _store = require('./store');
-
-var _store2 = _interopRequireDefault(_store);
 
 var _sprite = require('./sprite');
 
@@ -21204,7 +21189,7 @@ var Child = function (_Element) {
 
         var _this = _possibleConstructorReturn(this, (Child.__proto__ || Object.getPrototypeOf(Child)).call(this, x, y, radius));
 
-        _this.sprite = new _sprite2.default(2, 2, _store2.default.getImg('child-roll'), { frameUpdateTime: 1 });
+        _this.sprite = new _sprite2.default(2, 2, (0, _store.storeState)().resMgr.getImg('child-roll'), { frameUpdateTime: 1 });
 
         _this.drinkMilk = false;
         _this.drinkMilkTime = 2;
@@ -21217,7 +21202,7 @@ var Child = function (_Element) {
     _createClass(Child, [{
         key: 'update',
         value: function update(elapsed) {
-            switch (_store2.default.gameState()) {
+            switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateGame:
                     if (this.drinkMilk) {
                         if (this.pass < this.drinkMilkTime) {
@@ -21242,7 +21227,7 @@ var Child = function (_Element) {
     }, {
         key: 'draw',
         value: function draw(context) {
-            switch (_store2.default.gameState()) {
+            switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateGameOver:
                     break;
                 case _macro2.default.StateGame:
@@ -21251,7 +21236,7 @@ var Child = function (_Element) {
                     context.translate(this.x, this.y);
                     if (this.drinkMilk) {
                         context.rotate(this.angle);
-                        this.img = _store2.default.getImg('drink');
+                        this.img = (0, _store.storeState)().resMgr.getImg('drink');
                         _drawing2.default.drawImg(context, -_macro2.default.GridSize / 2, -_macro2.default.GridSize / 2, this.radius, this.img);
                     } else {
                         this.sprite.draw(context);
@@ -21284,7 +21269,7 @@ var Child = function (_Element) {
         key: 'checkPosInFense',
         value: function checkPosInFense(pos) {
             var inFense = false;
-            _store2.default.getMap().fences.forEach(function (fence) {
+            (0, _store.storeState)().map.fences.forEach(function (fence) {
                 if (_tool2.default.distancePos(pos, fence.pos()) < fence.radius) inFense = true;
             });
             return inFense;
@@ -21329,8 +21314,6 @@ var _element2 = _interopRequireDefault(_element);
 
 var _store = require('./store');
 
-var _store2 = _interopRequireDefault(_store);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21349,7 +21332,7 @@ var Door = function (_Element) {
 
         var _this = _possibleConstructorReturn(this, (Door.__proto__ || Object.getPrototypeOf(Door)).call(this, x, y, radius));
 
-        _this.img = _store2.default.getImg('door');
+        _this.img = (0, _store.storeState)().resMgr.getImg('door');
         return _this;
     }
 
@@ -21393,8 +21376,6 @@ var _macro2 = _interopRequireDefault(_macro);
 
 var _store = require('./store');
 
-var _store2 = _interopRequireDefault(_store);
-
 var _sprite = require('./sprite');
 
 var _sprite2 = _interopRequireDefault(_sprite);
@@ -21420,8 +21401,8 @@ var Mom = function (_Element) {
         _this.chaseSpeed = 100;
         _this.waitTime = 1;
         _this.waitPass = 0;
-        _this.sprite = new _sprite2.default(2, 2, _store2.default.getImg('mom-run'));
-        _this.img = _store2.default.getImg('catched');
+        _this.sprite = new _sprite2.default(2, 2, (0, _store.storeState)().resMgr.getImg('mom-run'));
+        _this.img = (0, _store.storeState)().resMgr.getImg('catched');
 
         return _this;
     }
@@ -21450,7 +21431,7 @@ var Mom = function (_Element) {
         value: function draw(context) {
             context.save();
             context.translate(this.x, this.y);
-            switch (_store2.default.gameState()) {
+            switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateGame:
                 case _macro2.default.StateReachDoor:
                     this.sprite.draw(context);
@@ -21633,8 +21614,6 @@ var _tool2 = _interopRequireDefault(_tool);
 
 var _store = require('./store');
 
-var _store2 = _interopRequireDefault(_store);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21660,7 +21639,7 @@ var Game = function () {
 
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
 
-        _store2.default.getResMgr().loadImgs(function () {
+        (0, _store.storeState)().resMgr.loadRes(function () {
             _this.resetGame();
             window.requestAnimationFrame(_this.frame);
         });
@@ -21669,14 +21648,14 @@ var Game = function () {
     _createClass(Game, [{
         key: 'restartGame',
         value: function restartGame() {
-            _store2.default.changeState(_macro2.default.StateGame);
+            (0, _store.changeState)(_macro2.default.StateGame);
             this.level = 1;
             this.resetGame();
         }
     }, {
         key: 'resetGame',
         value: function resetGame() {
-            _store2.default.getMusic().playBg();
+            (0, _store.storeState)().resMgr.music.playBg();
             this.grid = new _grid.Grid();
 
             var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 2);
@@ -21689,16 +21668,16 @@ var Game = function () {
 
             pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 4);
 
-            _store2.default.getMap().reset();
+            (0, _store.storeState)().map.reset();
         }
     }, {
         key: 'levelUp',
         value: function levelUp() {
-            _store2.default.changeState(_macro2.default.StateLevelUp);
+            (0, _store.changeState)(_macro2.default.StateLevelUp);
             this.level += 1;
             this.resetGame();
             setTimeout(function () {
-                _store2.default.changeState(_macro2.default.StateGame);
+                (0, _store.changeState)(_macro2.default.StateGame);
             }, 2 * 1000);
         }
     }, {
@@ -21719,11 +21698,11 @@ var Game = function () {
             var _this2 = this;
 
             var drink = false;
-            _store2.default.getMap().milks.forEach(function (milk, i) {
+            (0, _store.storeState)().map.milks.forEach(function (milk, i) {
                 var dis = _tool2.default.distance(_this2.child, milk);
                 if (dis < _this2.child.radius + milk.radius) {
                     drink = true;
-                    _store2.default.getMap().milks.splice(i, 1);
+                    (0, _store.storeState)().map.milks.splice(i, 1);
                 }
             });
             return drink;
@@ -21744,17 +21723,17 @@ var Game = function () {
             var _this3 = this;
 
             this.fps = 1 / elapsed;
-            switch (_store2.default.gameState()) {
+            switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateGame:
                     if (this.reachDoor()) {
-                        _store2.default.changeState(_macro2.default.StateReachDoor);
+                        (0, _store.changeState)(_macro2.default.StateReachDoor);
                         setTimeout(function () {
                             _this3.levelUp();
                         }, 2 * 1000);
                         return;
                     }
                     if (this.momCatchChild()) {
-                        _store2.default.changeState(_macro2.default.StateGameOver);
+                        (0, _store.changeState)(_macro2.default.StateGameOver);
                         return;
                     }
                     if (this.childCatchMilk()) {
@@ -21776,7 +21755,7 @@ var Game = function () {
         value: function draw() {
             var _this4 = this;
 
-            switch (_store2.default.gameState()) {
+            switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateLevelUp:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     _drawing2.default.drawLabel(this.context, 'Level ' + this.level, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
@@ -21786,10 +21765,10 @@ var Game = function () {
                 case _macro2.default.StateReachDoor:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     this.grid.draw(this.context, this.child);
-                    _store2.default.getMap().milks.forEach(function (milk) {
+                    (0, _store.storeState)().map.milks.forEach(function (milk) {
                         milk.draw(_this4.context);
                     });
-                    _store2.default.getMap().fences.forEach(function (fence) {
+                    (0, _store.storeState)().map.fences.forEach(function (fence) {
                         fence.draw(_this4.context);
                     });
                     this.mom.draw(this.context);
@@ -21799,7 +21778,7 @@ var Game = function () {
                     this.levelIndicator.draw(this.context, this.level);
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.child.draw(this.context);
-                    if (_store2.default.gameState() === _macro2.default.StateGameOver) this.drawGameOver();
+                    if ((0, _store.storeState)().gameState === _macro2.default.StateGameOver) this.drawGameOver();
                     break;
             }
         }
@@ -21814,7 +21793,7 @@ var Game = function () {
     }, {
         key: 'keyHandler',
         value: function keyHandler(key) {
-            switch (_store2.default.gameState()) {
+            switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateGame:
                     this.child.move(this.context, key);
                     break;
@@ -21967,7 +21946,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '63082' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '60722' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

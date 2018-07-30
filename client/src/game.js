@@ -6,7 +6,7 @@ import macro from './macro'
 import { Grid } from './grid'
 import { NumberIndicator } from './indicator'
 import tool from './tool'
-import store from './store'
+import {storeState, changeState} from './store'
 
 class Game {
     constructor(context) {
@@ -29,20 +29,20 @@ class Game {
             'fps ', 200, 10, { pt: 12, digits: 2 }
         )
 
-        store.getResMgr().loadImgs(() => {
+        storeState().resMgr.loadRes(() => {
             this.resetGame()
             window.requestAnimationFrame(this.frame)
         })
     }
 
     restartGame() {
-        store.changeState(macro.StateGame)
+        changeState(macro.StateGame)
         this.level = 1
         this.resetGame()
     }
 
     resetGame() {
-        store.getMusic().playBg()
+        storeState().resMgr.music.playBg()
         this.grid = new Grid()
 
         let pos = tool.grid2coord(tool.maxRow(), 2)
@@ -58,14 +58,14 @@ class Game {
 
         pos = tool.grid2coord(tool.maxRow(), 4)
 
-        store.getMap().reset()
+        storeState().map.reset()
     }
 
     levelUp() {
-        store.changeState(macro.StateLevelUp)
+        changeState(macro.StateLevelUp)
         this.level += 1
         this.resetGame()
-        setTimeout(() => { store.changeState(macro.StateGame) }, 2 * 1000)
+        setTimeout(() => { changeState(macro.StateGame) }, 2 * 1000)
     }
 
     reachDoor() {
@@ -80,11 +80,11 @@ class Game {
 
     childCatchMilk() {
         let drink = false
-        store.getMap().milks.forEach((milk, i) => {
+        storeState().map.milks.forEach((milk, i) => {
             const dis = tool.distance(this.child, milk)
             if (dis < (this.child.radius + milk.radius)) {
                 drink = true
-                store.getMap().milks.splice(i, 1)
+                storeState().map.milks.splice(i, 1)
             }
         })
         return drink
@@ -101,15 +101,15 @@ class Game {
 
     update(elapsed) {
         this.fps = 1 / elapsed
-        switch (store.gameState()) {
+        switch (storeState().gameState) {
             case macro.StateGame:
                 if (this.reachDoor()) {
-                    store.changeState(macro.StateReachDoor)
+                    changeState(macro.StateReachDoor)
                     setTimeout(() => { this.levelUp() }, 2 * 1000)
                     return
                 }
                 if (this.momCatchChild()) {
-                    store.changeState(macro.StateGameOver)
+                    changeState(macro.StateGameOver)
                     return
                 }
                 if (this.childCatchMilk()) {
@@ -128,7 +128,7 @@ class Game {
     }
 
     draw() {
-        switch (store.gameState()) {
+        switch (storeState().gameState) {
             case macro.StateLevelUp:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 drawing.drawLabel(
@@ -143,10 +143,10 @@ class Game {
             case macro.StateReachDoor:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 this.grid.draw(this.context, this.child)
-                store.getMap().milks.forEach(milk => {
+                storeState().map.milks.forEach(milk => {
                     milk.draw(this.context)
                 })
-                store.getMap().fences.forEach(fence => {
+                storeState().map.fences.forEach(fence => {
                     fence.draw(this.context)
                 })
                 this.mom.draw(this.context)
@@ -156,7 +156,7 @@ class Game {
                 this.levelIndicator.draw(this.context, this.level)
                 //this.fpsIndicator.draw(this.context, this.fps) 
                 this.child.draw(this.context)
-                if (store.gameState() === macro.StateGameOver) this.drawGameOver()
+                if (storeState().gameState === macro.StateGameOver) this.drawGameOver()
                 break
         }
     }
@@ -170,7 +170,7 @@ class Game {
     }
 
     keyHandler(key) {
-        switch (store.gameState()) {
+        switch (storeState().gameState) {
             case macro.StateGame:
                 this.child.move(this.context, key)
                 break

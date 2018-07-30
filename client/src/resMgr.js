@@ -1,3 +1,5 @@
+import Music from './music'
+
 class ResMgr {
     constructor() {
         this.names= [
@@ -10,6 +12,13 @@ class ResMgr {
             'child-roll',
         ]
         this.images = {}
+        this.music = new Music()
+    }
+
+    loadRes(callback){
+        this.loadImgs( () => {
+            this.music.loadMusics(callback)
+        })
     }
 
     loadImgs(callback) {

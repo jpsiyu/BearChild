@@ -5,13 +5,10 @@ const pjson = require('../package.json')
 const app = express()
 
 app.use('*', (req, res, next) => {
-    console.log('Req For', req.originalUrl)
     next()
 })
 
 const prefix = (url='') => { return `${pjson.prefix}${url}` }
-
-console.log(prefix())
 
 app.use(prefix(), express.static(path.resolve(__dirname, '../dist')))
 app.use(prefix(), express.static(path.resolve(__dirname, '../client/public')))
