@@ -20537,7 +20537,10 @@ var Music = function () {
                 m.oncanplay = function () {
                     readyNum++;
                     _this.musics[name] = m;
-                    if (readyNum === totalNum && callback) callback();
+                    if (readyNum === totalNum && callback) {
+                        console.log('load music finished');
+                        callback();
+                    }
                 };
             });
         }

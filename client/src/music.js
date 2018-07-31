@@ -14,14 +14,17 @@ class Music {
             m.oncanplay = () => {
                 readyNum++
                 this.musics[name] = m
-                if ((readyNum === totalNum) && callback) callback()
+                if ((readyNum === totalNum) && callback) {
+                    console.log('load music finished')
+                    callback()
+                }
             }
         })
     }
 
-    click(){
+    click() {
         const clickMusic = this.musics['click']
-        if(!clickMusic) return
+        if (!clickMusic) return
         clickMusic.pause()
         clickMusic.volume = 0.5
         clickMusic.play()
@@ -29,7 +32,7 @@ class Music {
 
     playBg() {
         const bgMusic = this.musics['bg']
-        if(!bgMusic) return
+        if (!bgMusic) return
 
         if (!bgMusic.loop) bgMusic.loop = true
         bgMusic.volume = 0.2
@@ -38,7 +41,7 @@ class Music {
 
     pauseBg() {
         const bgMusic = this.musics['bg']
-        if(bgMusic)
+        if (bgMusic)
             bgMusic.pause()
     }
 }
