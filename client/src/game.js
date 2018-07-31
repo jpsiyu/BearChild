@@ -203,6 +203,11 @@ class Game {
     }
 
     keyHandler(key) {
+        if (key === 'f') {
+            document.body.style.zoom = '100%'
+            const browserZoomLevel = Math.round(window.devicePixelRatio * 100)
+            console.log(`zoom level ${browserZoomLevel}, num ${document.body.style.zoom}`)
+        }
         switch (storeState().gameState) {
             case macro.StateGame:
                 this.child.move(this.context, key)

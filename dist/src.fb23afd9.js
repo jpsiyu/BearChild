@@ -22080,6 +22080,11 @@ var Game = function () {
     }, {
         key: 'keyHandler',
         value: function keyHandler(key) {
+            if (key === 'f') {
+                document.body.style.zoom = '100%';
+                var browserZoomLevel = Math.round(window.devicePixelRatio * 100);
+                console.log('zoom level ' + browserZoomLevel + ', num ' + document.body.style.zoom);
+            }
             switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateGame:
                     this.child.move(this.context, key);
