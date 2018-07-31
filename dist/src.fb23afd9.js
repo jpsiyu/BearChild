@@ -21779,7 +21779,7 @@ var Controller = function (_Element) {
         value: function resetPos() {
             this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 2);
             this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 0.5);
-            this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() / 2, _tool2.default.maxCol() / 2 + 3);
+            this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() / 2, _tool2.default.maxCol() - 2);
             this.gameTextInfo = {
                 text: 'Start Game',
                 pt: 20,
