@@ -55,7 +55,7 @@ const drawCoverTop = (context, color, h) => {
 const drawButton = (context, radius, text, options = {}) => {
     context.save()
     context.beginPath()
-    context.fillStyle = 'rgba(255, 255, 255, 0.8)'
+    context.fillStyle = options.color || 'rgba(255, 255, 255, 0.8)'
     context.arc(0, 0, radius, 0, 2 * Math.PI)
     context.fill()
     const fontSize = options.pt || 20

@@ -21144,7 +21144,7 @@ var drawButton = function drawButton(context, radius, text) {
 
     context.save();
     context.beginPath();
-    context.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    context.fillStyle = options.color || 'rgba(255, 255, 255, 0.8)';
     context.arc(0, 0, radius, 0, 2 * Math.PI);
     context.fill();
     var fontSize = options.pt || 20;
@@ -21800,7 +21800,7 @@ var Controller = function (_Element) {
         value: function draw(context) {
             switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateGameOver:
-                    this.drawArrow(context, this.posArrowReload, '↺');
+                    this.drawArrow(context, this.posArrowReload, '↺', { color: 'rgba(255, 245, 215, 0.8)' });
                     break;
                 case _macro2.default.StateGame:
                     this.drawArrow(context, this.posArrowUp, '↑');
@@ -21828,9 +21828,11 @@ var Controller = function (_Element) {
     }, {
         key: 'drawArrow',
         value: function drawArrow(context, pos, arrow) {
+            var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
             context.save();
             context.translate(pos.x, pos.y);
-            _drawing2.default.drawButton(context, this.radius, arrow);
+            _drawing2.default.drawButton(context, this.radius, arrow, options);
             context.restore();
         }
     }, {

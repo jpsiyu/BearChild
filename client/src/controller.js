@@ -37,7 +37,7 @@ class Controller extends Element {
     draw(context) {
         switch (storeState().gameState) {
             case macro.StateGameOver:
-                this.drawArrow(context, this.posArrowReload, '↺')
+                this.drawArrow(context, this.posArrowReload, '↺', {color : 'rgba(255, 245, 215, 0.8)'})
                 break
             case macro.StateGame:
                 this.drawArrow(context, this.posArrowUp, '↑')
@@ -62,10 +62,10 @@ class Controller extends Element {
         context.restore()
     }
 
-    drawArrow(context, pos, arrow) {
+    drawArrow(context, pos, arrow, options={}) {
         context.save()
         context.translate(pos.x, pos.y)
-        drawing.drawButton(context, this.radius, arrow)
+        drawing.drawButton(context, this.radius, arrow, options)
         context.restore()
     }
 
