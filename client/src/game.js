@@ -210,7 +210,7 @@ class Game {
         const w = this.context.canvas.width
         const h = this.context.canvas.height
         drawing.drawLabel(this.context, 'Game Over', w / 2, h / 2, { pt: 30 })
-        drawing.drawLabel(this.context, 'Press Space To Restart', w / 2, h / 2 + 30, { pt: 16 })
+        drawing.drawLabel(this.context, 'Press ↺ To Restart', w / 2, h / 2 + 30, { pt: 16 })
 
     }
 

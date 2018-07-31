@@ -21779,7 +21779,7 @@ var Controller = function (_Element) {
         value: function resetPos() {
             this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 2);
             this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 0.5);
-            this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() - 1, _tool2.default.maxCol() - 1);
+            this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() / 2, _tool2.default.maxCol() / 2 + 3);
             this.gameTextInfo = {
                 text: 'Start Game',
                 pt: 20,
@@ -22149,7 +22149,7 @@ var Game = function () {
             var w = this.context.canvas.width;
             var h = this.context.canvas.height;
             _drawing2.default.drawLabel(this.context, 'Game Over', w / 2, h / 2, { pt: 30 });
-            _drawing2.default.drawLabel(this.context, 'Press Space To Restart', w / 2, h / 2 + 30, { pt: 16 });
+            _drawing2.default.drawLabel(this.context, 'Press ↺ To Restart', w / 2, h / 2 + 30, { pt: 16 });
         }
     }, {
         key: 'keyHandler',
