@@ -89,7 +89,7 @@ class Controller extends Element {
 
     startGameClick() {
         changeState(macro.StateGame)
-        storeState().music.playBg()
+        storeState().music.activeAllMusic()
     }
 
     handleClick(pos) {

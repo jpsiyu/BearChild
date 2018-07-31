@@ -8,6 +8,7 @@ class Music {
             'lose',
         ]
         this.musics = {}
+        this.active = false
     }
 
     loadMusics(callback) {
@@ -44,6 +45,7 @@ class Music {
     }
 
     playClip(name){
+        if(!this.active) return
         const m = this.musics[name]
         if (!m) return
         m.volume = 0.5
@@ -53,6 +55,7 @@ class Music {
     }
 
     playBg() {
+        if(!this.active) return
         const bgMusic = this.musics['bg']
         if (!bgMusic) return
 
@@ -65,6 +68,13 @@ class Music {
         const bgMusic = this.musics['bg']
         if (bgMusic)
             bgMusic.pause()
+    }
+
+    activeAllMusic(){
+        this.active = true
+        Object.keys(this.musics).forEach( key => {
+            this.musics[key].play()
+        })
     }
 }
 

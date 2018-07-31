@@ -20530,6 +20530,7 @@ var Music = function () {
 
         this.names = ['bg', 'win', 'lose'];
         this.musics = {};
+        this.active = false;
     }
 
     _createClass(Music, [{
@@ -20571,6 +20572,7 @@ var Music = function () {
     }, {
         key: 'playClip',
         value: function playClip(name) {
+            if (!this.active) return;
             var m = this.musics[name];
             if (!m) return;
             m.volume = 0.5;
@@ -20580,6 +20582,7 @@ var Music = function () {
     }, {
         key: 'playBg',
         value: function playBg() {
+            if (!this.active) return;
             var bgMusic = this.musics['bg'];
             if (!bgMusic) return;
 
@@ -20592,6 +20595,16 @@ var Music = function () {
         value: function pauseBg() {
             var bgMusic = this.musics['bg'];
             if (bgMusic) bgMusic.pause();
+        }
+    }, {
+        key: 'activeAllMusic',
+        value: function activeAllMusic() {
+            var _this2 = this;
+
+            this.active = true;
+            Object.keys(this.musics).forEach(function (key) {
+                _this2.musics[key].play();
+            });
         }
     }]);
 
@@ -21841,7 +21854,7 @@ var Controller = function (_Element) {
         key: 'startGameClick',
         value: function startGameClick() {
             (0, _store.changeState)(_macro2.default.StateGame);
-            (0, _store.storeState)().music.playBg();
+            (0, _store.storeState)().music.activeAllMusic();
         }
     }, {
         key: 'handleClick',
