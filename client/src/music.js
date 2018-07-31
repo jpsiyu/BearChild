@@ -1,3 +1,5 @@
+import tool from './tool'
+
 class Music {
     constructor() {
         this.names = [
@@ -11,15 +13,24 @@ class Music {
         const totalNum = this.names.length
         this.names.forEach(name => {
             const m = new Audio(`${name}.mp3`)
-            console.log('new music', name)
-            m.oncanplay = () => {
-                console.log('music ready', name)
+            if (tool.isSmartPhone()) {
+                console.log('smart phone')
                 readyNum++
                 this.musics[name] = m
                 if ((readyNum === totalNum) && callback) {
-                    console.log('load music finished')
                     callback()
                 }
+
+            } else {
+                console.log('desktop')
+                m.oncanplay = () => {
+                    readyNum++
+                    this.musics[name] = m
+                    if ((readyNum === totalNum) && callback) {
+                        callback()
+                    }
+                }
+
             }
         })
     }

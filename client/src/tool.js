@@ -1,5 +1,5 @@
 import macro from './macro'
-import {storeState} from './store'
+import { storeState } from './store'
 
 const grid2coord = (row, col) => {
     const x = gridSize() / 2 + col * gridSize()
@@ -47,6 +47,10 @@ const gameHeight = () => {
     return context.canvas.height
 }
 
+const isSmartPhone = () => {
+    return (typeof window.orientation !== 'undefined') 
+}
+
 export default {
     grid2coord,
     maxRow,
@@ -56,4 +60,5 @@ export default {
     gridSize,
     gameWidth,
     gameHeight,
+    isSmartPhone,
 }

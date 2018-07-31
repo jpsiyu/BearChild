@@ -20515,6 +20515,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Music = function () {
@@ -20534,16 +20540,23 @@ var Music = function () {
             var totalNum = this.names.length;
             this.names.forEach(function (name) {
                 var m = new Audio(name + '.mp3');
-                console.log('new music', name);
-                m.oncanplay = function () {
-                    console.log('music ready', name);
+                if (_tool2.default.isSmartPhone()) {
+                    console.log('smart phone');
                     readyNum++;
                     _this.musics[name] = m;
                     if (readyNum === totalNum && callback) {
-                        console.log('load music finished');
                         callback();
                     }
-                };
+                } else {
+                    console.log('desktop');
+                    m.oncanplay = function () {
+                        readyNum++;
+                        _this.musics[name] = m;
+                        if (readyNum === totalNum && callback) {
+                            callback();
+                        }
+                    };
+                }
             });
         }
     }, {
@@ -20577,7 +20590,7 @@ var Music = function () {
 }();
 
 exports.default = Music;
-},{}],"../src/element.js":[function(require,module,exports) {
+},{"./tool":"../src/tool.js"}],"../src/element.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21017,6 +21030,10 @@ var gameHeight = function gameHeight() {
     return context.canvas.height;
 };
 
+var isSmartPhone = function isSmartPhone() {
+    return typeof window.orientation !== 'undefined';
+};
+
 exports.default = {
     grid2coord: grid2coord,
     maxRow: maxRow,
@@ -21025,7 +21042,8 @@ exports.default = {
     distancePos: distancePos,
     gridSize: gridSize,
     gameWidth: gameWidth,
-    gameHeight: gameHeight
+    gameHeight: gameHeight,
+    isSmartPhone: isSmartPhone
 };
 },{"./macro":"../src/macro.js","./store":"../src/store.js"}],"../src/drawing.js":[function(require,module,exports) {
 'use strict';
