@@ -91,8 +91,10 @@ class Game {
     levelUp() {
         changeState(macro.StateLevelUp)
         this.level += 1
-        this.resetGame()
-        setTimeout(() => { changeState(macro.StateGame) }, 2 * 1000)
+        setTimeout(() => {
+            this.resetGame()
+            changeState(macro.StateGame)
+        }, 2 * 1000)
     }
 
     reachDoor() {
@@ -137,6 +139,7 @@ class Game {
                     return
                 }
                 if (this.momCatchChild()) {
+                    storeState().music.pauseBg()
                     changeState(macro.StateGameOver)
                     return
                 }

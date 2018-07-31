@@ -20527,7 +20527,7 @@ var Music = function () {
     function Music() {
         _classCallCheck(this, Music);
 
-        this.names = ['click'];
+        this.names = ['bg', 'click'];
         this.musics = {};
     }
 
@@ -21954,10 +21954,12 @@ var Game = function () {
     }, {
         key: 'levelUp',
         value: function levelUp() {
+            var _this2 = this;
+
             (0, _store.changeState)(_macro2.default.StateLevelUp);
             this.level += 1;
-            this.resetGame();
             setTimeout(function () {
+                _this2.resetGame();
                 (0, _store.changeState)(_macro2.default.StateGame);
             }, 2 * 1000);
         }
@@ -21976,12 +21978,12 @@ var Game = function () {
     }, {
         key: 'childCatchMilk',
         value: function childCatchMilk() {
-            var _this2 = this;
+            var _this3 = this;
 
             var drink = false;
             (0, _store.storeState)().map.milks.forEach(function (milk, i) {
-                var dis = _tool2.default.distance(_this2.child, milk);
-                if (dis < _this2.child.radius + milk.radius) {
+                var dis = _tool2.default.distance(_this3.child, milk);
+                if (dis < _this3.child.radius + milk.radius) {
                     drink = true;
                     (0, _store.storeState)().map.milks.splice(i, 1);
                 }
@@ -22001,7 +22003,7 @@ var Game = function () {
     }, {
         key: 'update',
         value: function update(elapsed) {
-            var _this3 = this;
+            var _this4 = this;
 
             if (this.pause) return;
             this.fps = 1 / elapsed;
@@ -22010,11 +22012,12 @@ var Game = function () {
                     if (this.reachDoor()) {
                         (0, _store.changeState)(_macro2.default.StateReachDoor);
                         setTimeout(function () {
-                            _this3.levelUp();
+                            _this4.levelUp();
                         }, 2 * 1000);
                         return;
                     }
                     if (this.momCatchChild()) {
+                        (0, _store.storeState)().music.pauseBg();
                         (0, _store.changeState)(_macro2.default.StateGameOver);
                         return;
                     }
@@ -22035,7 +22038,7 @@ var Game = function () {
     }, {
         key: 'draw',
         value: function draw() {
-            var _this4 = this;
+            var _this5 = this;
 
             if (this.pause) return;
             switch ((0, _store.storeState)().gameState) {
@@ -22049,10 +22052,10 @@ var Game = function () {
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     this.grid.draw(this.context, this.child);
                     (0, _store.storeState)().map.milks.forEach(function (milk) {
-                        milk.draw(_this4.context);
+                        milk.draw(_this5.context);
                     });
                     (0, _store.storeState)().map.fences.forEach(function (fence) {
-                        fence.draw(_this4.context);
+                        fence.draw(_this5.context);
                     });
                     this.mom.draw(this.context);
                     this.grid.drawMask(this.context, this.child);

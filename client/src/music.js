@@ -3,6 +3,7 @@ import tool from './tool'
 class Music {
     constructor() {
         this.names = [
+            'bg',
             'click',
         ]
         this.musics = {}
