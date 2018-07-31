@@ -21043,7 +21043,6 @@ var distancePos = function distancePos(pos1, pos2) {
 var gridSize = function gridSize() {
     var context = (0, _store.storeState)().context;
     return context.canvas.width / _macro2.default.GridNumInRow;
-    //return context.canvas.height / macro.GridNumInCol
 };
 
 var gameWidth = function gameWidth() {
@@ -22243,7 +22242,6 @@ var GameCpt = function (_React$Component) {
         value: function componentDidMount() {
             var _this2 = this;
 
-            if (typeof screen.lockOrientation !== 'undefined') screen.lockOrientation('landscape');
             this.canvas = this.refs.canvas;
             this.resizeCanvas();
             window.addEventListener('resize', function (ev) {
@@ -22256,20 +22254,16 @@ var GameCpt = function (_React$Component) {
     }, {
         key: 'resizeCanvas',
         value: function resizeCanvas() {
-            this.canvas.width = window.innerWidth;
-            var gridSize = this.canvas.width / _macro2.default.GridNumInRow;
-            var h = window.innerHeight - 50;
-            this.canvas.height = h - h % gridSize;
-            /*
-            const curruntRatio = (window.innerWidth / window.innerHeight)
-            if (curruntRatio > macro.WidthHeightRatio) {
-                this.canvas.height = window.innerHeight
-                this.canvas.width = this.canvas.height * macro.WidthHeightRatio
+            var curruntRatio = window.innerWidth / window.innerHeight;
+            if (curruntRatio > _macro2.default.WidthHeightRatio) {
+                this.canvas.height = window.innerHeight;
+                this.canvas.width = this.canvas.height * _macro2.default.WidthHeightRatio;
             } else {
-                this.canvas.width = window.innerWidth
-                this.canvas.height = this.canvas.width / macro.WidthHeightRatio
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = this.canvas.width / _macro2.default.WidthHeightRatio;
             }
-            */
+            var size = this.canvas.width / _macro2.default.GridNumInRow;
+            this.canvas.height -= this.canvas.height % size;
         }
     }, {
         key: 'render',

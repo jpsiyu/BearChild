@@ -1,7 +1,7 @@
 import React from 'react'
 import macro from './macro'
 import Game from './game';
-import {setContext} from './store'
+import { setContext } from './store'
 
 class GameCpt extends React.Component {
     constructor() {
@@ -10,7 +10,6 @@ class GameCpt extends React.Component {
     }
 
     componentDidMount() {
-        if(typeof screen.lockOrientation !== 'undefined') screen.lockOrientation('landscape')
         this.canvas = this.refs.canvas
         this.resizeCanvas()
         window.addEventListener('resize', ev => { this.resizeCanvas() })
@@ -20,11 +19,6 @@ class GameCpt extends React.Component {
     }
 
     resizeCanvas() {
-        this.canvas.width = window.innerWidth
-        const gridSize = this.canvas.width / macro.GridNumInRow
-        const h = window.innerHeight - 50
-        this.canvas.height = h - h % gridSize
-        /*
         const curruntRatio = (window.innerWidth / window.innerHeight)
         if (curruntRatio > macro.WidthHeightRatio) {
             this.canvas.height = window.innerHeight
@@ -33,7 +27,8 @@ class GameCpt extends React.Component {
             this.canvas.width = window.innerWidth
             this.canvas.height = this.canvas.width / macro.WidthHeightRatio
         }
-        */
+        const size = this.canvas.width / macro.GridNumInRow
+        this.canvas.height -= this.canvas.height % size
     }
 
     render() {

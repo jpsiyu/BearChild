@@ -34,7 +34,6 @@ const distancePos = (pos1, pos2) => {
 const gridSize = () => {
     const context = storeState().context
     return context.canvas.width / macro.GridNumInRow
-    //return context.canvas.height / macro.GridNumInCol
 }
 
 const gameWidth = () => {
