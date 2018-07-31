@@ -19755,9 +19755,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
     Visiable: 3,
-    WidthHeightRatio: 3,
+    WidthHeightRatio: 2.5,
     GridNumInRow: 16,
-    GridNumInCol: 8,
+    GridNumInCol: 10,
     CanvasMargin: 20,
 
     StateGame: 'StateGame',
