@@ -7,8 +7,8 @@ class Map {
         this.milks = []
         this.fences = []
         this.posList = []
-        this.milkNum = 14
-        this.fenceNum = 2
+        this.milkNum = 18
+        this.fenceNum = 3
     }
 
     reset(){

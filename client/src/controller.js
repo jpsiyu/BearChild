@@ -5,11 +5,16 @@ import tool from './tool'
 import { storeState } from './store'
 
 class Controller extends Element {
-    constructor(x, y, childHandler, restartHandler) {
+    constructor(childHandler, restartHandler) {
         const radius = tool.gridSize() * 1
-        super(x, y, radius)
+        super(0, 0, radius)
         this.childHandler = childHandler
         this.restartHandler = restartHandler
+        this.resetPos()
+        window.addEventListener('resize', ev => { this.resetPos() })
+    }
+
+    resetPos(){
         this.posArrowUp = tool.grid2coord(tool.maxRow() - 2, tool.maxCol() - 2)
         this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 0.5)
         this.posArrowReload = tool.grid2coord(tool.maxRow() - 1, tool.maxCol() - 1)

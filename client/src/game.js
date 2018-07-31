@@ -24,8 +24,7 @@ class Game {
             this.keyHandler(ev.key)
         })
 
-        let pos = tool.grid2coord(tool.maxRow(), tool.maxCol())
-        this.controller = new Controller(pos.x, pos.y, () => { return this.child }, () => { this.restartGame() })
+        this.controller = new Controller(() => { return this.child }, () => { this.restartGame() })
         this.context.canvas.addEventListener('click', event => {
             const pos = this.getMousePos(event)
             this.controller.handleClick(pos)

@@ -19755,8 +19755,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
     Visiable: 3,
-    WidthHeightRatio: 2,
+    WidthHeightRatio: 3,
     GridNumInRow: 16,
+    GridNumInCol: 8,
     CanvasMargin: 20,
 
     StateGame: 'StateGame',
@@ -20750,8 +20751,8 @@ var Map = function () {
         this.milks = [];
         this.fences = [];
         this.posList = [];
-        this.milkNum = 14;
-        this.fenceNum = 2;
+        this.milkNum = 18;
+        this.fenceNum = 3;
     }
 
     _createClass(Map, [{
@@ -20989,7 +20990,8 @@ var distancePos = function distancePos(pos1, pos2) {
 
 var gridSize = function gridSize() {
     var context = (0, _store.storeState)().context;
-    return context.canvas.width / _macro2.default.GridNumInRow;
+    //return context.canvas.width / macro.GridNumInRow
+    return context.canvas.height / _macro2.default.GridNumInCol;
 };
 
 var gameWidth = function gameWidth() {
@@ -21698,22 +21700,30 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Controller = function (_Element) {
     _inherits(Controller, _Element);
 
-    function Controller(x, y, childHandler, restartHandler) {
+    function Controller(childHandler, restartHandler) {
         _classCallCheck(this, Controller);
 
         var radius = _tool2.default.gridSize() * 1;
 
-        var _this = _possibleConstructorReturn(this, (Controller.__proto__ || Object.getPrototypeOf(Controller)).call(this, x, y, radius));
+        var _this = _possibleConstructorReturn(this, (Controller.__proto__ || Object.getPrototypeOf(Controller)).call(this, 0, 0, radius));
 
         _this.childHandler = childHandler;
         _this.restartHandler = restartHandler;
-        _this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 2);
-        _this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 0.5);
-        _this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() - 1, _tool2.default.maxCol() - 1);
+        _this.resetPos();
+        window.addEventListener('resize', function (ev) {
+            _this.resetPos();
+        });
         return _this;
     }
 
     _createClass(Controller, [{
+        key: 'resetPos',
+        value: function resetPos() {
+            this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 2);
+            this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 0.5);
+            this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() - 1, _tool2.default.maxCol() - 1);
+        }
+    }, {
         key: 'update',
         value: function update() {}
     }, {
@@ -21848,8 +21858,7 @@ var Game = function () {
             _this.keyHandler(ev.key);
         });
 
-        var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), _tool2.default.maxCol());
-        this.controller = new _controller2.default(pos.x, pos.y, function () {
+        this.controller = new _controller2.default(function () {
             return _this.child;
         }, function () {
             _this.restartGame();
