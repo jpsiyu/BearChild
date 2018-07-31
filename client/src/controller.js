@@ -4,7 +4,7 @@ import Element from './element'
 import tool from './tool'
 import { storeState } from './store'
 
-class Button extends Element {
+class Controller extends Element {
     constructor(x, y, childHandler, restartHandler) {
         const radius = macro.GridSize / 2
         super(x, y, radius)
@@ -73,4 +73,4 @@ class Button extends Element {
 
 }
 
-export default Button
+export default Controller

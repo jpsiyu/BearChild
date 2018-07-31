@@ -74,19 +74,20 @@ class Child extends Element {
                 this.moveRight()
                 break
         }
-        this.moveLimit(context)
     }
 
-    moveRight() {
+    moveRight(context) {
         if (this.drinkMilk) return
         if (!this.checkPosInFense({ x: this.x + macro.GridSize, y: this.y }))
             this.x += macro.GridSize
+        this.moveLimit(context)
     }
 
     moveUp() {
         if (this.drinkMilk) return
         if (!this.checkPosInFense({ x: this.x, y: this.y - macro.GridSize }))
             this.y -= macro.GridSize
+        this.moveLimit()
     }
 
     checkPosInFense(pos) {
@@ -98,9 +99,9 @@ class Child extends Element {
         return inFense
     }
 
-    moveLimit(context) {
-        const w = context.canvas.width
-        const h = context.canvas.height
+    moveLimit() {
+        const w = macro.Width
+        const h = macro.Height
         const halfGrid = macro.GridSize / 2
         this.x = Math.min(this.x, w - halfGrid)
         this.x = Math.max(this.x, 0 + halfGrid)

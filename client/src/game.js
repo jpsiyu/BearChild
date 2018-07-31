@@ -7,7 +7,7 @@ import { Grid } from './grid'
 import { NumberIndicator } from './indicator'
 import tool from './tool'
 import { storeState, changeState } from './store'
-import Button from './button'
+import Controller from './controller'
 
 class Game {
     constructor(context) {
@@ -23,13 +23,17 @@ class Game {
         window.addEventListener('keydown', ev => {
             this.keyHandler(ev.key)
         })
+
+        let pos = tool.grid2coord(tool.maxRow(), tool.maxCol())
+        this.controller = new Controller(pos.x, pos.y, () => { return this.child }, () => { this.restartGame() })
         this.context.canvas.addEventListener('click', event => {
             const pos = this.getMousePos(event)
-            this.button.handleClick(pos)
+            this.controller.handleClick(pos)
         })
+
         this.context.canvas.addEventListener('touchstart', event => {
             const pos = this.getTouchPos(event)
-            this.button.handleClick(pos)
+            this.controller.handleClick(pos)
             event.preventDefault()
         })
 
@@ -41,8 +45,6 @@ class Game {
             'fps ', 200, 10, { pt: 12, digits: 2 }
         )
 
-        let pos = tool.grid2coord(tool.maxRow(), tool.maxCol())
-        this.button = new Button(pos.x, pos.y, () => { return this.child }, () => { this.restartGame() })
 
         storeState().resMgr.loadRes(() => {
             this.resetGame()
@@ -182,7 +184,7 @@ class Game {
                 this.door.draw(this.context)
 
                 this.levelIndicator.draw(this.context, this.level)
-                this.button.draw(this.context)
+                this.controller.draw(this.context)
                 //this.fpsIndicator.draw(this.context, this.fps) 
                 this.child.draw(this.context)
                 if (storeState().gameState === macro.StateGameOver) this.drawGameOver()

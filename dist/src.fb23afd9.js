@@ -19834,7 +19834,7 @@ var drawButton = function drawButton(context, radius, text) {
 
     context.save();
     context.beginPath();
-    context.fillStyle = 'white';
+    context.fillStyle = 'rgba(255, 255, 255, 0.2)';
     context.arc(0, 0, radius, 0, 2 * Math.PI);
     context.fill();
     var fontSize = options.pt || 15;
@@ -21281,19 +21281,20 @@ var Child = function (_Element) {
                     this.moveRight();
                     break;
             }
-            this.moveLimit(context);
         }
     }, {
         key: 'moveRight',
-        value: function moveRight() {
+        value: function moveRight(context) {
             if (this.drinkMilk) return;
             if (!this.checkPosInFense({ x: this.x + _macro2.default.GridSize, y: this.y })) this.x += _macro2.default.GridSize;
+            this.moveLimit(context);
         }
     }, {
         key: 'moveUp',
         value: function moveUp() {
             if (this.drinkMilk) return;
             if (!this.checkPosInFense({ x: this.x, y: this.y - _macro2.default.GridSize })) this.y -= _macro2.default.GridSize;
+            this.moveLimit();
         }
     }, {
         key: 'checkPosInFense',
@@ -21306,9 +21307,9 @@ var Child = function (_Element) {
         }
     }, {
         key: 'moveLimit',
-        value: function moveLimit(context) {
-            var w = context.canvas.width;
-            var h = context.canvas.height;
+        value: function moveLimit() {
+            var w = _macro2.default.Width;
+            var h = _macro2.default.Height;
             var halfGrid = _macro2.default.GridSize / 2;
             this.x = Math.min(this.x, w - halfGrid);
             this.x = Math.max(this.x, 0 + halfGrid);
@@ -21605,7 +21606,7 @@ var NumberIndicator = function () {
 
 exports.Indicator = Indicator;
 exports.NumberIndicator = NumberIndicator;
-},{}],"../src/button.js":[function(require,module,exports) {
+},{}],"../src/controller.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21640,15 +21641,15 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Button = function (_Element) {
-    _inherits(Button, _Element);
+var Controller = function (_Element) {
+    _inherits(Controller, _Element);
 
-    function Button(x, y, childHandler, restartHandler) {
-        _classCallCheck(this, Button);
+    function Controller(x, y, childHandler, restartHandler) {
+        _classCallCheck(this, Controller);
 
         var radius = _macro2.default.GridSize / 2;
 
-        var _this = _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this, x, y, radius));
+        var _this = _possibleConstructorReturn(this, (Controller.__proto__ || Object.getPrototypeOf(Controller)).call(this, x, y, radius));
 
         _this.childHandler = childHandler;
         _this.restartHandler = restartHandler;
@@ -21658,7 +21659,7 @@ var Button = function (_Element) {
         return _this;
     }
 
-    _createClass(Button, [{
+    _createClass(Controller, [{
         key: 'update',
         value: function update() {}
     }, {
@@ -21723,10 +21724,10 @@ var Button = function (_Element) {
         }
     }]);
 
-    return Button;
+    return Controller;
 }(_element2.default);
 
-exports.default = Button;
+exports.default = Controller;
 },{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js","./store":"../src/store.js"}],"../src/game.js":[function(require,module,exports) {
 'use strict';
 
@@ -21766,9 +21767,9 @@ var _tool2 = _interopRequireDefault(_tool);
 
 var _store = require('./store');
 
-var _button = require('./button');
+var _controller = require('./controller');
 
-var _button2 = _interopRequireDefault(_button);
+var _controller2 = _interopRequireDefault(_controller);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21792,26 +21793,27 @@ var Game = function () {
         window.addEventListener('keydown', function (ev) {
             _this.keyHandler(ev.key);
         });
+
+        var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), _tool2.default.maxCol());
+        this.controller = new _controller2.default(pos.x, pos.y, function () {
+            return _this.child;
+        }, function () {
+            _this.restartGame();
+        });
         this.context.canvas.addEventListener('click', function (event) {
             var pos = _this.getMousePos(event);
-            _this.button.handleClick(pos);
+            _this.controller.handleClick(pos);
         });
+
         this.context.canvas.addEventListener('touchstart', function (event) {
             var pos = _this.getTouchPos(event);
-            _this.button.handleClick(pos);
+            _this.controller.handleClick(pos);
             event.preventDefault();
         });
 
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
 
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
-
-        var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), _tool2.default.maxCol());
-        this.button = new _button2.default(pos.x, pos.y, function () {
-            return _this.child;
-        }, function () {
-            _this.restartGame();
-        });
 
         (0, _store.storeState)().resMgr.loadRes(function () {
             _this.resetGame();
@@ -21962,7 +21964,7 @@ var Game = function () {
                     this.door.draw(this.context);
 
                     this.levelIndicator.draw(this.context, this.level);
-                    this.button.draw(this.context);
+                    this.controller.draw(this.context);
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.child.draw(this.context);
                     if ((0, _store.storeState)().gameState === _macro2.default.StateGameOver) this.drawGameOver();
@@ -22014,7 +22016,7 @@ var Game = function () {
 }();
 
 exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./store":"../src/store.js","./button":"../src/button.js"}],"../src/gameCpt.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./store":"../src/store.js","./controller":"../src/controller.js"}],"../src/gameCpt.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22151,7 +22153,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '54952' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49339' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
