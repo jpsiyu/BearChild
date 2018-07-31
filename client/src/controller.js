@@ -2,7 +2,7 @@ import drawing from './drawing'
 import macro from './macro'
 import Element from './element'
 import tool from './tool'
-import { storeState } from './store'
+import { storeState, changeState } from './store'
 
 class Controller extends Element {
     constructor(childHandler, restartHandler) {
@@ -11,13 +11,25 @@ class Controller extends Element {
         this.childHandler = childHandler
         this.restartHandler = restartHandler
         this.resetPos()
+        this.startGameText = 'Start Game'
         window.addEventListener('resize', ev => { this.resetPos() })
     }
 
-    resetPos(){
+    resetPos() {
         this.posArrowUp = tool.grid2coord(tool.maxRow() - 2, tool.maxCol() - 2)
         this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 0.5)
         this.posArrowReload = tool.grid2coord(tool.maxRow() - 1, tool.maxCol() - 1)
+        this.gameTextInfo = {
+            text: 'Start Game',
+            pt: 20,
+            color: 'white',
+        }
+        this.rectInfo = {
+            x: tool.gameWidth() / 2 - this.gameTextInfo.text.length * this.gameTextInfo.pt / 2,
+            y: tool.gameHeight() / 2 - 1.5 * this.gameTextInfo.pt,
+            w: this.gameTextInfo.text.length * this.gameTextInfo.pt,
+            h: 2 * this.gameTextInfo.pt,
+        }
     }
 
     update() { }
@@ -31,7 +43,23 @@ class Controller extends Element {
                 this.drawArrow(context, this.posArrowUp, '↑')
                 this.drawArrow(context, this.posArrowRight, '→')
                 break
+            case macro.StateReady:
+                this.drawStart(context)
+                break
         }
+    }
+
+    drawStart(context) {
+        const x = tool.gameWidth() / 2
+        const y = tool.gameHeight() / 2
+        context.save()
+        drawing.drawLabel(context, this.gameTextInfo.text, x, y, { color: this.gameTextInfo.color, pt: this.gameTextInfo.pt })
+
+        context.beginPath()
+        context.strokeStyle = this.gameTextInfo.color
+        context.rect(this.rectInfo.x, this.rectInfo.y, this.rectInfo.w, this.rectInfo.h)
+        context.stroke()
+        context.restore()
     }
 
     drawArrow(context, pos, arrow) {
@@ -59,6 +87,11 @@ class Controller extends Element {
         this.restartHandler()
     }
 
+    startGameClick() {
+        changeState(macro.StateGame)
+        storeState().music.playBg()
+    }
+
     handleClick(pos) {
         let distance
         switch (storeState().gameState) {
@@ -72,6 +105,11 @@ class Controller extends Element {
             case macro.StateGameOver:
                 distance = tool.distancePos(pos, this.posArrowReload)
                 if (distance < this.radius) this.arrowReloadClick()
+                break
+            case macro.StateReady:
+                if (pos.x > this.rectInfo.x && pos.x < this.rectInfo.x + this.rectInfo.w &&
+                    pos.y > this.rectInfo.y && pos.y < this.rectInfo.y + this.rectInfo.h)
+                    this.startGameClick()
                 break
         }
     }

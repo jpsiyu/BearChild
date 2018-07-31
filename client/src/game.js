@@ -46,7 +46,7 @@ class Game {
 
 
         storeState().resMgr.loadRes(() => {
-            this.resetGame()
+            this.readyForGame()
             window.requestAnimationFrame(this.frame)
         })
 
@@ -60,6 +60,12 @@ class Game {
                 storeState().music.playBg()
             }
         })
+    }
+
+    readyForGame(){
+        changeState(macro.StateReady)
+        this.level = 1
+        this.resetGame()
     }
 
     restartGame() {
@@ -192,6 +198,9 @@ class Game {
                 //this.fpsIndicator.draw(this.context, this.fps) 
                 this.child.draw(this.context)
                 if (storeState().gameState === macro.StateGameOver) this.drawGameOver()
+                break
+            case macro.StateReady:
+                this.controller.draw(this.context)
                 break
         }
     }

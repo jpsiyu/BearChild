@@ -19764,6 +19764,7 @@ exports.default = {
     StateGameOver: 'StateGameOver',
     StateLevelUp: 'StateLevelUp',
     StateReachDoor: 'StateReachDoor',
+    StateReady: 'StateReady',
 
     ActionStateChange: 'ActionStateChange',
     ActionSetContext: 'ActionSetContext'
@@ -20540,7 +20541,6 @@ var Music = function () {
             var totalNum = this.names.length;
             this.names.forEach(function (name) {
                 var m = new Audio(name + '.mp3');
-                m.muted = true;
                 if (_tool2.default.isSmartPhone()) {
                     readyNum++;
                     _this.musics[name] = m;
@@ -20573,7 +20573,6 @@ var Music = function () {
         value: function playClip(name) {
             var m = this.musics[name];
             if (!m) return;
-            m.muted = false;
             m.volume = 0.5;
             m.currentTime = 0;
             m.play();
@@ -20581,7 +20580,6 @@ var Music = function () {
     }, {
         key: 'playBg',
         value: function playBg() {
-            return;
             var bgMusic = this.musics['bg'];
             if (!bgMusic) return;
 
@@ -21752,6 +21750,7 @@ var Controller = function (_Element) {
         _this.childHandler = childHandler;
         _this.restartHandler = restartHandler;
         _this.resetPos();
+        _this.startGameText = 'Start Game';
         window.addEventListener('resize', function (ev) {
             _this.resetPos();
         });
@@ -21764,6 +21763,17 @@ var Controller = function (_Element) {
             this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 2);
             this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 0.5);
             this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() - 1, _tool2.default.maxCol() - 1);
+            this.gameTextInfo = {
+                text: 'Start Game',
+                pt: 20,
+                color: 'white'
+            };
+            this.rectInfo = {
+                x: _tool2.default.gameWidth() / 2 - this.gameTextInfo.text.length * this.gameTextInfo.pt / 2,
+                y: _tool2.default.gameHeight() / 2 - 1.5 * this.gameTextInfo.pt,
+                w: this.gameTextInfo.text.length * this.gameTextInfo.pt,
+                h: 2 * this.gameTextInfo.pt
+            };
         }
     }, {
         key: 'update',
@@ -21779,7 +21789,24 @@ var Controller = function (_Element) {
                     this.drawArrow(context, this.posArrowUp, '↑');
                     this.drawArrow(context, this.posArrowRight, '→');
                     break;
+                case _macro2.default.StateReady:
+                    this.drawStart(context);
+                    break;
             }
+        }
+    }, {
+        key: 'drawStart',
+        value: function drawStart(context) {
+            var x = _tool2.default.gameWidth() / 2;
+            var y = _tool2.default.gameHeight() / 2;
+            context.save();
+            _drawing2.default.drawLabel(context, this.gameTextInfo.text, x, y, { color: this.gameTextInfo.color, pt: this.gameTextInfo.pt });
+
+            context.beginPath();
+            context.strokeStyle = this.gameTextInfo.color;
+            context.rect(this.rectInfo.x, this.rectInfo.y, this.rectInfo.w, this.rectInfo.h);
+            context.stroke();
+            context.restore();
         }
     }, {
         key: 'drawArrow',
@@ -21811,6 +21838,12 @@ var Controller = function (_Element) {
             this.restartHandler();
         }
     }, {
+        key: 'startGameClick',
+        value: function startGameClick() {
+            (0, _store.changeState)(_macro2.default.StateGame);
+            (0, _store.storeState)().music.playBg();
+        }
+    }, {
         key: 'handleClick',
         value: function handleClick(pos) {
             var distance = void 0;
@@ -21825,6 +21858,9 @@ var Controller = function (_Element) {
                 case _macro2.default.StateGameOver:
                     distance = _tool2.default.distancePos(pos, this.posArrowReload);
                     if (distance < this.radius) this.arrowReloadClick();
+                    break;
+                case _macro2.default.StateReady:
+                    if (pos.x > this.rectInfo.x && pos.x < this.rectInfo.x + this.rectInfo.w && pos.y > this.rectInfo.y && pos.y < this.rectInfo.y + this.rectInfo.h) this.startGameClick();
                     break;
             }
         }
@@ -21921,7 +21957,7 @@ var Game = function () {
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
 
         (0, _store.storeState)().resMgr.loadRes(function () {
-            _this.resetGame();
+            _this.readyForGame();
             window.requestAnimationFrame(_this.frame);
         });
 
@@ -21937,6 +21973,13 @@ var Game = function () {
     }
 
     _createClass(Game, [{
+        key: 'readyForGame',
+        value: function readyForGame() {
+            (0, _store.changeState)(_macro2.default.StateReady);
+            this.level = 1;
+            this.resetGame();
+        }
+    }, {
         key: 'restartGame',
         value: function restartGame() {
             (0, _store.changeState)(_macro2.default.StateGame);
@@ -22078,6 +22121,9 @@ var Game = function () {
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.child.draw(this.context);
                     if ((0, _store.storeState)().gameState === _macro2.default.StateGameOver) this.drawGameOver();
+                    break;
+                case _macro2.default.StateReady:
+                    this.controller.draw(this.context);
                     break;
             }
         }

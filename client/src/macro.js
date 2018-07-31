@@ -9,6 +9,7 @@ export default {
     StateGameOver: 'StateGameOver',
     StateLevelUp: 'StateLevelUp',
     StateReachDoor: 'StateReachDoor',
+    StateReady: 'StateReady',
 
     ActionStateChange: 'ActionStateChange',
     ActionSetContext: 'ActionSetContext',

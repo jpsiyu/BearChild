@@ -37,12 +37,12 @@ const drawCoverRight = (context, color, x) => {
     context.save()
     context.beginPath()
     context.fillStyle = color
-    context.rect(x, 0, context.canvas.width-x, context.canvas.height)
+    context.rect(x, 0, context.canvas.width - x, context.canvas.height)
     context.fill()
     context.restore()
 }
 
-const drawCoverTop = ( context, color, h) => {
+const drawCoverTop = (context, color, h) => {
     color = color || 'yellow'
     context.save()
     context.beginPath()
@@ -52,28 +52,28 @@ const drawCoverTop = ( context, color, h) => {
     context.restore()
 }
 
-const drawButton = (context, radius, text, options={}) => {
+const drawButton = (context, radius, text, options = {}) => {
     context.save()
     context.beginPath()
     context.fillStyle = 'rgba(255, 255, 255, 0.8)'
-    context.arc(0, 0, radius, 0, 2*Math.PI)
+    context.arc(0, 0, radius, 0, 2 * Math.PI)
     context.fill()
-    const fontSize = options.pt || 20 
+    const fontSize = options.pt || 20
     context.font = `${fontSize}pt Arial`
     context.fillStyle = 'black'
     context.textAlign = 'center'
-    context.fillText(text, 0, fontSize/2)
+    context.fillText(text, 0, fontSize / 2)
     context.restore()
 }
 
-const drawImg = (context, x, y, radius, img, guide=false) => {
+const drawImg = (context, x, y, radius, img, guide = false) => {
     context.save()
-    if(img && img.complete)
-        context.drawImage(img, x, y, 2*radius, 2*radius)
-    if(guide){
+    if (img && img.complete)
+        context.drawImage(img, x, y, 2 * radius, 2 * radius)
+    if (guide) {
         context.beginPath()
         context.strokeStyle = 'red'
-        context.arc(0, 0, radius, 0, 2*Math.PI)
+        context.arc(0, 0, radius, 0, 2 * Math.PI)
         context.stroke()
     }
 
