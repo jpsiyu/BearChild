@@ -22243,6 +22243,7 @@ var GameCpt = function (_React$Component) {
         value: function componentDidMount() {
             var _this2 = this;
 
+            if (typeof screen.lockOrientation !== 'undefined') screen.lockOrientation('landscape');
             this.canvas = this.refs.canvas;
             this.resizeCanvas();
             window.addEventListener('resize', function (ev) {

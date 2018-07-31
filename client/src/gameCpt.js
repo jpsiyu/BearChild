@@ -10,6 +10,7 @@ class GameCpt extends React.Component {
     }
 
     componentDidMount() {
+        if(typeof screen.lockOrientation !== 'undefined') screen.lockOrientation('landscape')
         this.canvas = this.refs.canvas
         this.resizeCanvas()
         window.addEventListener('resize', ev => { this.resizeCanvas() })
