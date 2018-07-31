@@ -20541,14 +20541,12 @@ var Music = function () {
             this.names.forEach(function (name) {
                 var m = new Audio(name + '.mp3');
                 if (_tool2.default.isSmartPhone()) {
-                    console.log('smart phone');
                     readyNum++;
                     _this.musics[name] = m;
                     if (readyNum === totalNum && callback) {
                         callback();
                     }
                 } else {
-                    console.log('desktop');
                     m.oncanplay = function () {
                         readyNum++;
                         _this.musics[name] = m;
@@ -20564,8 +20562,8 @@ var Music = function () {
         value: function click() {
             var clickMusic = this.musics['click'];
             if (!clickMusic) return;
-            clickMusic.pause();
             clickMusic.volume = 0.5;
+            clickMusic.currentTime = 0;
             clickMusic.play();
         }
     }, {

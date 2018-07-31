@@ -14,7 +14,6 @@ class Music {
         this.names.forEach(name => {
             const m = new Audio(`${name}.mp3`)
             if (tool.isSmartPhone()) {
-                console.log('smart phone')
                 readyNum++
                 this.musics[name] = m
                 if ((readyNum === totalNum) && callback) {
@@ -22,7 +21,6 @@ class Music {
                 }
 
             } else {
-                console.log('desktop')
                 m.oncanplay = () => {
                     readyNum++
                     this.musics[name] = m
@@ -38,8 +36,8 @@ class Music {
     click() {
         const clickMusic = this.musics['click']
         if (!clickMusic) return
-        clickMusic.pause()
         clickMusic.volume = 0.5
+        clickMusic.currentTime = 0
         clickMusic.play()
     }
 
