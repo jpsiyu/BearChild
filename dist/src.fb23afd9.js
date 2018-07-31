@@ -20562,6 +20562,7 @@ var Music = function () {
         value: function win() {
             var winMusic = this.musics['win'];
             if (!winMusic) return;
+            console.log('win', winMusic);
             winMusic.volume = 0.5;
             winMusic.currentTime = 0;
             winMusic.play();
