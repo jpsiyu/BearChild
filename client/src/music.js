@@ -16,6 +16,7 @@ class Music {
         const totalNum = this.names.length
         this.names.forEach(name => {
             const m = new Audio(`${name}.mp3`)
+            m.muted = true
             if (tool.isSmartPhone()) {
                 readyNum++
                 this.musics[name] = m
@@ -48,6 +49,7 @@ class Music {
         if(!this.active) return
         const m = this.musics[name]
         if (!m) return
+        if(m.muted) m.muted = false
         m.volume = 0.5
         m.currentTime = 0
         m.play()
@@ -59,6 +61,7 @@ class Music {
         const bgMusic = this.musics['bg']
         if (!bgMusic) return
 
+        if(bgMusic.muted) bgMusic.muted = false
         if (!bgMusic.loop) bgMusic.loop = true
         bgMusic.volume = 0.2
         bgMusic.play()
@@ -75,6 +78,7 @@ class Music {
         Object.keys(this.musics).forEach( key => {
             this.musics[key].play()
         })
+        this.playBg()
     }
 }
 

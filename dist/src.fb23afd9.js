@@ -20542,6 +20542,7 @@ var Music = function () {
             var totalNum = this.names.length;
             this.names.forEach(function (name) {
                 var m = new Audio(name + '.mp3');
+                m.muted = true;
                 if (_tool2.default.isSmartPhone()) {
                     readyNum++;
                     _this.musics[name] = m;
@@ -20575,6 +20576,7 @@ var Music = function () {
             if (!this.active) return;
             var m = this.musics[name];
             if (!m) return;
+            if (m.muted) m.muted = false;
             m.volume = 0.5;
             m.currentTime = 0;
             m.play();
@@ -20586,6 +20588,7 @@ var Music = function () {
             var bgMusic = this.musics['bg'];
             if (!bgMusic) return;
 
+            if (bgMusic.muted) bgMusic.muted = false;
             if (!bgMusic.loop) bgMusic.loop = true;
             bgMusic.volume = 0.2;
             bgMusic.play();
@@ -20605,6 +20608,7 @@ var Music = function () {
             Object.keys(this.musics).forEach(function (key) {
                 _this2.musics[key].play();
             });
+            this.playBg();
         }
     }]);
 
