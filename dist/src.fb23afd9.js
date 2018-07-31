@@ -20475,8 +20475,7 @@ var ResMgr = function () {
         key: 'loadRes',
         value: function loadRes(callback) {
             this.loadImgs(function () {
-                callback();
-                //storeState().music.loadMusics(callback)
+                (0, _store.storeState)().music.loadMusics(callback);
             });
         }
     }, {
@@ -20522,7 +20521,7 @@ var Music = function () {
     function Music() {
         _classCallCheck(this, Music);
 
-        this.names = ['bg'];
+        this.names = ['click'];
         this.musics = {};
     }
 
@@ -20541,6 +20540,15 @@ var Music = function () {
                     if (readyNum === totalNum && callback) callback();
                 };
             });
+        }
+    }, {
+        key: 'click',
+        value: function click() {
+            var clickMusic = this.musics['click'];
+            if (!clickMusic) return;
+            clickMusic.pause();
+            clickMusic.volume = 0.5;
+            clickMusic.play();
         }
     }, {
         key: 'playBg',
@@ -21754,6 +21762,7 @@ var Controller = function (_Element) {
             if (c) {
                 c.moveRight();
             }
+            (0, _store.storeState)().music.click();
         }
     }, {
         key: 'arrowUpClick',
@@ -21762,11 +21771,13 @@ var Controller = function (_Element) {
             if (c) {
                 c.moveUp();
             }
+            (0, _store.storeState)().music.click();
         }
     }, {
         key: 'arrowReloadClick',
         value: function arrowReloadClick() {
             this.restartHandler();
+            (0, _store.storeState)().music.click();
         }
     }, {
         key: 'handleClick',

@@ -1,7 +1,7 @@
 class Music {
     constructor() {
         this.names = [
-            'bg',
+            'click',
         ]
         this.musics = {}
     }
@@ -17,6 +17,14 @@ class Music {
                 if ((readyNum === totalNum) && callback) callback()
             }
         })
+    }
+
+    click(){
+        const clickMusic = this.musics['click']
+        if(!clickMusic) return
+        clickMusic.pause()
+        clickMusic.volume = 0.5
+        clickMusic.play()
     }
 
     playBg() {
