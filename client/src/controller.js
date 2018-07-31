@@ -46,7 +46,6 @@ class Controller extends Element {
         if (c) {
             c.moveRight()
         }
-        storeState().music.click()
     }
 
     arrowUpClick() {
@@ -54,12 +53,10 @@ class Controller extends Element {
         if (c) {
             c.moveUp()
         }
-        storeState().music.click()
     }
 
     arrowReloadClick() {
         this.restartHandler()
-        storeState().music.click()
     }
 
     handleClick(pos) {

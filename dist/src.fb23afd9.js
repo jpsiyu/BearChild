@@ -20527,7 +20527,7 @@ var Music = function () {
     function Music() {
         _classCallCheck(this, Music);
 
-        this.names = ['bg', 'click', 'win', 'lose'];
+        this.names = ['bg', 'win', 'lose'];
         this.musics = {};
     }
 
@@ -20574,15 +20574,6 @@ var Music = function () {
             loseMusic.volume = 0.5;
             loseMusic.currentTime = 0;
             loseMusic.play();
-        }
-    }, {
-        key: 'click',
-        value: function click() {
-            var clickMusic = this.musics['click'];
-            if (!clickMusic) return;
-            clickMusic.volume = 0.5;
-            clickMusic.currentTime = 0;
-            clickMusic.play();
         }
     }, {
         key: 'playBg',
@@ -21801,7 +21792,6 @@ var Controller = function (_Element) {
             if (c) {
                 c.moveRight();
             }
-            (0, _store.storeState)().music.click();
         }
     }, {
         key: 'arrowUpClick',
@@ -21810,13 +21800,11 @@ var Controller = function (_Element) {
             if (c) {
                 c.moveUp();
             }
-            (0, _store.storeState)().music.click();
         }
     }, {
         key: 'arrowReloadClick',
         value: function arrowReloadClick() {
             this.restartHandler();
-            (0, _store.storeState)().music.click();
         }
     }, {
         key: 'handleClick',

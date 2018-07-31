@@ -4,7 +4,6 @@ class Music {
     constructor() {
         this.names = [
             'bg',
-            'click',
             'win',
             'lose',
         ]
@@ -50,14 +49,6 @@ class Music {
         loseMusic.volume = 0.5
         loseMusic.currentTime = 0
         loseMusic.play()
-    }
-
-    click() {
-        const clickMusic = this.musics['click']
-        if (!clickMusic) return
-        clickMusic.volume = 0.5
-        clickMusic.currentTime = 0
-        clickMusic.play()
     }
 
     playBg() {
