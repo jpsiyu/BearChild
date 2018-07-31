@@ -10,8 +10,8 @@ class Controller extends Element {
         super(x, y, radius)
         this.childHandler = childHandler
         this.restartHandler = restartHandler
-        this.posArrowUp = tool.grid2coord(tool.maxRow() - 2, tool.maxCol() - 0.5)
-        this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 2)
+        this.posArrowUp = tool.grid2coord(tool.maxRow() - 2, tool.maxCol() - 2)
+        this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 0.5)
         this.posArrowReload = tool.grid2coord(tool.maxRow() - 1, tool.maxCol() - 1)
     }
 

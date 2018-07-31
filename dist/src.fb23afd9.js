@@ -21707,8 +21707,8 @@ var Controller = function (_Element) {
 
         _this.childHandler = childHandler;
         _this.restartHandler = restartHandler;
-        _this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 0.5);
-        _this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 2);
+        _this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 2);
+        _this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 0.5);
         _this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() - 1, _tool2.default.maxCol() - 1);
         return _this;
     }
