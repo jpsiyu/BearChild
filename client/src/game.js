@@ -62,7 +62,7 @@ class Game {
         })
     }
 
-    readyForGame(){
+    readyForGame() {
         changeState(macro.StateReady)
         this.level = 1
         this.resetGame()
@@ -97,8 +97,8 @@ class Game {
     levelUp() {
         changeState(macro.StateLevelUp)
         this.level += 1
+        this.resetGame()
         setTimeout(() => {
-            this.resetGame()
             changeState(macro.StateGame)
         }, 2 * 1000)
     }
@@ -140,6 +140,7 @@ class Game {
         switch (storeState().gameState) {
             case macro.StateGame:
                 if (this.reachDoor()) {
+                    storeState().music.pauseBg()
                     changeState(macro.StateReachDoor)
                     setTimeout(() => { this.levelUp() }, 2 * 1000)
                     storeState().music.win()
