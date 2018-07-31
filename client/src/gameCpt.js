@@ -21,7 +21,8 @@ class GameCpt extends React.Component {
     resizeCanvas() {
         this.canvas.width = window.innerWidth
         const gridSize = this.canvas.width / macro.GridNumInRow
-        this.canvas.height = window.innerHeight - 20 - window.innerHeight % gridSize
+        const h = window.innerHeight - 20
+        this.canvas.height = h - h % gridSize
         /*
         const curruntRatio = (window.innerWidth / window.innerHeight)
         if (curruntRatio > macro.WidthHeightRatio) {
