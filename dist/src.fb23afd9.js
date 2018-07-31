@@ -21085,10 +21085,10 @@ var drawButton = function drawButton(context, radius, text) {
 
     context.save();
     context.beginPath();
-    context.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    context.fillStyle = 'rgba(255, 255, 255, 0.8)';
     context.arc(0, 0, radius, 0, 2 * Math.PI);
     context.fill();
-    var fontSize = options.pt || 15;
+    var fontSize = options.pt || 20;
     context.font = fontSize + 'pt Arial';
     context.fillStyle = 'black';
     context.textAlign = 'center';
@@ -21701,15 +21701,15 @@ var Controller = function (_Element) {
     function Controller(x, y, childHandler, restartHandler) {
         _classCallCheck(this, Controller);
 
-        var radius = _tool2.default.gridSize() / 2;
+        var radius = _tool2.default.gridSize() * 1;
 
         var _this = _possibleConstructorReturn(this, (Controller.__proto__ || Object.getPrototypeOf(Controller)).call(this, x, y, radius));
 
         _this.childHandler = childHandler;
         _this.restartHandler = restartHandler;
-        _this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 1, _tool2.default.maxCol());
-        _this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow(), _tool2.default.maxCol());
-        _this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow(), _tool2.default.maxCol());
+        _this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 0.5);
+        _this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 2);
+        _this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() - 1, _tool2.default.maxCol() - 1);
         return _this;
     }
 

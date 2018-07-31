@@ -6,13 +6,13 @@ import { storeState } from './store'
 
 class Controller extends Element {
     constructor(x, y, childHandler, restartHandler) {
-        const radius = tool.gridSize() / 2
+        const radius = tool.gridSize() * 1
         super(x, y, radius)
         this.childHandler = childHandler
         this.restartHandler = restartHandler
-        this.posArrowUp = tool.grid2coord(tool.maxRow() - 1, tool.maxCol())
-        this.posArrowRight = tool.grid2coord(tool.maxRow(), tool.maxCol())
-        this.posArrowReload = tool.grid2coord(tool.maxRow(), tool.maxCol())
+        this.posArrowUp = tool.grid2coord(tool.maxRow() - 2, tool.maxCol() - 0.5)
+        this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 2)
+        this.posArrowReload = tool.grid2coord(tool.maxRow() - 1, tool.maxCol() - 1)
     }
 
     update() { }
