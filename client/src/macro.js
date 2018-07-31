@@ -1,7 +1,7 @@
 export default {
     Visiable: 3,
     WidthHeightRatio : 2.5,
-    GridNumInRow : 16,
+    GridNumInRow : 18,
     GridNumInCol: 8,
     CanvasMargin: 20,
 

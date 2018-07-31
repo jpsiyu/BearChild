@@ -19756,7 +19756,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = {
     Visiable: 3,
     WidthHeightRatio: 2.5,
-    GridNumInRow: 16,
+    GridNumInRow: 18,
     GridNumInCol: 8,
     CanvasMargin: 20,
 
@@ -21042,8 +21042,8 @@ var distancePos = function distancePos(pos1, pos2) {
 
 var gridSize = function gridSize() {
     var context = (0, _store.storeState)().context;
-    //return context.canvas.width / macro.GridNumInRow
-    return context.canvas.height / _macro2.default.GridNumInCol;
+    return context.canvas.width / _macro2.default.GridNumInRow;
+    //return context.canvas.height / macro.GridNumInCol
 };
 
 var gameWidth = function gameWidth() {
@@ -22255,14 +22255,20 @@ var GameCpt = function (_React$Component) {
     }, {
         key: 'resizeCanvas',
         value: function resizeCanvas() {
-            var curruntRatio = window.innerWidth / window.innerHeight;
-            if (curruntRatio > _macro2.default.WidthHeightRatio) {
-                this.canvas.height = window.innerHeight;
-                this.canvas.width = this.canvas.height * _macro2.default.WidthHeightRatio;
+            this.canvas.width = window.innerWidth;
+            var gridSize = this.canvas.width / _macro2.default.GridNumInRow;
+            this.canvas.height = window.innerHeight - window.innerHeight % gridSize;
+            console.log(this.canvas.width, this.canvas.height);
+            /*
+            const curruntRatio = (window.innerWidth / window.innerHeight)
+            if (curruntRatio > macro.WidthHeightRatio) {
+                this.canvas.height = window.innerHeight
+                this.canvas.width = this.canvas.height * macro.WidthHeightRatio
             } else {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = this.canvas.width / _macro2.default.WidthHeightRatio;
+                this.canvas.width = window.innerWidth
+                this.canvas.height = this.canvas.width / macro.WidthHeightRatio
             }
+            */
         }
     }, {
         key: 'render',
@@ -22355,7 +22361,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '59416' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49209' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
