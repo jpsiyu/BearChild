@@ -22258,7 +22258,7 @@ var GameCpt = function (_React$Component) {
             this.canvas.width = window.innerWidth;
             var gridSize = this.canvas.width / _macro2.default.GridNumInRow;
             this.canvas.height = window.innerHeight - window.innerHeight % gridSize;
-            console.log(this.canvas.width, this.canvas.height);
+            console.log(window.innerWidth, window.screen.height, document.documentElement.clientHeight);
             /*
             const curruntRatio = (window.innerWidth / window.innerHeight)
             if (curruntRatio > macro.WidthHeightRatio) {
