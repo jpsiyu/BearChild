@@ -5,6 +5,8 @@ class Music {
         this.names = [
             'bg',
             'click',
+            'win',
+            'lose',
         ]
         this.musics = {}
     }
@@ -32,6 +34,22 @@ class Music {
 
             }
         })
+    }
+
+    win() {
+        const winMusic = this.musics['win']
+        if (!winMusic) return
+        winMusic.volume = 0.5
+        winMusic.currentTime = 0
+        winMusic.play()
+    }
+
+    lose() {
+        const loseMusic = this.musics['lose']
+        if (!loseMusic) return
+        loseMusic.volume = 0.5
+        loseMusic.currentTime = 0
+        loseMusic.play()
     }
 
     click() {

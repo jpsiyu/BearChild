@@ -20527,7 +20527,7 @@ var Music = function () {
     function Music() {
         _classCallCheck(this, Music);
 
-        this.names = ['bg', 'click'];
+        this.names = ['bg', 'click', 'win', 'lose'];
         this.musics = {};
     }
 
@@ -20556,6 +20556,24 @@ var Music = function () {
                     };
                 }
             });
+        }
+    }, {
+        key: 'win',
+        value: function win() {
+            var winMusic = this.musics['win'];
+            if (!winMusic) return;
+            winMusic.volume = 0.5;
+            winMusic.currentTime = 0;
+            winMusic.play();
+        }
+    }, {
+        key: 'lose',
+        value: function lose() {
+            var loseMusic = this.musics['lose'];
+            if (!loseMusic) return;
+            loseMusic.volume = 0.5;
+            loseMusic.currentTime = 0;
+            loseMusic.play();
         }
     }, {
         key: 'click',
@@ -22014,10 +22032,12 @@ var Game = function () {
                         setTimeout(function () {
                             _this4.levelUp();
                         }, 2 * 1000);
+                        (0, _store.storeState)().music.win();
                         return;
                     }
                     if (this.momCatchChild()) {
                         (0, _store.storeState)().music.pauseBg();
+                        (0, _store.storeState)().music.lose();
                         (0, _store.changeState)(_macro2.default.StateGameOver);
                         return;
                     }
