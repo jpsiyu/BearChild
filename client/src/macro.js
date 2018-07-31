@@ -2,7 +2,7 @@ export default {
     Visiable: 3,
     WidthHeightRatio : 2.5,
     GridNumInRow : 16,
-    GridNumInCol: 10,
+    GridNumInCol: 8,
     CanvasMargin: 20,
 
     StateGame: 'StateGame',

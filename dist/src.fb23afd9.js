@@ -19757,7 +19757,7 @@ exports.default = {
     Visiable: 3,
     WidthHeightRatio: 2.5,
     GridNumInRow: 16,
-    GridNumInCol: 10,
+    GridNumInCol: 8,
     CanvasMargin: 20,
 
     StateGame: 'StateGame',
@@ -20751,7 +20751,7 @@ var Map = function () {
         this.milks = [];
         this.fences = [];
         this.posList = [];
-        this.milkNum = 18;
+        this.milkNum = 14;
         this.fenceNum = 3;
     }
 
