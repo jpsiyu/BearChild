@@ -20534,7 +20534,9 @@ var Music = function () {
             var totalNum = this.names.length;
             this.names.forEach(function (name) {
                 var m = new Audio(name + '.mp3');
+                console.log('new music', name);
                 m.oncanplay = function () {
+                    console.log('music ready', name);
                     readyNum++;
                     _this.musics[name] = m;
                     if (readyNum === totalNum && callback) {
