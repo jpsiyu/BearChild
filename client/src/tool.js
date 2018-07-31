@@ -1,17 +1,20 @@
 import macro from './macro'
+import {storeState} from './store'
 
 const grid2coord = (row, col) => {
-    const x = macro.GridSize / 2 + col * macro.GridSize
-    const y = macro.GridSize / 2 + row * macro.GridSize
+    const x = gridSize() / 2 + col * gridSize()
+    const y = gridSize() / 2 + row * gridSize()
     return { x, y }
 }
 
 const maxRow = () => {
-    return macro.Height / macro.GridSize - 1
+    const size = gridSize()
+    return gameHeight() / size - 1
 }
 
 const maxCol = () => {
-    return macro.Width / macro.GridSize - 1
+    const size = gridSize()
+    return gameWidth() / size - 1
 }
 
 const distance = (obj1, obj2) => {
@@ -28,10 +31,28 @@ const distancePos = (pos1, pos2) => {
     return dis
 }
 
+const gridSize = () => {
+    const context = storeState().context
+    return context.canvas.width / macro.GridNumInRow
+}
+
+const gameWidth = () => {
+    const context = storeState().context
+    return context.canvas.width
+}
+
+const gameHeight = () => {
+    const context = storeState().context
+    return context.canvas.height
+}
+
 export default {
     grid2coord,
     maxRow,
     maxCol,
     distance,
     distancePos,
+    gridSize,
+    gameWidth,
+    gameHeight,
 }

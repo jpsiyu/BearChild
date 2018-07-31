@@ -3,10 +3,11 @@ import drawing from './drawing'
 import macro from './macro'
 import {storeState} from './store'
 import Sprite from './sprite'
+import tool from './tool'
 
 class Mom extends Element {
     constructor(x, y) {
-        const radius = macro.GridSize / 2
+        const radius = tool.gridSize() / 2
         super(x, y, radius)
         this.chaseSpeed = 100
         this.waitTime = 1
@@ -42,7 +43,7 @@ class Mom extends Element {
                 this.sprite.draw(context)
                 break
             case macro.StateGameOver:
-                this.radius = macro.GridSize
+                this.radius = tool.gridSize()
                 drawing.drawImg(context, -this.radius, -this.radius, this.radius, this.img)
                 break
         }

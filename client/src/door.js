@@ -1,11 +1,11 @@
 import drawing from './drawing'
-import macro from './macro'
+import tool from './tool'
 import Element from './element'
 import {storeState} from './store'
 
 class Door extends Element {
     constructor(x, y) {
-        const radius = macro.GridSize
+        const radius = tool.gridSize()
         super(x, y, radius)
         this.img = storeState().resMgr.getImg('door')
     }
@@ -15,7 +15,7 @@ class Door extends Element {
     draw(context) {
         context.save()
         context.translate(this.x, this.y)
-        drawing.drawImg(context, -macro.GridSize, -macro.GridSize, this.radius, this.img)
+        drawing.drawImg(context, -tool.gridSize(), -tool.gridSize(), this.radius, this.img)
         context.restore()
     }
 

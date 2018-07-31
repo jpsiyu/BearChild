@@ -1,8 +1,8 @@
 export default {
-    Width : 800,
-    Height : 400,
-    GridSize: 50,
     Visiable: 3,
+    WidthHeightRatio : 2,
+    GridNumInRow : 16,
+    CanvasMargin: 20,
 
     StateGame: 'StateGame',
     StateGameOver: 'StateGameOver',
@@ -10,4 +10,5 @@ export default {
     StateReachDoor: 'StateReachDoor',
 
     ActionStateChange: 'ActionStateChange',
+    ActionSetContext: 'ActionSetContext',
 }

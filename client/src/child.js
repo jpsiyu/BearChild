@@ -7,7 +7,7 @@ import tool from './tool'
 
 class Child extends Element {
     constructor(x, y) {
-        const radius = macro.GridSize / 2
+        const radius = tool.gridSize() / 2
         super(x, y, radius)
         this.sprite = new Sprite(2, 2, storeState().resMgr.getImg('child-roll'), { frameUpdateTime: 1 })
 
@@ -55,7 +55,7 @@ class Child extends Element {
                 if (this.drinkMilk) {
                     context.rotate(this.angle)
                     this.img = storeState().resMgr.getImg('drink')
-                    drawing.drawImg(context, -macro.GridSize / 2, -macro.GridSize / 2, this.radius, this.img)
+                    drawing.drawImg(context, -tool.gridSize()/ 2, -tool.gridSize()/ 2, this.radius, this.img)
 
                 } else {
                     this.sprite.draw(context)
@@ -78,15 +78,15 @@ class Child extends Element {
 
     moveRight(context) {
         if (this.drinkMilk) return
-        if (!this.checkPosInFense({ x: this.x + macro.GridSize, y: this.y }))
-            this.x += macro.GridSize
+        if (!this.checkPosInFense({ x: this.x + tool.gridSize(), y: this.y }))
+            this.x += tool.gridSize()
         this.moveLimit(context)
     }
 
     moveUp() {
         if (this.drinkMilk) return
-        if (!this.checkPosInFense({ x: this.x, y: this.y - macro.GridSize }))
-            this.y -= macro.GridSize
+        if (!this.checkPosInFense({ x: this.x, y: this.y - tool.gridSize()}))
+            this.y -= tool.gridSize()
         this.moveLimit()
     }
 
@@ -100,9 +100,9 @@ class Child extends Element {
     }
 
     moveLimit() {
-        const w = macro.Width
-        const h = macro.Height
-        const halfGrid = macro.GridSize / 2
+        const w = tool.gameWidth()
+        const h = tool.gameHeight()
+        const halfGrid = tool.gridSize() / 2
         this.x = Math.min(this.x, w - halfGrid)
         this.x = Math.max(this.x, 0 + halfGrid)
         this.y = Math.min(this.y, h - halfGrid)

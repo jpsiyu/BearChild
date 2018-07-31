@@ -1,18 +1,20 @@
 import macro from './macro'
+import tool from './tool'
 
 const drawGrid = (context) => {
     const w = context.canvas.width
     const h = context.canvas.height
+    const gridSize = tool.gridSize()
 
     context.save()
     context.lineWidth = 0.1
     context.strokeStyle = '#000000'
     context.beginPath()
-    for (let i = 0; i <= h; i += macro.GridSize) {
+    for (let i = 0; i <= h; i += gridSize) {
         context.moveTo(0, i)
         context.lineTo(w, i)
     }
-    for (let i = 0; i <= w; i += macro.GridSize) {
+    for (let i = 0; i <= w; i += gridSize) {
         context.moveTo(i, 0)
         context.lineTo(i, h)
     }
@@ -45,7 +47,7 @@ const drawCoverTop = ( context, color, h) => {
     context.save()
     context.beginPath()
     context.fillStyle = color
-    context.rect(0, 0, macro.Width, h)
+    context.rect(0, 0, tool.gameWidth(), h)
     context.fill()
     context.restore()
 }

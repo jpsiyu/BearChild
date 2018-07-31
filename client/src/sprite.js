@@ -1,11 +1,11 @@
-import macro from './macro'
+import tool from './tool'
 
 class Sprite{
     constructor(row, col, image, options={}) {
         this.row = row
         this.col = col
 
-        this.radius = macro.GridSize/2
+        this.radius = tool.gridSize()/2
         this.img = image
 
         this.frameIndex = 0

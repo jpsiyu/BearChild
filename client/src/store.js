@@ -28,11 +28,21 @@ const mapReducer = (state = new Map(), action) => {
     return state
 }
 
+const contextReducer = (state = {}, action) => {
+    switch (action.type) {
+        case macro.ActionSetContext:
+            return action.payload
+        default:
+            return state
+    }
+}
+
 const appReducer = combineReducers({
     resMgr: resReducer,
     gameState: gameStateReducer,
     map: mapReducer,
     music: musicReducer,
+    context: contextReducer,
 })
 
 
@@ -45,13 +55,18 @@ const build = () => {
 
 let store = undefined
 const getStore = () => {
-    if(!store) store = new build()
+    if (!store) store = new build()
     return store
 }
 
 const changeState = (newState) => {
     const store = getStore()
     store.dispatch({ type: macro.ActionStateChange, payload: newState })
+}
+
+const setContext = (context) => {
+    const store = getStore()
+    store.dispatch({ type: macro.ActionSetContext, payload: context })
 }
 
 const storeState = () => {
@@ -62,4 +77,5 @@ const storeState = () => {
 export {
     storeState,
     changeState,
+    setContext,
 }

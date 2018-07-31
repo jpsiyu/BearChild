@@ -1,11 +1,11 @@
 import drawing from './drawing'
-import macro from './macro'
+import tool from './tool'
 import Element from './element'
 import {storeState} from './store'
 
 class Fence extends Element {
     constructor(x, y) {
-        const radius = macro.GridSize/2
+        const radius = tool.gridSize()/2
         super(x, y, radius)
         this.img = storeState().resMgr.getImg('fence')
     }

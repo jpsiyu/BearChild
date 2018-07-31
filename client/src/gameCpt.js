@@ -1,23 +1,38 @@
 import React from 'react'
 import macro from './macro'
 import Game from './game';
+import {setContext} from './store'
 
 class GameCpt extends React.Component {
     constructor() {
         super()
+        this.canvas = undefined
     }
 
     componentDidMount() {
-        const context = this.refs.canvas.getContext('2d')
+        this.canvas = this.refs.canvas
+        this.resizeCanvas()
+        window.addEventListener('resize', ev => { this.resizeCanvas() })
+        const context = this.canvas.getContext('2d')
+        setContext(context)
         const game = new Game(context)
     }
 
+    resizeCanvas() {
+        const curruntRatio = (window.innerWidth / window.innerHeight)
+        if (curruntRatio > macro.WidthHeightRatio) {
+            this.canvas.height = window.innerHeight
+            this.canvas.width = this.canvas.height * macro.WidthHeightRatio
+        } else {
+            this.canvas.width = window.innerWidth
+            this.canvas.height = this.canvas.width / macro.WidthHeightRatio
+        }
+    }
+
     render() {
-        return <canvas
+        return <canvas className='ml-0'
             ref='canvas'
-            style={{ backgroundColor: 'black' }}
-            width={macro.Width}
-            height={macro.Height}>
+            style={{ backgroundColor: 'black', marginLeft: macro.CanvasMargin }}>
         </canvas>
     }
 }

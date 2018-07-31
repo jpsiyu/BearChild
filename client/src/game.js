@@ -80,8 +80,8 @@ class Game {
         this.mom = new Mom(pos.x, pos.y)
 
         this.door = new Door(
-            this.context.canvas.width - macro.GridSize,
-            macro.GridSize,
+            this.context.canvas.width - tool.gridSize(),
+            tool.gridSize(),
         )
 
         pos = tool.grid2coord(tool.maxRow(), 4)

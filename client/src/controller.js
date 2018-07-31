@@ -6,7 +6,7 @@ import { storeState } from './store'
 
 class Controller extends Element {
     constructor(x, y, childHandler, restartHandler) {
-        const radius = macro.GridSize / 2
+        const radius = tool.gridSize() / 2
         super(x, y, radius)
         this.childHandler = childHandler
         this.restartHandler = restartHandler
