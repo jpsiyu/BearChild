@@ -20578,6 +20578,7 @@ var Music = function () {
     }, {
         key: 'playBg',
         value: function playBg() {
+            return;
             var bgMusic = this.musics['bg'];
             if (!bgMusic) return;
 

@@ -52,6 +52,7 @@ class Music {
     }
 
     playBg() {
+        return
         const bgMusic = this.musics['bg']
         if (!bgMusic) return
 
