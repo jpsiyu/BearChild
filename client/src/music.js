@@ -15,6 +15,7 @@ class Music {
         const totalNum = this.names.length
         this.names.forEach(name => {
             const m = new Audio(`${name}.mp3`)
+            m.muted = true
             if (tool.isSmartPhone()) {
                 readyNum++
                 this.musics[name] = m
@@ -36,20 +37,21 @@ class Music {
     }
 
     win() {
-        const winMusic = this.musics['win']
-        if (!winMusic) return
-        console.log('win', winMusic)
-        winMusic.volume = 0.5
-        winMusic.currentTime = 0
-        winMusic.play()
+        this.playClip('win')
     }
 
     lose() {
-        const loseMusic = this.musics['lose']
-        if (!loseMusic) return
-        loseMusic.volume = 0.5
-        loseMusic.currentTime = 0
-        loseMusic.play()
+        this.playClip('lose')
+    }
+
+    playClip(name){
+        const m = this.musics[name]
+        if (!m) return
+        m.muted = false
+        m.volume = 0.5
+        m.currentTime = 0
+        m.play()
+
     }
 
     playBg() {

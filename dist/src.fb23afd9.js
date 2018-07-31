@@ -20540,6 +20540,7 @@ var Music = function () {
             var totalNum = this.names.length;
             this.names.forEach(function (name) {
                 var m = new Audio(name + '.mp3');
+                m.muted = true;
                 if (_tool2.default.isSmartPhone()) {
                     readyNum++;
                     _this.musics[name] = m;
@@ -20560,21 +20561,22 @@ var Music = function () {
     }, {
         key: 'win',
         value: function win() {
-            var winMusic = this.musics['win'];
-            if (!winMusic) return;
-            console.log('win', winMusic);
-            winMusic.volume = 0.5;
-            winMusic.currentTime = 0;
-            winMusic.play();
+            this.playClip('win');
         }
     }, {
         key: 'lose',
         value: function lose() {
-            var loseMusic = this.musics['lose'];
-            if (!loseMusic) return;
-            loseMusic.volume = 0.5;
-            loseMusic.currentTime = 0;
-            loseMusic.play();
+            this.playClip('lose');
+        }
+    }, {
+        key: 'playClip',
+        value: function playClip(name) {
+            var m = this.musics[name];
+            if (!m) return;
+            m.muted = false;
+            m.volume = 0.5;
+            m.currentTime = 0;
+            m.play();
         }
     }, {
         key: 'playBg',
