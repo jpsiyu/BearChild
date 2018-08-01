@@ -27,6 +27,7 @@ class GameCpt extends React.Component {
     }
 
     resizeCanvas() {
+        window.scrollTo(0, 0)
         const updateState = {}
 
         const curruntRatio = (window.innerWidth / window.innerHeight)

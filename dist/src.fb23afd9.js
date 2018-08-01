@@ -22255,6 +22255,7 @@ var GameCpt = function (_React$Component) {
     }, {
         key: 'resizeCanvas',
         value: function resizeCanvas() {
+            window.scrollTo(0, 0);
             var updateState = {};
 
             var curruntRatio = window.innerWidth / window.innerHeight;
