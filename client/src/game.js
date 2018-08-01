@@ -10,6 +10,7 @@ import { storeState, changeState } from './store'
 import Controller from './controller'
 import PageEnd from './pageEnd'
 import PageStart from './pageStart'
+import PageLoad from './pageLoad'
 
 class Game {
     constructor(context) {
@@ -23,26 +24,43 @@ class Game {
         this.controller = this.initController()
         this.pageEnd = this.initPageEnd()
         this.pageStart = this.initPageStart()
+        this.pageLoad = this.initPageLoad()
         this.levelIndicator = new NumberIndicator('Level ', 70, 10, { pt: 12 })
         this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
+        this.loadFlag = 0
 
         window.requestAnimationFrame(this.frame)
     }
 
-    startLoad(){
+    startLoad() {
         changeState(macro.StateLoad)
         storeState().resMgr.loadRes(() => {
-            this.readyForGame()
+            this.loadFlag++
+            this.loadFinish()
         })
+    }
+
+    loadFinish() {
+        if (this.loadFlag >= 2)
+            this.readyForGame()
     }
 
     initController() {
         const controller = new Controller(this.context)
         controller.setChildHanlder(() => { return this.child })
         controller.setPageEndHandler(() => { return this.pageEnd })
-        controller.setPageStartHandler( () => {return this.pageStart})
+        controller.setPageStartHandler(() => { return this.pageStart })
         controller.setRestartHandler(() => { this.restartGame() })
         return controller
+    }
+
+    initPageLoad() {
+        const pageLoad = new PageLoad()
+        pageLoad.setFinishHandler(() => {
+            this.loadFlag++
+            this.loadFinish()
+        })
+        return pageLoad
     }
 
     initPageEnd() {
@@ -52,7 +70,7 @@ class Game {
         return pageEnd
     }
 
-    initPageStart(){
+    initPageStart() {
         const pageStart = new PageStart()
         pageStart.setRestartHandler(() => { this.restartGame() })
         return pageStart
@@ -136,6 +154,9 @@ class Game {
     update(elapsed) {
         this.fps = 1 / elapsed
         switch (storeState().gameState) {
+            case macro.StateLoad:
+                this.pageLoad.update(elapsed)
+                break
             case macro.StateGame:
                 if (this.reachDoor()) {
                     storeState().music.pauseBg()
@@ -167,6 +188,7 @@ class Game {
     draw() {
         switch (storeState().gameState) {
             case macro.StateLoad:
+                this.pageLoad.draw(this.context)
                 break
             case macro.StateReady:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)

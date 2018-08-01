@@ -1,3 +1,5 @@
+import { timingSafeEqual } from "crypto";
+
 class Indicator {
     constructor(label, x, y, width, height) {
         this.label = label
@@ -7,7 +9,7 @@ class Indicator {
         this.height = height
     }
 
-    draw(ctx, max, level) {
+    draw(ctx, cur, max) {
         ctx.save()
         ctx.strokeStyle = 'white'
         ctx.fillStyle = 'white'
@@ -18,7 +20,7 @@ class Indicator {
         ctx.rect(offset + this.x, this.y, this.width, this.height)
         ctx.stroke()
         ctx.beginPath()
-        ctx.rect(offset + this.x, this.y, this.width * (max / level), this.height)
+        ctx.rect(offset + this.x, this.y, this.width * (cur / max), this.height)
         ctx.fill()
         ctx.restore()
     }
