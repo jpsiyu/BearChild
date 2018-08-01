@@ -20,14 +20,13 @@ class GameCpt extends React.Component {
         this.canvas = this.refs.canvasGame
         this.resizeCanvas()
         window.addEventListener('resize', ev => { this.resizeCanvas() })
-        window.addEventListener('orientationchange', ev => {this.resizeCanvas()})
+        window.addEventListener('orientationchange', ev => { window.scroll(0, 0) })
         const context = this.canvas.getContext('2d')
         setContext(context)
         this.game = new Game(context)
     }
 
     resizeCanvas() {
-        window.scrollTo(0, 0)
         const updateState = {}
 
         const curruntRatio = (window.innerWidth / window.innerHeight)
@@ -52,7 +51,7 @@ class GameCpt extends React.Component {
     render() {
         return <div style={{ backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight }}>
             <canvas ref='canvasGame'
-                style={{ backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft}}>
+                style={{ backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft }}>
             </canvas>
         </div>
     }
