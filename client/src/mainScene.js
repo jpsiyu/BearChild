@@ -3,7 +3,7 @@ import macro from './macro'
 import Game from './game';
 import { setContext, storeState } from './store'
 
-class GameCpt extends React.Component {
+class MainScene extends React.Component {
     constructor() {
         super()
         this.canvas = undefined
@@ -21,7 +21,8 @@ class GameCpt extends React.Component {
         this.div.addEventListener('touchstart', event => { event.preventDefault() })
         this.canvas = this.refs.canvasGame
         this.canvas.focus()
-        const context = this.canvas.getContext('2d')
+        this.context = this.canvas.getContext('2d')
+        setContext(this.context)
 
         this.resizeCanvas()
 
@@ -31,8 +32,13 @@ class GameCpt extends React.Component {
         })
         window.addEventListener('resize', ev => { this.resizeCanvas() })
         window.addEventListener('orientationchange', ev => { setTimeout(() => { this.resizeCanvas() }, 200); })
-        setContext(context)
-        this.game = new Game(context)
+
+        this.startLoading()
+    }
+
+    startLoading(){
+        this.game = new Game(this.context)
+        this.game.startLoad()
     }
 
     resizeCanvas() {
@@ -69,4 +75,4 @@ class GameCpt extends React.Component {
     }
 }
 
-export default GameCpt
+export default MainScene

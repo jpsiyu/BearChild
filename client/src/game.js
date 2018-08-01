@@ -9,6 +9,7 @@ import tool from './tool'
 import { storeState, changeState } from './store'
 import Controller from './controller'
 import PageEnd from './pageEnd'
+import PageStart from './pageStart'
 
 class Game {
     constructor(context) {
@@ -21,13 +22,17 @@ class Game {
         this.child = undefined
         this.controller = this.initController()
         this.pageEnd = this.initPageEnd()
+        this.pageStart = this.initPageStart()
         this.levelIndicator = new NumberIndicator('Level ', 70, 10, { pt: 12 })
         this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
 
+        window.requestAnimationFrame(this.frame)
+    }
 
+    startLoad(){
+        changeState(macro.StateLoad)
         storeState().resMgr.loadRes(() => {
             this.readyForGame()
-            window.requestAnimationFrame(this.frame)
         })
     }
 
@@ -35,6 +40,7 @@ class Game {
         const controller = new Controller(this.context)
         controller.setChildHanlder(() => { return this.child })
         controller.setPageEndHandler(() => { return this.pageEnd })
+        controller.setPageStartHandler( () => {return this.pageStart})
         controller.setRestartHandler(() => { this.restartGame() })
         return controller
     }
@@ -44,6 +50,12 @@ class Game {
         pageEnd.setRestartHandler(() => { this.restartGame() })
         pageEnd.setReadyHandler(() => { this.readyForGame() })
         return pageEnd
+    }
+
+    initPageStart(){
+        const pageStart = new PageStart()
+        pageStart.setRestartHandler(() => { this.restartGame() })
+        return pageStart
     }
 
     readyForGame() {
@@ -71,8 +83,6 @@ class Game {
             this.context.canvas.width - tool.gridSize(),
             tool.gridSize(),
         )
-
-        pos = tool.grid2coord(tool.maxRow(), 4)
 
         storeState().map.reset()
     }
@@ -156,6 +166,12 @@ class Game {
 
     draw() {
         switch (storeState().gameState) {
+            case macro.StateLoad:
+                break
+            case macro.StateReady:
+                this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
+                this.pageStart.draw(this.context)
+                break
             case macro.StateLevelUp:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 drawing.drawLabel(
@@ -164,10 +180,6 @@ class Game {
                     this.context.canvas.width / 2,
                     this.context.canvas.height / 2, { pt: 30, color: 'white' }
                 )
-                break
-            case macro.StateReady:
-                this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
-                this.controller.draw(this.context)
                 break
             default:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)

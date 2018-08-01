@@ -4,11 +4,12 @@ export default {
     GridNumInRow : 18,
     GridNumInCol: 8,
 
-    StateGame: 'StateGame',
-    StateGameOver: 'StateGameOver',
-    StateLevelUp: 'StateLevelUp',
-    StateReachDoor: 'StateReachDoor',
+    StateLoad: 'StateLoad',
     StateReady: 'StateReady',
+    StateGame: 'StateGame',
+    StateReachDoor: 'StateReachDoor',
+    StateLevelUp: 'StateLevelUp',
+    StateGameOver: 'StateGameOver',
 
     ActionStateChange: 'ActionStateChange',
     ActionSetContext: 'ActionSetContext',

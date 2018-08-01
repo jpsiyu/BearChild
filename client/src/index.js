@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import GameCpt from './gameCpt'
+import MainScene from './mainScene'
 
 class Entry extends React.Component {
     render() {
-        return <GameCpt />
+        return <MainScene />
     }
 }
 

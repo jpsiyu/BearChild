@@ -45,21 +45,14 @@ class Controller extends Element {
         this.pageEndHandler = pageEndHandler
     }
 
+    setPageStartHandler(pageStartHandler) {
+        this.pageStartHandler = pageStartHandler
+    }
+
     resetPos() {
         this.radius = tool.gridSize() * 1
         this.posArrowUp = tool.grid2coord(tool.maxRow() - 2, tool.maxCol() - 2)
         this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 0.5)
-        this.gameTextInfo = {
-            text: 'Start Game',
-            pt: 20,
-            color: 'white',
-        }
-        this.rectInfo = {
-            x: tool.gameWidth() / 2 - this.gameTextInfo.text.length * this.gameTextInfo.pt / 2,
-            y: tool.gameHeight() / 2 - 1.5 * this.gameTextInfo.pt,
-            w: this.gameTextInfo.text.length * this.gameTextInfo.pt,
-            h: 2 * this.gameTextInfo.pt,
-        }
     }
 
     update() { }
@@ -70,23 +63,7 @@ class Controller extends Element {
                 this.drawArrow(context, this.posArrowUp, '↑')
                 this.drawArrow(context, this.posArrowRight, '→')
                 break
-            case macro.StateReady:
-                this.drawStart(context)
-                break
         }
-    }
-
-    drawStart(context) {
-        const x = tool.gameWidth() / 2
-        const y = tool.gameHeight() / 2
-        context.save()
-        drawing.drawLabel(context, this.gameTextInfo.text, x, y, { color: this.gameTextInfo.color, pt: this.gameTextInfo.pt })
-
-        context.beginPath()
-        context.strokeStyle = this.gameTextInfo.color
-        context.rect(this.rectInfo.x, this.rectInfo.y, this.rectInfo.w, this.rectInfo.h)
-        context.stroke()
-        context.restore()
     }
 
     drawArrow(context, pos, arrow, options = {}) {
@@ -110,10 +87,6 @@ class Controller extends Element {
         }
     }
 
-    startGameClick() {
-        this.restartHandler()
-        storeState().music.activeAllMusic()
-    }
 
     handleClick(pos) {
         let distance
@@ -129,9 +102,7 @@ class Controller extends Element {
                 this.pageEndHandler().handleClick(pos)
                 break
             case macro.StateReady:
-                if (pos.x > this.rectInfo.x && pos.x < this.rectInfo.x + this.rectInfo.w &&
-                    pos.y > this.rectInfo.y && pos.y < this.rectInfo.y + this.rectInfo.h)
-                    this.startGameClick()
+                this.pageStartHandler().handleClick(pos)
                 break
         }
     }
