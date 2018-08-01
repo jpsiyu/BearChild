@@ -52,7 +52,9 @@ class GameCpt extends React.Component {
         updateState.innerWidth = window.innerWidth
         updateState.innerHeight = window.innerHeight
         this.setState(updateState)
-        window.scrollTo(0, 0)
+        setTimeout(() => {
+            window.scrollTo(0, 0)
+        }, 200);
     }
 
     render() {

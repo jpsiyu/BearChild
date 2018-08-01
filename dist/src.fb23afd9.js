@@ -22281,7 +22281,9 @@ var GameCpt = function (_React$Component) {
             updateState.innerWidth = window.innerWidth;
             updateState.innerHeight = window.innerHeight;
             this.setState(updateState);
-            window.scrollTo(0, 0);
+            setTimeout(function () {
+                window.scrollTo(0, 0);
+            }, 200);
         }
     }, {
         key: 'render',
