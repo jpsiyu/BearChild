@@ -22247,7 +22247,7 @@ var GameCpt = function (_React$Component) {
                 _this2.resizeCanvas();
             });
             window.addEventListener('orientationchange', function (ev) {
-                window.scroll(0, 0);
+                _this2.resizeCanvas();
             });
             var context = this.canvas.getContext('2d');
             (0, _store.setContext)(context);
@@ -22256,6 +22256,7 @@ var GameCpt = function (_React$Component) {
     }, {
         key: 'resizeCanvas',
         value: function resizeCanvas() {
+            window.scrollTo(0, 0);
             var updateState = {};
 
             var curruntRatio = window.innerWidth / window.innerHeight;
