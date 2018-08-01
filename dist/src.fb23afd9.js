@@ -22241,6 +22241,10 @@ var GameCpt = function (_React$Component) {
         value: function componentDidMount() {
             var _this2 = this;
 
+            this.div = this.refs.div;
+            this.div.addEventListener('touchstart', function (event) {
+                event.preventDefault();
+            });
             this.canvas = this.refs.canvasGame;
             this.resizeCanvas();
             window.addEventListener('resize', function (ev) {
@@ -22282,7 +22286,7 @@ var GameCpt = function (_React$Component) {
         value: function render() {
             return _react2.default.createElement(
                 'div',
-                { style: { backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight } },
+                { ref: 'div', style: { backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight } },
                 _react2.default.createElement('canvas', { ref: 'canvasGame',
                     style: { backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft } })
             );

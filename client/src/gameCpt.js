@@ -17,10 +17,12 @@ class GameCpt extends React.Component {
     }
 
     componentDidMount() {
+        this.div = this.refs.div
+        this.div.addEventListener('touchstart', event => { event.preventDefault() })
         this.canvas = this.refs.canvasGame
         this.resizeCanvas()
         window.addEventListener('resize', ev => { this.resizeCanvas() })
-        window.addEventListener('orientationchange', ev => {this.resizeCanvas()})
+        window.addEventListener('orientationchange', ev => { this.resizeCanvas() })
         const context = this.canvas.getContext('2d')
         setContext(context)
         this.game = new Game(context)
@@ -50,9 +52,9 @@ class GameCpt extends React.Component {
     }
 
     render() {
-        return <div style={{ backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight }}>
+        return <div ref='div' style={{ backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight }}>
             <canvas ref='canvasGame'
-                style={{ backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft}}>
+                style={{ backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft }}>
             </canvas>
         </div>
     }
