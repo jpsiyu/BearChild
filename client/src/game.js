@@ -156,15 +156,11 @@ class Game {
                     this.child.drinkMilk = true
                 }
                 this.mom.update(this.child, elapsed)
-                this.child.update(elapsed)
                 break
-            case macro.StateReachDoor:
-                this.child.update(elapsed)
-                break
-            case macro.StateGameOver:
-            case macro.StateLevelUp:
+            default:
                 break
         }
+        this.child.update(elapsed)
     }
 
     draw() {
@@ -179,9 +175,9 @@ class Game {
                     this.context.canvas.height / 2, { pt: 30, color: 'white' }
                 )
                 break
-            case macro.StateGameOver:
-            case macro.StateGame:
-            case macro.StateReachDoor:
+            case macro.StateReady:
+                break
+            default:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 this.grid.draw(this.context)
                 storeState().map.milks.forEach(milk => {
@@ -198,8 +194,6 @@ class Game {
                 //this.fpsIndicator.draw(this.context, this.fps) 
                 this.child.draw(this.context)
                 if (storeState().gameState === macro.StateGameOver) this.drawGameOver()
-                break
-            case macro.StateReady:
                 break
         }
         this.controller.draw(this.context)

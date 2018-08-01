@@ -22095,15 +22095,11 @@ var Game = function () {
                         this.child.drinkMilk = true;
                     }
                     this.mom.update(this.child, elapsed);
-                    this.child.update(elapsed);
                     break;
-                case _macro2.default.StateReachDoor:
-                    this.child.update(elapsed);
-                    break;
-                case _macro2.default.StateGameOver:
-                case _macro2.default.StateLevelUp:
+                default:
                     break;
             }
+            this.child.update(elapsed);
         }
     }, {
         key: 'draw',
@@ -22116,9 +22112,9 @@ var Game = function () {
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     _drawing2.default.drawLabel(this.context, 'Level ' + this.level, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
                     break;
-                case _macro2.default.StateGameOver:
-                case _macro2.default.StateGame:
-                case _macro2.default.StateReachDoor:
+                case _macro2.default.StateReady:
+                    break;
+                default:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     this.grid.draw(this.context);
                     (0, _store.storeState)().map.milks.forEach(function (milk) {
@@ -22135,8 +22131,6 @@ var Game = function () {
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.child.draw(this.context);
                     if ((0, _store.storeState)().gameState === _macro2.default.StateGameOver) this.drawGameOver();
-                    break;
-                case _macro2.default.StateReady:
                     break;
             }
             this.controller.draw(this.context);
