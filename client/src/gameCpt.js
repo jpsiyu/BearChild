@@ -46,7 +46,7 @@ class GameCpt extends React.Component {
     }
 
     render() {
-        return <div style={{ position:'absolute', backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight }}>
+        return <div style={{ position:'absolute', margin:0, backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight }}>
             <canvas ref='canvasGame'
                 style={{ backgroundColor: 'black', marginLeft: this.state.marginLeft, marginTop: this.state.marginTop }}>
             </canvas>
