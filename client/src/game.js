@@ -195,15 +195,14 @@ class Game {
                 this.door.draw(this.context)
 
                 this.levelIndicator.draw(this.context, this.level)
-                this.controller.draw(this.context)
                 //this.fpsIndicator.draw(this.context, this.fps) 
                 this.child.draw(this.context)
                 if (storeState().gameState === macro.StateGameOver) this.drawGameOver()
                 break
             case macro.StateReady:
-                this.controller.draw(this.context)
                 break
         }
+        this.controller.draw(this.context)
     }
 
     drawGameOver() {
@@ -215,11 +214,6 @@ class Game {
     }
 
     keyHandler(key) {
-        if (key === 'f') {
-            document.body.style.zoom = '100%'
-            const browserZoomLevel = Math.round(window.devicePixelRatio * 100)
-            console.log(`zoom level ${browserZoomLevel}, num ${document.body.style.zoom}`)
-        }
         switch (storeState().gameState) {
             case macro.StateGame:
                 this.child.move(this.context, key)

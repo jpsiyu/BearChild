@@ -22131,15 +22131,14 @@ var Game = function () {
                     this.door.draw(this.context);
 
                     this.levelIndicator.draw(this.context, this.level);
-                    this.controller.draw(this.context);
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.child.draw(this.context);
                     if ((0, _store.storeState)().gameState === _macro2.default.StateGameOver) this.drawGameOver();
                     break;
                 case _macro2.default.StateReady:
-                    this.controller.draw(this.context);
                     break;
             }
+            this.controller.draw(this.context);
         }
     }, {
         key: 'drawGameOver',
@@ -22152,11 +22151,6 @@ var Game = function () {
     }, {
         key: 'keyHandler',
         value: function keyHandler(key) {
-            if (key === 'f') {
-                document.body.style.zoom = '100%';
-                var browserZoomLevel = Math.round(window.devicePixelRatio * 100);
-                console.log('zoom level ' + browserZoomLevel + ', num ' + document.body.style.zoom);
-            }
             switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateGame:
                     this.child.move(this.context, key);
@@ -22249,6 +22243,9 @@ var GameCpt = function (_React$Component) {
             this.canvas = this.refs.canvasGame;
             this.resizeCanvas();
             window.addEventListener('resize', function (ev) {
+                _this2.resizeCanvas();
+            });
+            window.addEventListener('orientationchange', function (ev) {
                 _this2.resizeCanvas();
             });
             var context = this.canvas.getContext('2d');
