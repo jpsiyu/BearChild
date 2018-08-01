@@ -19758,7 +19758,6 @@ exports.default = {
     WidthHeightRatio: 2.5,
     GridNumInRow: 18,
     GridNumInCol: 8,
-    CanvasMargin: 20,
 
     StateGame: 'StateGame',
     StateGameOver: 'StateGameOver',
@@ -22234,6 +22233,10 @@ var GameCpt = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (GameCpt.__proto__ || Object.getPrototypeOf(GameCpt)).call(this));
 
         _this.canvas = undefined;
+        _this.state = {
+            marginLeft: 0,
+            marginTop: 0
+        };
         return _this;
     }
 
@@ -22258,19 +22261,25 @@ var GameCpt = function (_React$Component) {
             if (curruntRatio > _macro2.default.WidthHeightRatio) {
                 this.canvas.height = window.innerHeight;
                 this.canvas.width = this.canvas.height * _macro2.default.WidthHeightRatio;
+                this.setState({
+                    marginLeft: (window.innerWidth - this.canvas.width) / 2
+                });
             } else {
                 this.canvas.width = window.innerWidth;
                 this.canvas.height = this.canvas.width / _macro2.default.WidthHeightRatio;
             }
             var size = this.canvas.width / _macro2.default.GridNumInRow;
             this.canvas.height -= this.canvas.height % size;
+            this.setState({
+                marginTop: (window.innerHeight - this.canvas.height) / 2
+            });
         }
     }, {
         key: 'render',
         value: function render() {
-            return _react2.default.createElement('canvas', { className: 'ml-0',
+            return _react2.default.createElement('canvas', {
                 ref: 'canvas',
-                style: { backgroundColor: 'black', marginLeft: _macro2.default.CanvasMargin } });
+                style: { backgroundColor: 'black', marginLeft: this.state.marginLeft, marginTop: this.state.marginTop } });
         }
     }]);
 
@@ -22315,11 +22324,7 @@ var Entry = function (_React$Component) {
     _createClass(Entry, [{
         key: 'render',
         value: function render() {
-            return _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(_gameCpt2.default, null)
-            );
+            return _react2.default.createElement(_gameCpt2.default, null);
         }
     }]);
 
@@ -22356,7 +22361,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49209' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49244' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
