@@ -21773,6 +21773,7 @@ var Controller = function (_Element) {
     _createClass(Controller, [{
         key: 'resetPos',
         value: function resetPos() {
+            this.radius = _tool2.default.gridSize() * 1;
             this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 2);
             this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 0.5);
             this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() / 2, _tool2.default.maxCol() - 2);

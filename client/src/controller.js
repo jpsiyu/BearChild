@@ -16,6 +16,7 @@ class Controller extends Element {
     }
 
     resetPos() {
+        this.radius = tool.gridSize() * 1
         this.posArrowUp = tool.grid2coord(tool.maxRow() - 2, tool.maxCol() - 2)
         this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 0.5)
         this.posArrowReload = tool.grid2coord(tool.maxRow() / 2, tool.maxCol() - 2)
