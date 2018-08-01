@@ -21753,24 +21753,55 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Controller = function (_Element) {
     _inherits(Controller, _Element);
 
-    function Controller(childHandler, restartHandler) {
+    function Controller(context) {
         _classCallCheck(this, Controller);
 
         var radius = _tool2.default.gridSize() * 1;
 
         var _this = _possibleConstructorReturn(this, (Controller.__proto__ || Object.getPrototypeOf(Controller)).call(this, 0, 0, radius));
 
-        _this.childHandler = childHandler;
-        _this.restartHandler = restartHandler;
+        _this.context = context;
         _this.resetPos();
         _this.startGameText = 'Start Game';
-        window.addEventListener('resize', function (ev) {
-            _this.resetPos();
-        });
+        _this.setEventListener();
         return _this;
     }
 
     _createClass(Controller, [{
+        key: 'setEventListener',
+        value: function setEventListener() {
+            var _this2 = this;
+
+            window.addEventListener('resize', function (ev) {
+                _this2.resetPos();
+            });
+
+            window.addEventListener('keydown', function (ev) {
+                _this2.keyHandler(ev.key);
+            });
+
+            this.context.canvas.addEventListener('click', function (event) {
+                var pos = _this2.getMousePos(event);
+                _this2.handleClick(pos);
+            });
+
+            this.context.canvas.addEventListener('touchstart', function (event) {
+                var pos = _this2.getTouchPos(event);
+                _this2.handleClick(pos);
+                event.preventDefault();
+            });
+        }
+    }, {
+        key: 'setChildHanlder',
+        value: function setChildHanlder(childHandler) {
+            this.childHandler = childHandler;
+        }
+    }, {
+        key: 'setRestartHandler',
+        value: function setRestartHandler(restartHandler) {
+            this.restartHandler = restartHandler;
+        }
+    }, {
         key: 'resetPos',
         value: function resetPos() {
             this.radius = _tool2.default.gridSize() * 1;
@@ -21880,6 +21911,37 @@ var Controller = function (_Element) {
                     break;
             }
         }
+    }, {
+        key: 'getMousePos',
+        value: function getMousePos(event) {
+            var rect = this.context.canvas.getBoundingClientRect();
+            return {
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top
+            };
+        }
+    }, {
+        key: 'getTouchPos',
+        value: function getTouchPos(event) {
+            var rect = this.context.canvas.getBoundingClientRect();
+            return {
+                x: event.touches[0].clientX - rect.left,
+                y: event.touches[0].clientY - rect.top
+            };
+        }
+    }, {
+        key: 'keyHandler',
+        value: function keyHandler(key) {
+            switch ((0, _store.storeState)().gameState) {
+                case _macro2.default.StateGame:
+                    var c = this.childHandler();
+                    c.move(this.context, key);
+                    break;
+                case _macro2.default.StateGameOver:
+                    if (key === ' ') this.restartHandler();
+                    break;
+            }
+        }
     }]);
 
     return Controller;
@@ -21948,47 +22010,32 @@ var Game = function () {
         this.child = undefined;
 
         this.context.canvas.focus();
-        window.addEventListener('keydown', function (ev) {
-            _this.keyHandler(ev.key);
-        });
 
-        this.controller = new _controller2.default(function () {
-            return _this.child;
-        }, function () {
-            _this.restartGame();
-        });
-        this.context.canvas.addEventListener('click', function (event) {
-            var pos = _this.getMousePos(event);
-            _this.controller.handleClick(pos);
-        });
-
-        this.context.canvas.addEventListener('touchstart', function (event) {
-            var pos = _this.getTouchPos(event);
-            _this.controller.handleClick(pos);
-            event.preventDefault();
-        });
-
+        this.controller = this.initController();
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
-
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
 
         (0, _store.storeState)().resMgr.loadRes(function () {
             _this.readyForGame();
             window.requestAnimationFrame(_this.frame);
         });
-
-        document.addEventListener('visibilitychange', function () {
-            if (document.hidden) {
-                _this.pause = true;
-                (0, _store.storeState)().music.pauseBg();
-            } else {
-                _this.pause = false;
-                (0, _store.storeState)().music.playBg();
-            }
-        });
     }
 
     _createClass(Game, [{
+        key: 'initController',
+        value: function initController() {
+            var _this2 = this;
+
+            var controller = new _controller2.default(this.context);
+            controller.setChildHanlder(function () {
+                return _this2.child;
+            });
+            controller.setRestartHandler(function () {
+                _this2.restartGame();
+            });
+            return controller;
+        }
+    }, {
         key: 'readyForGame',
         value: function readyForGame() {
             (0, _store.changeState)(_macro2.default.StateReady);
@@ -22045,12 +22092,12 @@ var Game = function () {
     }, {
         key: 'childCatchMilk',
         value: function childCatchMilk() {
-            var _this2 = this;
+            var _this3 = this;
 
             var drink = false;
             (0, _store.storeState)().map.milks.forEach(function (milk, i) {
-                var dis = _tool2.default.distance(_this2.child, milk);
-                if (dis < _this2.child.radius + milk.radius) {
+                var dis = _tool2.default.distance(_this3.child, milk);
+                if (dis < _this3.child.radius + milk.radius) {
                     drink = true;
                     (0, _store.storeState)().map.milks.splice(i, 1);
                 }
@@ -22058,8 +22105,15 @@ var Game = function () {
             return drink;
         }
     }, {
+        key: 'setPause',
+        value: function setPause(bool) {
+            this.pause = bool;
+            if (this.pause) this.previous = undefined;
+        }
+    }, {
         key: 'frame',
         value: function frame(timestamp) {
+            if (this.pause) return;
             this.previous = this.previous || timestamp;
             var elapsed = (timestamp - this.previous) / 1000;
             this.previous = timestamp;
@@ -22070,9 +22124,8 @@ var Game = function () {
     }, {
         key: 'update',
         value: function update(elapsed) {
-            var _this3 = this;
+            var _this4 = this;
 
-            if (this.pause) return;
             this.fps = 1 / elapsed;
             switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateGame:
@@ -22080,7 +22133,7 @@ var Game = function () {
                         (0, _store.storeState)().music.pauseBg();
                         (0, _store.changeState)(_macro2.default.StateReachDoor);
                         setTimeout(function () {
-                            _this3.levelUp();
+                            _this4.levelUp();
                         }, 2 * 1000);
                         (0, _store.storeState)().music.win();
                         return;
@@ -22104,9 +22157,8 @@ var Game = function () {
     }, {
         key: 'draw',
         value: function draw() {
-            var _this4 = this;
+            var _this5 = this;
 
-            if (this.pause) return;
             switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateLevelUp:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
@@ -22118,10 +22170,10 @@ var Game = function () {
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     this.grid.draw(this.context);
                     (0, _store.storeState)().map.milks.forEach(function (milk) {
-                        milk.draw(_this4.context);
+                        milk.draw(_this5.context);
                     });
                     (0, _store.storeState)().map.fences.forEach(function (fence) {
-                        fence.draw(_this4.context);
+                        fence.draw(_this5.context);
                     });
                     this.mom.draw(this.context);
                     this.grid.drawMask(this.context, this.child);
@@ -22142,37 +22194,6 @@ var Game = function () {
             var h = this.context.canvas.height;
             _drawing2.default.drawLabel(this.context, 'Game Over', w / 2, h / 2, { pt: 30 });
             _drawing2.default.drawLabel(this.context, 'Press ↺ To Restart', w / 2, h / 2 + 30, { pt: 16 });
-        }
-    }, {
-        key: 'keyHandler',
-        value: function keyHandler(key) {
-            switch ((0, _store.storeState)().gameState) {
-                case _macro2.default.StateGame:
-                    this.child.move(this.context, key);
-                    break;
-                case _macro2.default.StateGameOver:
-                    if (key === ' ') this.restartGame();
-                    break;
-
-            }
-        }
-    }, {
-        key: 'getMousePos',
-        value: function getMousePos(event) {
-            var rect = this.context.canvas.getBoundingClientRect();
-            return {
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top
-            };
-        }
-    }, {
-        key: 'getTouchPos',
-        value: function getTouchPos(event) {
-            var rect = this.context.canvas.getBoundingClientRect();
-            return {
-                x: event.touches[0].clientX - rect.left,
-                y: event.touches[0].clientY - rect.top
-            };
         }
     }]);
 
@@ -22240,7 +22261,14 @@ var GameCpt = function (_React$Component) {
                 event.preventDefault();
             });
             this.canvas = this.refs.canvasGame;
+            var context = this.canvas.getContext('2d');
+
             this.resizeCanvas();
+
+            document.addEventListener('visibilitychange', function () {
+                document.hidden ? (0, _store.storeState)().music.pauseBg() : (0, _store.storeState)().music.playBg();
+                _this2.game.setPause(document.hidden);
+            });
             window.addEventListener('resize', function (ev) {
                 _this2.resizeCanvas();
             });
@@ -22249,7 +22277,6 @@ var GameCpt = function (_React$Component) {
                     _this2.resizeCanvas();
                 }, 200);
             });
-            var context = this.canvas.getContext('2d');
             (0, _store.setContext)(context);
             this.game = new _game2.default(context);
         }

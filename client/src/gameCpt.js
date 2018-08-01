@@ -20,14 +20,16 @@ class GameCpt extends React.Component {
         this.div = this.refs.div
         this.div.addEventListener('touchstart', event => { event.preventDefault() })
         this.canvas = this.refs.canvasGame
-        this.resizeCanvas()
-        window.addEventListener('resize', ev => { this.resizeCanvas() })
-        window.addEventListener('orientationchange', ev => {
-            setTimeout(() => {
-                this.resizeCanvas()
-            }, 200);
-        })
         const context = this.canvas.getContext('2d')
+
+        this.resizeCanvas()
+
+        document.addEventListener('visibilitychange', () => {
+            document.hidden ? storeState().music.pauseBg() : storeState().music.playBg()
+            this.game.setPause(document.hidden)
+        })
+        window.addEventListener('resize', ev => { this.resizeCanvas() })
+        window.addEventListener('orientationchange', ev => { setTimeout(() => { this.resizeCanvas() }, 200); })
         setContext(context)
         this.game = new Game(context)
     }

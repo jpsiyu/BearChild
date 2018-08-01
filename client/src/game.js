@@ -20,46 +20,23 @@ class Game {
         this.child = undefined
 
         this.context.canvas.focus()
-        window.addEventListener('keydown', ev => {
-            this.keyHandler(ev.key)
-        })
 
-        this.controller = new Controller(() => { return this.child }, () => { this.restartGame() })
-        this.context.canvas.addEventListener('click', event => {
-            const pos = this.getMousePos(event)
-            this.controller.handleClick(pos)
-        })
-
-        this.context.canvas.addEventListener('touchstart', event => {
-            const pos = this.getTouchPos(event)
-            this.controller.handleClick(pos)
-            event.preventDefault()
-        })
-
-        this.levelIndicator = new NumberIndicator(
-            'Level ', 70, 10, { pt: 12 }
-        )
-
-        this.fpsIndicator = new NumberIndicator(
-            'fps ', 200, 10, { pt: 12, digits: 2 }
-        )
+        this.controller = this.initController()
+        this.levelIndicator = new NumberIndicator('Level ', 70, 10, { pt: 12 })
+        this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
 
 
         storeState().resMgr.loadRes(() => {
             this.readyForGame()
             window.requestAnimationFrame(this.frame)
         })
+    }
 
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                this.pause = true
-                storeState().music.pauseBg()
-            }
-            else {
-                this.pause = false
-                storeState().music.playBg()
-            }
-        })
+    initController() {
+        const controller = new Controller(this.context)
+        controller.setChildHanlder(() => { return this.child })
+        controller.setRestartHandler(() => { this.restartGame() })
+        return controller
     }
 
     readyForGame() {
@@ -125,7 +102,13 @@ class Game {
         return drink
     }
 
+    setPause(bool){
+        this.pause = bool
+        if(this.pause) this.previous = undefined
+    }
+
     frame(timestamp) {
+        if (this.pause) return
         this.previous = this.previous || timestamp
         const elapsed = (timestamp - this.previous) / 1000
         this.previous = timestamp
@@ -135,7 +118,6 @@ class Game {
     }
 
     update(elapsed) {
-        if (this.pause) return
         this.fps = 1 / elapsed
         switch (storeState().gameState) {
             case macro.StateGame:
@@ -164,7 +146,6 @@ class Game {
     }
 
     draw() {
-        if (this.pause) return
         switch (storeState().gameState) {
             case macro.StateLevelUp:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
@@ -204,36 +185,6 @@ class Game {
         const h = this.context.canvas.height
         drawing.drawLabel(this.context, 'Game Over', w / 2, h / 2, { pt: 30 })
         drawing.drawLabel(this.context, 'Press ↺ To Restart', w / 2, h / 2 + 30, { pt: 16 })
-
-    }
-
-    keyHandler(key) {
-        switch (storeState().gameState) {
-            case macro.StateGame:
-                this.child.move(this.context, key)
-                break
-            case macro.StateGameOver:
-                if (key === ' ')
-                    this.restartGame()
-                break
-
-        }
-    }
-
-    getMousePos(event) {
-        const rect = this.context.canvas.getBoundingClientRect()
-        return {
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top
-        }
-    }
-
-    getTouchPos(event) {
-        const rect = this.context.canvas.getBoundingClientRect()
-        return {
-            x: event.touches[0].clientX - rect.left,
-            y: event.touches[0].clientY - rect.top
-        }
     }
 }
 

@@ -5,14 +5,40 @@ import tool from './tool'
 import { storeState, changeState } from './store'
 
 class Controller extends Element {
-    constructor(childHandler, restartHandler) {
+    constructor(context) {
         const radius = tool.gridSize() * 1
         super(0, 0, radius)
-        this.childHandler = childHandler
-        this.restartHandler = restartHandler
+        this.context = context
         this.resetPos()
         this.startGameText = 'Start Game'
+        this.setEventListener()
+    }
+
+    setEventListener() {
         window.addEventListener('resize', ev => { this.resetPos() })
+
+        window.addEventListener('keydown', ev => {
+            this.keyHandler(ev.key)
+        })
+
+        this.context.canvas.addEventListener('click', event => {
+            const pos = this.getMousePos(event)
+            this.handleClick(pos)
+        })
+
+        this.context.canvas.addEventListener('touchstart', event => {
+            const pos = this.getTouchPos(event)
+            this.handleClick(pos)
+            event.preventDefault()
+        })
+    }
+
+    setChildHanlder(childHandler) {
+        this.childHandler = childHandler
+    }
+
+    setRestartHandler(restartHandler) {
+        this.restartHandler = restartHandler
     }
 
     resetPos() {
@@ -38,7 +64,7 @@ class Controller extends Element {
     draw(context) {
         switch (storeState().gameState) {
             case macro.StateGameOver:
-                this.drawArrow(context, this.posArrowReload, '↺', {color : 'rgba(255, 245, 215, 0.8)'})
+                this.drawArrow(context, this.posArrowReload, '↺', { color: 'rgba(255, 245, 215, 0.8)' })
                 break
             case macro.StateGame:
                 this.drawArrow(context, this.posArrowUp, '↑')
@@ -63,7 +89,7 @@ class Controller extends Element {
         context.restore()
     }
 
-    drawArrow(context, pos, arrow, options={}) {
+    drawArrow(context, pos, arrow, options = {}) {
         context.save()
         context.translate(pos.x, pos.y)
         drawing.drawButton(context, this.radius, arrow, options)
@@ -115,6 +141,34 @@ class Controller extends Element {
         }
     }
 
+    getMousePos(event) {
+        const rect = this.context.canvas.getBoundingClientRect()
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        }
+    }
+
+    getTouchPos(event) {
+        const rect = this.context.canvas.getBoundingClientRect()
+        return {
+            x: event.touches[0].clientX - rect.left,
+            y: event.touches[0].clientY - rect.top
+        }
+    }
+
+    keyHandler(key) {
+        switch (storeState().gameState) {
+            case macro.StateGame:
+                const c = this.childHandler()
+                c.move(this.context, key)
+                break
+            case macro.StateGameOver:
+                if (key === ' ')
+                    this.restartHandler()
+                break
+        }
+    }
 }
 
 export default Controller
