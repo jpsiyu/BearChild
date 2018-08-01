@@ -22253,9 +22253,6 @@ var GameCpt = function (_React$Component) {
             window.addEventListener('orientationchange', function (ev) {
                 setTimeout(function () {
                     _this2.resizeCanvas();
-                    setTimeout(function () {
-                        window.scrollTo(0, 1);
-                    }, 20);
                 }, 200);
             });
             var context = this.canvas.getContext('2d');
@@ -22284,6 +22281,7 @@ var GameCpt = function (_React$Component) {
             updateState.innerWidth = window.innerWidth;
             updateState.innerHeight = window.innerHeight;
             this.setState(updateState);
+            window.scrollTo(0, 0);
         }
     }, {
         key: 'render',
