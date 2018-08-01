@@ -21802,12 +21802,16 @@ var Controller = function (_Element) {
             this.restartHandler = restartHandler;
         }
     }, {
+        key: 'setPageEndHandler',
+        value: function setPageEndHandler(pageEndHandler) {
+            this.pageEndHandler = pageEndHandler;
+        }
+    }, {
         key: 'resetPos',
         value: function resetPos() {
             this.radius = _tool2.default.gridSize() * 1;
             this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 2);
             this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 0.5);
-            this.posArrowReload = _tool2.default.grid2coord(_tool2.default.maxRow() / 2, _tool2.default.maxCol() - 2);
             this.gameTextInfo = {
                 text: 'Start Game',
                 pt: 20,
@@ -21827,9 +21831,6 @@ var Controller = function (_Element) {
         key: 'draw',
         value: function draw(context) {
             switch ((0, _store.storeState)().gameState) {
-                case _macro2.default.StateGameOver:
-                    this.drawArrow(context, this.posArrowReload, '↺', { color: 'rgba(255, 245, 215, 0.8)' });
-                    break;
                 case _macro2.default.StateGame:
                     this.drawArrow(context, this.posArrowUp, '↑');
                     this.drawArrow(context, this.posArrowRight, '→');
@@ -21880,11 +21881,6 @@ var Controller = function (_Element) {
             }
         }
     }, {
-        key: 'arrowReloadClick',
-        value: function arrowReloadClick() {
-            this.restartHandler();
-        }
-    }, {
         key: 'startGameClick',
         value: function startGameClick() {
             (0, _store.changeState)(_macro2.default.StateGame);
@@ -21903,8 +21899,7 @@ var Controller = function (_Element) {
                     if (distance < this.radius) this.arrowRightClick();
                     break;
                 case _macro2.default.StateGameOver:
-                    distance = _tool2.default.distancePos(pos, this.posArrowReload);
-                    if (distance < this.radius) this.arrowReloadClick();
+                    this.pageEndHandler().handleClick(pos);
                     break;
                 case _macro2.default.StateReady:
                     if (pos.x > this.rectInfo.x && pos.x < this.rectInfo.x + this.rectInfo.w && pos.y > this.rectInfo.y && pos.y < this.rectInfo.y + this.rectInfo.h) this.startGameClick();
@@ -21948,7 +21943,162 @@ var Controller = function (_Element) {
 }(_element2.default);
 
 exports.default = Controller;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js","./store":"../src/store.js"}],"../src/game.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js","./store":"../src/store.js"}],"../src/pageEnd.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _store = require('./store');
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var PageEnd = function () {
+    function PageEnd() {
+        _classCallCheck(this, PageEnd);
+
+        this.mainText = 'Game Over';
+        this.subText = 'Quit              Restart';
+        this.quitRect = undefined;
+        this.restartRect = undefined;
+    }
+
+    _createClass(PageEnd, [{
+        key: 'setRestartHandler',
+        value: function setRestartHandler(restartHandler) {
+            this.restartHandler = restartHandler;
+        }
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            if ((0, _store.storeState)().gameState !== _macro2.default.StateGameOver) return;
+
+            var basePos = {
+                x: _tool2.default.gameWidth() / 2,
+                y: _tool2.default.gameHeight() / 2
+            };
+
+            var gridSize = _tool2.default.gridSize();
+            var mainPt = gridSize / 2;
+            var subPt = mainPt / 2;
+            var tw = gridSize * 4;
+            var th = gridSize * 2;
+            var pos = void 0,
+                absPos = { x: 0, y: 0
+
+                //bg
+            };pos = { x: basePos.x, y: basePos.y - gridSize };
+            context.save();
+            context.translate(pos.x, pos.y);
+            absPos = this.posAdd(absPos, pos);
+            context.beginPath();
+            context.fillStyle = 'rgba(255, 255, 0, 0.8)';
+            context.rect(-tw, -th / 2, 2 * tw, 2 * th);
+            context.fill();
+
+            //main text
+            _drawing2.default.drawLabel(context, this.mainText, 0, 0, { pt: mainPt });
+
+            //btn quit
+            pos = { x: -gridSize, y: gridSize };
+            context.beginPath();
+            context.translate(pos.x, pos.y);
+            absPos = this.posAdd(absPos, pos);
+            context.fillStyle = 'black';
+            context.rect(-gridSize / 2, -gridSize / 2, gridSize, gridSize);
+            this.quitRect = {
+                x: absPos.x - gridSize / 2,
+                y: absPos.y - gridSize / 2,
+                w: gridSize,
+                h: gridSize
+            };
+            context.fill();
+            _drawing2.default.drawLabel(context, '<', 0, subPt / 2, { color: 'white', pt: subPt });
+            context.translate(-pos.x, -pos.y);
+            absPos = this.posMin(absPos, pos);
+
+            //btn reload
+            pos = { x: gridSize, y: gridSize };
+            context.beginPath();
+            context.translate(pos.x, pos.y);
+            absPos = this.posAdd(absPos, pos);
+            context.fillStyle = 'black';
+            context.rect(-gridSize / 2, -gridSize / 2, gridSize, gridSize);
+            this.restartRect = {
+                x: absPos.x - gridSize / 2,
+                y: absPos.y - gridSize / 2,
+                w: gridSize,
+                h: gridSize
+            };
+            context.fill();
+            _drawing2.default.drawLabel(context, '↺', 0, subPt / 2, { color: 'white', pt: subPt });
+            context.translate(-pos.x, -pos.y);
+            absPos = this.posMin(absPos, pos);
+
+            //sub text
+            pos = { x: 0, y: 1.5 * gridSize };
+            context.translate(pos.x, pos.y);
+            absPos = this.posAdd(absPos, pos);
+            _drawing2.default.drawLabel(context, this.subText, 0, mainPt, { pt: subPt });
+
+            context.restore();
+        }
+    }, {
+        key: 'posAdd',
+        value: function posAdd(a, b) {
+            return {
+                x: a.x + b.x,
+                y: a.y + b.y
+            };
+        }
+    }, {
+        key: 'posMin',
+        value: function posMin(a, b) {
+            return {
+                x: a.x - b.x,
+                y: a.y - b.y
+            };
+        }
+    }, {
+        key: 'handleClick',
+        value: function handleClick(pos) {
+            var rectInfo = this.quitRect;
+            if (pos.x > rectInfo.x && pos.x < rectInfo.x + rectInfo.w && pos.y > rectInfo.y && pos.y < rectInfo.y + rectInfo.h) this.quit();
+            rectInfo = this.restartRect;
+            if (pos.x > rectInfo.x && pos.x < rectInfo.x + rectInfo.w && pos.y > rectInfo.y && pos.y < rectInfo.y + rectInfo.h) this.restart();
+        }
+    }, {
+        key: 'quit',
+        value: function quit() {}
+    }, {
+        key: 'restart',
+        value: function restart() {
+            this.restartHandler();
+        }
+    }]);
+
+    return PageEnd;
+}();
+
+exports.default = PageEnd;
+},{"./tool":"../src/tool.js","./drawing":"../src/drawing.js","./store":"../src/store.js","./macro":"../src/macro.js"}],"../src/game.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21991,6 +22141,10 @@ var _controller = require('./controller');
 
 var _controller2 = _interopRequireDefault(_controller);
 
+var _pageEnd = require('./pageEnd');
+
+var _pageEnd2 = _interopRequireDefault(_pageEnd);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22008,6 +22162,10 @@ var Game = function () {
         this.level = 1;
         this.pause = false;
         this.child = undefined;
+        this.pageEnd = new _pageEnd2.default();
+        this.pageEnd.setRestartHandler(function () {
+            _this.restartGame();
+        });
         this.controller = this.initController();
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
@@ -22026,6 +22184,9 @@ var Game = function () {
             var controller = new _controller2.default(this.context);
             controller.setChildHanlder(function () {
                 return _this2.child;
+            });
+            controller.setPageEndHandler(function () {
+                return _this2.pageEnd;
             });
             controller.setRestartHandler(function () {
                 _this2.restartGame();
@@ -22179,18 +22340,10 @@ var Game = function () {
                     this.levelIndicator.draw(this.context, this.level);
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.child.draw(this.context);
-                    if ((0, _store.storeState)().gameState === _macro2.default.StateGameOver) this.drawGameOver();
+                    this.pageEnd.draw(this.context);
                     break;
             }
             this.controller.draw(this.context);
-        }
-    }, {
-        key: 'drawGameOver',
-        value: function drawGameOver() {
-            var w = this.context.canvas.width;
-            var h = this.context.canvas.height;
-            _drawing2.default.drawLabel(this.context, 'Game Over', w / 2, h / 2, { pt: 30 });
-            _drawing2.default.drawLabel(this.context, 'Press ↺ To Restart', w / 2, h / 2 + 30, { pt: 16 });
         }
     }]);
 
@@ -22198,7 +22351,7 @@ var Game = function () {
 }();
 
 exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./store":"../src/store.js","./controller":"../src/controller.js"}],"../src/gameCpt.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./store":"../src/store.js","./controller":"../src/controller.js","./pageEnd":"../src/pageEnd.js"}],"../src/gameCpt.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

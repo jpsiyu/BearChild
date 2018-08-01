@@ -41,11 +41,14 @@ class Controller extends Element {
         this.restartHandler = restartHandler
     }
 
+    setPageEndHandler(pageEndHandler) {
+        this.pageEndHandler = pageEndHandler
+    }
+
     resetPos() {
         this.radius = tool.gridSize() * 1
         this.posArrowUp = tool.grid2coord(tool.maxRow() - 2, tool.maxCol() - 2)
         this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 0.5)
-        this.posArrowReload = tool.grid2coord(tool.maxRow() / 2, tool.maxCol() - 2)
         this.gameTextInfo = {
             text: 'Start Game',
             pt: 20,
@@ -63,9 +66,6 @@ class Controller extends Element {
 
     draw(context) {
         switch (storeState().gameState) {
-            case macro.StateGameOver:
-                this.drawArrow(context, this.posArrowReload, '↺', { color: 'rgba(255, 245, 215, 0.8)' })
-                break
             case macro.StateGame:
                 this.drawArrow(context, this.posArrowUp, '↑')
                 this.drawArrow(context, this.posArrowRight, '→')
@@ -110,10 +110,6 @@ class Controller extends Element {
         }
     }
 
-    arrowReloadClick() {
-        this.restartHandler()
-    }
-
     startGameClick() {
         changeState(macro.StateGame)
         storeState().music.activeAllMusic()
@@ -130,8 +126,7 @@ class Controller extends Element {
                 if (distance < this.radius) this.arrowRightClick()
                 break
             case macro.StateGameOver:
-                distance = tool.distancePos(pos, this.posArrowReload)
-                if (distance < this.radius) this.arrowReloadClick()
+                this.pageEndHandler().handleClick(pos)
                 break
             case macro.StateReady:
                 if (pos.x > this.rectInfo.x && pos.x < this.rectInfo.x + this.rectInfo.w &&

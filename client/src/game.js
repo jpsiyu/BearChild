@@ -8,6 +8,7 @@ import { NumberIndicator } from './indicator'
 import tool from './tool'
 import { storeState, changeState } from './store'
 import Controller from './controller'
+import PageEnd from './pageEnd'
 
 class Game {
     constructor(context) {
@@ -18,6 +19,8 @@ class Game {
         this.level = 1
         this.pause = false
         this.child = undefined
+        this.pageEnd = new PageEnd()
+        this.pageEnd.setRestartHandler(() => { this.restartGame() })
         this.controller = this.initController()
         this.levelIndicator = new NumberIndicator('Level ', 70, 10, { pt: 12 })
         this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
@@ -32,6 +35,7 @@ class Game {
     initController() {
         const controller = new Controller(this.context)
         controller.setChildHanlder(() => { return this.child })
+        controller.setPageEndHandler(() => { return this.pageEnd })
         controller.setRestartHandler(() => { this.restartGame() })
         return controller
     }
@@ -99,9 +103,9 @@ class Game {
         return drink
     }
 
-    setPause(bool){
+    setPause(bool) {
         this.pause = bool
-        if(this.pause) this.previous = undefined
+        if (this.pause) this.previous = undefined
     }
 
     frame(timestamp) {
@@ -171,17 +175,10 @@ class Game {
                 this.levelIndicator.draw(this.context, this.level)
                 //this.fpsIndicator.draw(this.context, this.fps) 
                 this.child.draw(this.context)
-                if (storeState().gameState === macro.StateGameOver) this.drawGameOver()
+                this.pageEnd.draw(this.context)
                 break
         }
         this.controller.draw(this.context)
-    }
-
-    drawGameOver() {
-        const w = this.context.canvas.width
-        const h = this.context.canvas.height
-        drawing.drawLabel(this.context, 'Game Over', w / 2, h / 2, { pt: 30 })
-        drawing.drawLabel(this.context, 'Press ↺ To Restart', w / 2, h / 2 + 30, { pt: 16 })
     }
 }
 
