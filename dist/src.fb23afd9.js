@@ -22279,12 +22279,8 @@ var GameCpt = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            return _react2.default.createElement(
-                'div',
-                { style: { position: 'absolute', margin: 0, backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight } },
-                _react2.default.createElement('canvas', { ref: 'canvasGame',
-                    style: { backgroundColor: 'black', marginLeft: this.state.marginLeft, marginTop: this.state.marginTop } })
-            );
+            return _react2.default.createElement('canvas', { ref: 'canvasGame',
+                style: { backgroundColor: 'black', marginLeft: this.state.marginLeft, marginTop: this.state.marginTop } });
         }
     }]);
 
