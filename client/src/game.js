@@ -18,9 +18,6 @@ class Game {
         this.level = 1
         this.pause = false
         this.child = undefined
-
-        this.context.canvas.focus()
-
         this.controller = this.initController()
         this.levelIndicator = new NumberIndicator('Level ', 70, 10, { pt: 12 })
         this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })

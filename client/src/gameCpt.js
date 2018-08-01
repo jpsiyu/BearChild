@@ -20,6 +20,7 @@ class GameCpt extends React.Component {
         this.div = this.refs.div
         this.div.addEventListener('touchstart', event => { event.preventDefault() })
         this.canvas = this.refs.canvasGame
+        this.canvas.focus()
         const context = this.canvas.getContext('2d')
 
         this.resizeCanvas()

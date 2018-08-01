@@ -22008,9 +22008,6 @@ var Game = function () {
         this.level = 1;
         this.pause = false;
         this.child = undefined;
-
-        this.context.canvas.focus();
-
         this.controller = this.initController();
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
@@ -22261,6 +22258,7 @@ var GameCpt = function (_React$Component) {
                 event.preventDefault();
             });
             this.canvas = this.refs.canvasGame;
+            this.canvas.focus();
             var context = this.canvas.getContext('2d');
 
             this.resizeCanvas();
