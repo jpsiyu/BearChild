@@ -21535,7 +21535,7 @@ var Mom = function (_Element) {
 
         var _this = _possibleConstructorReturn(this, (Mom.__proto__ || Object.getPrototypeOf(Mom)).call(this, x, y, radius));
 
-        _this.chaseSpeed = 100;
+        _this.chaseSpeed = 80;
         _this.waitTime = 1;
         _this.waitPass = 0;
         _this.sprite = new _sprite2.default(2, 2, (0, _store.storeState)().resMgr.getImg('mom-run'));

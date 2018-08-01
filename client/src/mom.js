@@ -9,7 +9,7 @@ class Mom extends Element {
     constructor(x, y) {
         const radius = tool.gridSize() / 2
         super(x, y, radius)
-        this.chaseSpeed = 100
+        this.chaseSpeed = 80
         this.waitTime = 1
         this.waitPass = 0
         this.sprite = new Sprite(2, 2, storeState().resMgr.getImg('mom-run'))
