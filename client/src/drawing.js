@@ -1,4 +1,3 @@
-import macro from './macro'
 import tool from './tool'
 
 const drawGrid = (context) => {

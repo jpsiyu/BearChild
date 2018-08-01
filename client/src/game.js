@@ -183,7 +183,7 @@ class Game {
             case macro.StateGame:
             case macro.StateReachDoor:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
-                this.grid.draw(this.context, this.child)
+                this.grid.draw(this.context)
                 storeState().map.milks.forEach(milk => {
                     milk.draw(this.context)
                 })

@@ -19766,7 +19766,9 @@ exports.default = {
     StateReady: 'StateReady',
 
     ActionStateChange: 'ActionStateChange',
-    ActionSetContext: 'ActionSetContext'
+    ActionSetContext: 'ActionSetContext',
+
+    BgColor: 'rgb(238, 217, 255)'
 };
 },{}],"../../node_modules/symbol-observable/es/ponyfill.js":[function(require,module,exports) {
 'use strict';
@@ -20932,7 +20934,7 @@ var musicReducer = function musicReducer() {
 };
 
 var gameStateReducer = function gameStateReducer() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _macro2.default.StateGame;
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _macro2.default.StateReady;
     var action = arguments[1];
 
     switch (action.type) {
@@ -21076,10 +21078,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _macro = require('./macro');
-
-var _macro2 = _interopRequireDefault(_macro);
-
 var _tool = require('./tool');
 
 var _tool2 = _interopRequireDefault(_tool);
@@ -21198,7 +21196,7 @@ exports.default = {
     drawLabel: drawLabel,
     drawButton: drawButton
 };
-},{"./macro":"../src/macro.js","./tool":"../src/tool.js"}],"../src/sprite.js":[function(require,module,exports) {
+},{"./tool":"../src/tool.js"}],"../src/sprite.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21622,9 +21620,9 @@ var Grid = function () {
 
     _createClass(Grid, [{
         key: 'draw',
-        value: function draw(context, child) {
+        value: function draw(context) {
             context.save();
-            _drawing2.default.drawCover(context, 'rgb(238, 217, 255');
+            _drawing2.default.drawCover(context, _macro2.default.BgColor);
             _drawing2.default.drawGrid(context);
             context.restore();
         }
@@ -22121,7 +22119,7 @@ var Game = function () {
                 case _macro2.default.StateGame:
                 case _macro2.default.StateReachDoor:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
-                    this.grid.draw(this.context, this.child);
+                    this.grid.draw(this.context);
                     (0, _store.storeState)().map.milks.forEach(function (milk) {
                         milk.draw(_this4.context);
                     });
@@ -22235,8 +22233,11 @@ var GameCpt = function (_React$Component) {
         _this.canvas = undefined;
         _this.state = {
             marginLeft: 0,
-            marginTop: 0
+            marginTop: 0,
+            innerWidth: 0,
+            innerHeight: 0
         };
+        _this.game = undefined;
         return _this;
     }
 
@@ -22245,43 +22246,43 @@ var GameCpt = function (_React$Component) {
         value: function componentDidMount() {
             var _this2 = this;
 
-            this.canvas = this.refs.canvas;
+            this.canvas = this.refs.canvasGame;
             this.resizeCanvas();
             window.addEventListener('resize', function (ev) {
                 _this2.resizeCanvas();
             });
             var context = this.canvas.getContext('2d');
             (0, _store.setContext)(context);
-            var game = new _game2.default(context);
+            this.game = new _game2.default(context);
         }
     }, {
         key: 'resizeCanvas',
         value: function resizeCanvas() {
+            var updateState = {};
             var curruntRatio = window.innerWidth / window.innerHeight;
             if (curruntRatio > _macro2.default.WidthHeightRatio) {
                 this.canvas.height = window.innerHeight;
                 this.canvas.width = this.canvas.height * _macro2.default.WidthHeightRatio;
-                this.setState({
-                    marginLeft: (window.innerWidth - this.canvas.width) / 2
-                });
+                updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2;
             } else {
                 this.canvas.width = window.innerWidth;
                 this.canvas.height = this.canvas.width / _macro2.default.WidthHeightRatio;
             }
             var size = this.canvas.width / _macro2.default.GridNumInRow;
             this.canvas.height -= this.canvas.height % size;
-            this.setState({
-                marginTop: (window.innerHeight - this.canvas.height) / 2
-            });
+
+            updateState.marginTop = (window.innerHeight - this.canvas.height) / 2;
+            updateState.innerWidth = window.innerWidth;
+            updateState.innerHeight = window.innerHeight;
+            this.setState(updateState);
         }
     }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
                 'div',
-                { style: { position: 'absolute' } },
-                _react2.default.createElement('canvas', {
-                    ref: 'canvas',
+                { style: { position: 'absolute', backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight } },
+                _react2.default.createElement('canvas', { ref: 'canvasGame',
                     style: { backgroundColor: 'black', marginLeft: this.state.marginLeft, marginTop: this.state.marginTop } })
             );
         }

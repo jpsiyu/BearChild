@@ -12,4 +12,6 @@ export default {
 
     ActionStateChange: 'ActionStateChange',
     ActionSetContext: 'ActionSetContext',
+
+    BgColor: 'rgb(238, 217, 255)',
 }

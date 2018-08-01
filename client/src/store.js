@@ -15,7 +15,7 @@ const musicReducer = (state = new Music(), action) => {
     return state
 }
 
-const gameStateReducer = (state = macro.StateGame, action) => {
+const gameStateReducer = (state = macro.StateReady, action) => {
     switch (action.type) {
         case macro.ActionStateChange:
             return action.payload

@@ -3,9 +3,9 @@ import macro from './macro'
 import tool from './tool'
 
 class Grid {
-    draw(context, child) {
+    draw(context) {
         context.save()
-        drawing.drawCover(context, 'rgb(238, 217, 255')
+        drawing.drawCover(context, macro.BgColor)
         drawing.drawGrid(context)
         context.restore()
     }
