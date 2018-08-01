@@ -22323,6 +22323,7 @@ var Game = function () {
                     _drawing2.default.drawLabel(this.context, 'Level ' + this.level, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
                     break;
                 case _macro2.default.StateReady:
+                    this.controller.draw(this.context);
                     break;
                 default:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
@@ -22339,11 +22340,11 @@ var Game = function () {
 
                     this.levelIndicator.draw(this.context, this.level);
                     //this.fpsIndicator.draw(this.context, this.fps) 
+                    this.controller.draw(this.context);
                     this.child.draw(this.context);
                     this.pageEnd.draw(this.context);
                     break;
             }
-            this.controller.draw(this.context);
         }
     }]);
 
