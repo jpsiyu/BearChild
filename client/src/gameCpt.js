@@ -23,6 +23,7 @@ class GameCpt extends React.Component {
         this.resizeCanvas()
         window.addEventListener('resize', ev => { this.resizeCanvas() })
         window.addEventListener('orientationchange', ev => {
+            window.scrollTo(0, 1)
             setTimeout(() => {
                 this.resizeCanvas()
             }, 200);
@@ -52,7 +53,6 @@ class GameCpt extends React.Component {
         updateState.innerWidth = window.innerWidth
         updateState.innerHeight = window.innerHeight
         this.setState(updateState)
-        window.scrollTo(0, 1)
     }
 
     render() {
