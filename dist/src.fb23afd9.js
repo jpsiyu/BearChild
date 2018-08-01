@@ -20605,6 +20605,7 @@ var Music = function () {
         value: function activeAllMusic() {
             var _this2 = this;
 
+            if (this.active) return;
             this.active = true;
             Object.keys(this.musics).forEach(function (key) {
                 _this2.musics[key].play();
@@ -21883,7 +21884,7 @@ var Controller = function (_Element) {
     }, {
         key: 'startGameClick',
         value: function startGameClick() {
-            (0, _store.changeState)(_macro2.default.StateGame);
+            this.restartHandler();
             (0, _store.storeState)().music.activeAllMusic();
         }
     }, {
@@ -21975,7 +21976,8 @@ var PageEnd = function () {
         _classCallCheck(this, PageEnd);
 
         this.mainText = 'Game Over';
-        this.subText = 'Quit              Restart';
+        this.quitText = 'Quit';
+        this.restartText = 'Restart';
         this.quitRect = undefined;
         this.restartRect = undefined;
     }
@@ -21984,6 +21986,11 @@ var PageEnd = function () {
         key: 'setRestartHandler',
         value: function setRestartHandler(restartHandler) {
             this.restartHandler = restartHandler;
+        }
+    }, {
+        key: 'setReadyHandler',
+        value: function setReadyHandler(readyHandler) {
+            this.readyHandler = readyHandler;
         }
     }, {
         key: 'draw',
@@ -22001,10 +22008,11 @@ var PageEnd = function () {
             var tw = gridSize * 4;
             var th = gridSize * 2;
             var pos = void 0,
-                absPos = { x: 0, y: 0
+                absPos = { x: 0, y: 0 };
+            var rw = gridSize * 1.5;
 
-                //bg
-            };pos = { x: basePos.x, y: basePos.y - gridSize };
+            //bg
+            pos = { x: basePos.x, y: basePos.y - gridSize };
             context.save();
             context.translate(pos.x, pos.y);
             absPos = this.posAdd(absPos, pos);
@@ -22017,46 +22025,54 @@ var PageEnd = function () {
             _drawing2.default.drawLabel(context, this.mainText, 0, 0, { pt: mainPt });
 
             //btn quit
-            pos = { x: -gridSize, y: gridSize };
+            pos = { x: -gridSize, y: 1.5 * gridSize };
             context.beginPath();
             context.translate(pos.x, pos.y);
             absPos = this.posAdd(absPos, pos);
             context.fillStyle = 'black';
-            context.rect(-gridSize / 2, -gridSize / 2, gridSize, gridSize);
+            context.rect(-rw / 2, -rw / 2, rw, rw);
             this.quitRect = {
-                x: absPos.x - gridSize / 2,
-                y: absPos.y - gridSize / 2,
-                w: gridSize,
-                h: gridSize
+                x: absPos.x - rw / 2,
+                y: absPos.y - rw / 2,
+                w: rw,
+                h: rw
             };
             context.fill();
-            _drawing2.default.drawLabel(context, '<', 0, subPt / 2, { color: 'white', pt: subPt });
+            _drawing2.default.drawLabel(context, '<', 0, mainPt / 2, { color: 'white', pt: mainPt });
             context.translate(-pos.x, -pos.y);
             absPos = this.posMin(absPos, pos);
 
             //btn reload
-            pos = { x: gridSize, y: gridSize };
+            pos = { x: gridSize, y: 1.5 * gridSize };
             context.beginPath();
             context.translate(pos.x, pos.y);
             absPos = this.posAdd(absPos, pos);
             context.fillStyle = 'black';
-            context.rect(-gridSize / 2, -gridSize / 2, gridSize, gridSize);
+            context.rect(-rw / 2, -rw / 2, rw, rw);
             this.restartRect = {
-                x: absPos.x - gridSize / 2,
-                y: absPos.y - gridSize / 2,
-                w: gridSize,
-                h: gridSize
+                x: absPos.x - rw / 2,
+                y: absPos.y - rw / 2,
+                w: rw,
+                h: rw
             };
             context.fill();
-            _drawing2.default.drawLabel(context, '↺', 0, subPt / 2, { color: 'white', pt: subPt });
+            _drawing2.default.drawLabel(context, '↺', 0, mainPt / 2, { color: 'white', pt: mainPt });
             context.translate(-pos.x, -pos.y);
             absPos = this.posMin(absPos, pos);
 
             //sub text
-            pos = { x: 0, y: 1.5 * gridSize };
+            pos = { x: -gridSize, y: 2.2 * gridSize };
             context.translate(pos.x, pos.y);
             absPos = this.posAdd(absPos, pos);
-            _drawing2.default.drawLabel(context, this.subText, 0, mainPt, { pt: subPt });
+            _drawing2.default.drawLabel(context, this.quitText, 0, mainPt, { pt: subPt });
+            context.translate(-pos.x, -pos.y);
+            absPos = this.posMin(absPos, pos);
+
+            pos = { x: gridSize, y: 2.2 * gridSize };
+            context.translate(pos.x, pos.y);
+            absPos = this.posAdd(absPos, pos);
+            _drawing2.default.drawLabel(context, this.restartText, 0, mainPt, { pt: subPt });
+            absPos = this.posMin(absPos, pos);
 
             context.restore();
         }
@@ -22086,7 +22102,9 @@ var PageEnd = function () {
         }
     }, {
         key: 'quit',
-        value: function quit() {}
+        value: function quit() {
+            this.readyHandler();
+        }
     }, {
         key: 'restart',
         value: function restart() {
@@ -22162,11 +22180,8 @@ var Game = function () {
         this.level = 1;
         this.pause = false;
         this.child = undefined;
-        this.pageEnd = new _pageEnd2.default();
-        this.pageEnd.setRestartHandler(function () {
-            _this.restartGame();
-        });
         this.controller = this.initController();
+        this.pageEnd = this.initPageEnd();
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
 
@@ -22194,11 +22209,24 @@ var Game = function () {
             return controller;
         }
     }, {
+        key: 'initPageEnd',
+        value: function initPageEnd() {
+            var _this3 = this;
+
+            var pageEnd = new _pageEnd2.default();
+            pageEnd.setRestartHandler(function () {
+                _this3.restartGame();
+            });
+            pageEnd.setReadyHandler(function () {
+                _this3.readyForGame();
+            });
+            return pageEnd;
+        }
+    }, {
         key: 'readyForGame',
         value: function readyForGame() {
             (0, _store.changeState)(_macro2.default.StateReady);
             this.level = 1;
-            this.resetGame();
         }
     }, {
         key: 'restartGame',
@@ -22250,12 +22278,12 @@ var Game = function () {
     }, {
         key: 'childCatchMilk',
         value: function childCatchMilk() {
-            var _this3 = this;
+            var _this4 = this;
 
             var drink = false;
             (0, _store.storeState)().map.milks.forEach(function (milk, i) {
-                var dis = _tool2.default.distance(_this3.child, milk);
-                if (dis < _this3.child.radius + milk.radius) {
+                var dis = _tool2.default.distance(_this4.child, milk);
+                if (dis < _this4.child.radius + milk.radius) {
                     drink = true;
                     (0, _store.storeState)().map.milks.splice(i, 1);
                 }
@@ -22282,7 +22310,7 @@ var Game = function () {
     }, {
         key: 'update',
         value: function update(elapsed) {
-            var _this4 = this;
+            var _this5 = this;
 
             this.fps = 1 / elapsed;
             switch ((0, _store.storeState)().gameState) {
@@ -22291,7 +22319,7 @@ var Game = function () {
                         (0, _store.storeState)().music.pauseBg();
                         (0, _store.changeState)(_macro2.default.StateReachDoor);
                         setTimeout(function () {
-                            _this4.levelUp();
+                            _this5.levelUp();
                         }, 2 * 1000);
                         (0, _store.storeState)().music.win();
                         return;
@@ -22305,17 +22333,20 @@ var Game = function () {
                     if (this.childCatchMilk()) {
                         this.child.drinkMilk = true;
                     }
+                    this.child.update(elapsed);
                     this.mom.update(this.child, elapsed);
+                    break;
+                case _macro2.default.StateReachDoor:
+                    this.child.update(elapsed);
                     break;
                 default:
                     break;
             }
-            this.child.update(elapsed);
         }
     }, {
         key: 'draw',
         value: function draw() {
-            var _this5 = this;
+            var _this6 = this;
 
             switch ((0, _store.storeState)().gameState) {
                 case _macro2.default.StateLevelUp:
@@ -22323,16 +22354,17 @@ var Game = function () {
                     _drawing2.default.drawLabel(this.context, 'Level ' + this.level, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
                     break;
                 case _macro2.default.StateReady:
+                    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     this.controller.draw(this.context);
                     break;
                 default:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     this.grid.draw(this.context);
                     (0, _store.storeState)().map.milks.forEach(function (milk) {
-                        milk.draw(_this5.context);
+                        milk.draw(_this6.context);
                     });
                     (0, _store.storeState)().map.fences.forEach(function (fence) {
-                        fence.draw(_this5.context);
+                        fence.draw(_this6.context);
                     });
                     this.mom.draw(this.context);
                     this.grid.drawMask(this.context, this.child);
@@ -22548,7 +22580,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49244' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '64482' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

@@ -19,9 +19,8 @@ class Game {
         this.level = 1
         this.pause = false
         this.child = undefined
-        this.pageEnd = new PageEnd()
-        this.pageEnd.setRestartHandler(() => { this.restartGame() })
         this.controller = this.initController()
+        this.pageEnd = this.initPageEnd()
         this.levelIndicator = new NumberIndicator('Level ', 70, 10, { pt: 12 })
         this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
 
@@ -40,10 +39,16 @@ class Game {
         return controller
     }
 
+    initPageEnd() {
+        const pageEnd = new PageEnd()
+        pageEnd.setRestartHandler(() => { this.restartGame() })
+        pageEnd.setReadyHandler(() => { this.readyForGame() })
+        return pageEnd
+    }
+
     readyForGame() {
         changeState(macro.StateReady)
         this.level = 1
-        this.resetGame()
     }
 
     restartGame() {
@@ -138,12 +143,15 @@ class Game {
                 if (this.childCatchMilk()) {
                     this.child.drinkMilk = true
                 }
+                this.child.update(elapsed)
                 this.mom.update(this.child, elapsed)
+                break
+            case macro.StateReachDoor:
+                this.child.update(elapsed)
                 break
             default:
                 break
         }
-        this.child.update(elapsed)
     }
 
     draw() {
@@ -158,6 +166,7 @@ class Game {
                 )
                 break
             case macro.StateReady:
+                this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 this.controller.draw(this.context)
                 break
             default:

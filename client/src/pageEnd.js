@@ -6,13 +6,18 @@ import macro from './macro'
 class PageEnd {
     constructor() {
         this.mainText = 'Game Over'
-        this.subText = 'Quit              Restart'
+        this.quitText = 'Quit'
+        this.restartText = 'Restart'
         this.quitRect = undefined
         this.restartRect = undefined
     }
 
     setRestartHandler(restartHandler) {
         this.restartHandler = restartHandler
+    }
+
+    setReadyHandler(readyHandler){
+        this.readyHandler = readyHandler
     }
 
     draw(context) {
@@ -30,6 +35,7 @@ class PageEnd {
         const tw = gridSize * 4
         const th = gridSize * 2
         let pos, absPos = { x: 0, y: 0 }
+        let rw = gridSize * 1.5
 
         //bg
         pos = { x: basePos.x, y: basePos.y - gridSize }
@@ -45,46 +51,54 @@ class PageEnd {
         drawing.drawLabel(context, this.mainText, 0, 0, { pt: mainPt })
 
         //btn quit
-        pos = { x: -gridSize, y: gridSize }
+        pos = { x: -gridSize, y: 1.5*gridSize }
         context.beginPath()
         context.translate(pos.x, pos.y)
         absPos = this.posAdd(absPos, pos)
         context.fillStyle = 'black'
-        context.rect(-gridSize / 2, -gridSize / 2, gridSize, gridSize)
+        context.rect(-rw / 2, -rw / 2, rw, rw)
         this.quitRect = {
-            x: absPos.x - gridSize / 2,
-            y: absPos.y - gridSize / 2,
-            w: gridSize,
-            h: gridSize,
+            x: absPos.x - rw / 2,
+            y: absPos.y - rw / 2,
+            w: rw,
+            h: rw,
         }
         context.fill()
-        drawing.drawLabel(context, '<', 0, subPt / 2, { color: 'white', pt: subPt })
+        drawing.drawLabel(context, '<', 0, mainPt/ 2, { color: 'white', pt: mainPt})
         context.translate(-pos.x, -pos.y)
         absPos = this.posMin(absPos, pos)
 
         //btn reload
-        pos = { x: gridSize, y: gridSize }
+        pos = { x: gridSize, y: 1.5*gridSize }
         context.beginPath()
         context.translate(pos.x, pos.y)
         absPos = this.posAdd(absPos, pos)
         context.fillStyle = 'black'
-        context.rect(-gridSize / 2, -gridSize / 2, gridSize, gridSize)
+        context.rect(-rw / 2, -rw / 2, rw, rw)
         this.restartRect = {
-            x: absPos.x - gridSize / 2,
-            y: absPos.y - gridSize / 2,
-            w: gridSize,
-            h: gridSize,
+            x: absPos.x - rw / 2,
+            y: absPos.y - rw / 2,
+            w: rw,
+            h: rw,
         }
         context.fill()
-        drawing.drawLabel(context, '↺', 0, subPt / 2, { color: 'white', pt: subPt })
+        drawing.drawLabel(context, '↺', 0, mainPt/ 2, { color: 'white', pt: mainPt})
         context.translate(-pos.x, -pos.y)
         absPos = this.posMin(absPos, pos)
 
         //sub text
-        pos = { x: 0, y: 1.5 * gridSize }
+        pos = { x: -gridSize, y: 2.2 * gridSize }
         context.translate(pos.x, pos.y)
         absPos = this.posAdd(absPos, pos)
-        drawing.drawLabel(context, this.subText, 0, mainPt, { pt: subPt })
+        drawing.drawLabel(context, this.quitText, 0, mainPt, { pt: subPt })
+        context.translate(-pos.x, -pos.y)
+        absPos = this.posMin(absPos, pos)
+
+        pos = { x: gridSize, y: 2.2 * gridSize }
+        context.translate(pos.x, pos.y)
+        absPos = this.posAdd(absPos, pos)
+        drawing.drawLabel(context, this.restartText, 0, mainPt, { pt: subPt })
+        absPos = this.posMin(absPos, pos)
 
         context.restore()
     }
@@ -117,6 +131,7 @@ class PageEnd {
 
 
     quit() {
+        this.readyHandler()
     }
 
     restart() {

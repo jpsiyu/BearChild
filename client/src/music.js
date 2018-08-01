@@ -74,6 +74,7 @@ class Music {
     }
 
     activeAllMusic(){
+        if(this.active) return
         this.active = true
         Object.keys(this.musics).forEach( key => {
             this.musics[key].play()

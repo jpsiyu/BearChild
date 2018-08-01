@@ -111,7 +111,7 @@ class Controller extends Element {
     }
 
     startGameClick() {
-        changeState(macro.StateGame)
+        this.restartHandler()
         storeState().music.activeAllMusic()
     }
 
