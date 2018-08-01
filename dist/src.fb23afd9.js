@@ -22259,27 +22259,23 @@ var GameCpt = function (_React$Component) {
         key: 'resizeCanvas',
         value: function resizeCanvas() {
             var updateState = {};
-            var adjWindow = {
-                innerWidth: window.innerWidth - 10,
-                innerHeight: window.innerHeight - 10
-            };
 
-            var curruntRatio = adjWindow.innerWidth / adjWindow.innerHeight;
+            var curruntRatio = window.innerWidth / window.innerHeight;
             if (curruntRatio > _macro2.default.WidthHeightRatio) {
-                this.canvas.height = adjWindow.innerHeight;
+                this.canvas.height = window.innerHeight;
                 this.canvas.width = this.canvas.height * _macro2.default.WidthHeightRatio;
             } else {
-                this.canvas.width = adjWindow.innerWidth;
+                this.canvas.width = window.innerWidth;
                 this.canvas.height = this.canvas.width / _macro2.default.WidthHeightRatio;
             }
 
             var size = this.canvas.width / _macro2.default.GridNumInRow;
             this.canvas.height -= this.canvas.height % size;
 
-            updateState.marginLeft = (adjWindow.innerWidth - this.canvas.width) / 2;
-            updateState.marginTop = (adjWindow.innerHeight - this.canvas.height) / 2;
-            updateState.innerWidth = adjWindow.innerWidth;
-            updateState.innerHeight = adjWindow.innerHeight;
+            updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2;
+            updateState.marginTop = (window.innerHeight - this.canvas.height) / 2;
+            updateState.innerWidth = window.innerWidth;
+            updateState.innerHeight = window.innerHeight;
             this.setState(updateState);
         }
     }, {

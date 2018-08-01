@@ -27,32 +27,28 @@ class GameCpt extends React.Component {
 
     resizeCanvas() {
         const updateState = {}
-        const adjWindow = {
-            innerWidth: window.innerWidth - 10,
-            innerHeight: window.innerHeight - 10,
-        }
 
-        const curruntRatio = (adjWindow.innerWidth / adjWindow.innerHeight)
+        const curruntRatio = (window.innerWidth / window.innerHeight)
         if (curruntRatio > macro.WidthHeightRatio) {
-            this.canvas.height = adjWindow.innerHeight
+            this.canvas.height = window.innerHeight
             this.canvas.width = this.canvas.height * macro.WidthHeightRatio
         } else {
-            this.canvas.width = adjWindow.innerWidth
+            this.canvas.width = window.innerWidth
             this.canvas.height = this.canvas.width / macro.WidthHeightRatio
         }
 
         const size = this.canvas.width / macro.GridNumInRow
         this.canvas.height -= this.canvas.height % size
 
-        updateState.marginLeft = (adjWindow.innerWidth - this.canvas.width) / 2
-        updateState.marginTop = (adjWindow.innerHeight - this.canvas.height) / 2
-        updateState.innerWidth = adjWindow.innerWidth
-        updateState.innerHeight = adjWindow.innerHeight
+        updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2
+        updateState.marginTop = (window.innerHeight - this.canvas.height) / 2
+        updateState.innerWidth = window.innerWidth
+        updateState.innerHeight = window.innerHeight
         this.setState(updateState)
     }
 
     render() {
-        return <div style={{ backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight}}>
+        return <div style={{backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight}}>
             <canvas ref='canvasGame'
                 style={{ backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft }}>
             </canvas>
