@@ -22,7 +22,11 @@ class GameCpt extends React.Component {
         this.canvas = this.refs.canvasGame
         this.resizeCanvas()
         window.addEventListener('resize', ev => { this.resizeCanvas() })
-        window.addEventListener('orientationchange', ev => { this.resizeCanvas() })
+        window.addEventListener('orientationchange', ev => {
+            setTimeout(() => {
+                this.resizeCanvas()
+            }, 200);
+        })
         const context = this.canvas.getContext('2d')
         setContext(context)
         this.game = new Game(context)

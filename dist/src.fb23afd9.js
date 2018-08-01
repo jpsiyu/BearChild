@@ -22251,7 +22251,9 @@ var GameCpt = function (_React$Component) {
                 _this2.resizeCanvas();
             });
             window.addEventListener('orientationchange', function (ev) {
-                _this2.resizeCanvas();
+                setTimeout(function () {
+                    _this2.resizeCanvas();
+                }, 200);
             });
             var context = this.canvas.getContext('2d');
             (0, _store.setContext)(context);
