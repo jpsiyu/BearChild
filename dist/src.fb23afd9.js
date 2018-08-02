@@ -21461,16 +21461,21 @@ var PageStart = function (_Page) {
             pt: 20,
             color: 'white'
         };
-        _this.rectInfo = {
-            x: _tool2.default.gameWidth() / 2 - _this.gameTextInfo.text.length * _this.gameTextInfo.pt / 2,
-            y: _tool2.default.gameHeight() / 2 - 1.5 * _this.gameTextInfo.pt,
-            w: _this.gameTextInfo.text.length * _this.gameTextInfo.pt,
-            h: 2 * _this.gameTextInfo.pt
-        };
+        _this.rectInfo = undefined;
         return _this;
     }
 
     _createClass(PageStart, [{
+        key: 'update',
+        value: function update(elapsed) {
+            this.rectInfo = {
+                x: _tool2.default.gameWidth() / 2 - this.gameTextInfo.text.length * this.gameTextInfo.pt / 2,
+                y: _tool2.default.gameHeight() / 2 - 1.5 * this.gameTextInfo.pt,
+                w: this.gameTextInfo.text.length * this.gameTextInfo.pt,
+                h: 2 * this.gameTextInfo.pt
+            };
+        }
+    }, {
         key: 'draw',
         value: function draw(context) {
             this.drawStart(context);

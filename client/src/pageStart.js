@@ -11,6 +11,10 @@ class PageStart extends Page {
             pt: 20,
             color: 'white',
         }
+        this.rectInfo = undefined
+    }
+
+    update(elapsed){
         this.rectInfo = {
             x: tool.gameWidth() / 2 - this.gameTextInfo.text.length * this.gameTextInfo.pt / 2,
             y: tool.gameHeight() / 2 - 1.5 * this.gameTextInfo.pt,
