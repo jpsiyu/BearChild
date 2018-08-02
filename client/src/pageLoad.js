@@ -35,6 +35,7 @@ class PageLoad extends Page {
             this.end = true
             window.g.gameEventListener.dispatch(macro.EventLoad)
         }
+        this.load.update(elapsed)
     }
 
     draw(context) {

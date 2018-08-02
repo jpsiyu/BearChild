@@ -21775,6 +21775,7 @@ var PageLoad = function (_Page) {
                 this.end = true;
                 window.g.gameEventListener.dispatch(_macro2.default.EventLoad);
             }
+            this.load.update(elapsed);
         }
     }, {
         key: 'draw',
