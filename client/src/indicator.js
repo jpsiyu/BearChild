@@ -1,10 +1,24 @@
 class Indicator {
-    constructor(label, x, y, width, height) {
+    constructor(label, posCallback) {
+        this.posCallback = posCallback
         this.label = label
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
+        this.updatePos()
+    }
+
+    setPosCallback(callback){
+        this.posCallback = callback
+    }
+
+    updatePos(){
+        const info = this.posCallback()
+        this.x = info.x
+        this.y = info.y
+        this.width = info.width
+        this.height = info.height
+    }
+
+    update(elpased){
+        this.updatePos()
     }
 
     draw(ctx, cur, max) {

@@ -9,10 +9,22 @@ class PageLoad extends Page {
         const w = tool.gameWidth()
         const h = tool.gameHeight()
         const size = tool.gridSize()
-        this.load = new Indicator('Loading  ', w / 3, h / 2, 4 * size, size / 3)
+        this.load = new Indicator('Loading  ', this.loadingBarPos.bind(this))
         this.laodTime = 3
         this.pass = 0
         this.end = false
+    }
+
+    loadingBarPos(){
+        const w = tool.gameWidth()
+        const h = tool.gameHeight()
+        const size = tool.gridSize()
+        return {
+            x: w / 3,
+            y: h / 2,
+            width: 4 * size,
+            height: size / 3,
+        }
     }
 
     update(elapsed) {

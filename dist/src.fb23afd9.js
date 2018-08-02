@@ -20449,17 +20449,34 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Indicator = function () {
-    function Indicator(label, x, y, width, height) {
+    function Indicator(label, posCallback) {
         _classCallCheck(this, Indicator);
 
+        this.posCallback = posCallback;
         this.label = label;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        this.updatePos();
     }
 
     _createClass(Indicator, [{
+        key: 'setPosCallback',
+        value: function setPosCallback(callback) {
+            this.posCallback = callback;
+        }
+    }, {
+        key: 'updatePos',
+        value: function updatePos() {
+            var info = this.posCallback();
+            this.x = info.x;
+            this.y = info.y;
+            this.width = info.width;
+            this.height = info.height;
+        }
+    }, {
+        key: 'update',
+        value: function update(elpased) {
+            this.updatePos();
+        }
+    }, {
         key: 'draw',
         value: function draw(ctx, cur, max) {
             ctx.save();
@@ -21728,7 +21745,7 @@ var PageLoad = function (_Page) {
         var w = _tool2.default.gameWidth();
         var h = _tool2.default.gameHeight();
         var size = _tool2.default.gridSize();
-        _this.load = new _indicator.Indicator('Loading  ', w / 3, h / 2, 4 * size, size / 3);
+        _this.load = new _indicator.Indicator('Loading  ', _this.loadingBarPos.bind(_this));
         _this.laodTime = 3;
         _this.pass = 0;
         _this.end = false;
@@ -21736,6 +21753,19 @@ var PageLoad = function (_Page) {
     }
 
     _createClass(PageLoad, [{
+        key: 'loadingBarPos',
+        value: function loadingBarPos() {
+            var w = _tool2.default.gameWidth();
+            var h = _tool2.default.gameHeight();
+            var size = _tool2.default.gridSize();
+            return {
+                x: w / 3,
+                y: h / 2,
+                width: 4 * size,
+                height: size / 3
+            };
+        }
+    }, {
         key: 'update',
         value: function update(elapsed) {
             if (this.end) return;
