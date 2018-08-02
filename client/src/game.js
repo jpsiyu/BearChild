@@ -151,6 +151,7 @@ class Game {
                 }
                 this.child.update(elapsed)
                 this.mom.update(this.child, elapsed)
+                this.controller.update(elapsed)
                 break
             case macro.StateReachDoor:
                 this.child.update(elapsed)

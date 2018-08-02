@@ -20595,8 +20595,8 @@ var Controller = function (_Element) {
         }
     }, {
         key: 'update',
-        value: function update() {
-            tis.resetPos();
+        value: function update(elapsed) {
+            this.resetPos();
         }
     }, {
         key: 'draw',
@@ -20906,6 +20906,7 @@ var Game = function () {
                     }
                     this.child.update(elapsed);
                     this.mom.update(this.child, elapsed);
+                    this.controller.update(elapsed);
                     break;
                 case _macro2.default.StateReachDoor:
                     this.child.update(elapsed);

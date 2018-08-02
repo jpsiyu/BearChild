@@ -42,8 +42,8 @@ class Controller extends Element {
         this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 0.5)
     }
 
-    update() { 
-        tis.resetPos()
+    update(elapsed) { 
+        this.resetPos()
     }
 
     draw(context) {
