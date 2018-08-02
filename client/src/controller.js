@@ -14,7 +14,6 @@ class Controller extends Element {
     }
 
     setEventListener() {
-        window.addEventListener('resize', ev => { this.resetPos() })
 
         window.addEventListener('keydown', ev => {
             this.keyHandler(ev.key)
@@ -43,7 +42,9 @@ class Controller extends Element {
         this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 0.5)
     }
 
-    update() { }
+    update() { 
+        tis.resetPos()
+    }
 
     draw(context) {
         switch (window.g.gameState) {

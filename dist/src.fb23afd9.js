@@ -20566,10 +20566,6 @@ var Controller = function (_Element) {
         value: function setEventListener() {
             var _this2 = this;
 
-            window.addEventListener('resize', function (ev) {
-                _this2.resetPos();
-            });
-
             window.addEventListener('keydown', function (ev) {
                 _this2.keyHandler(ev.key);
             });
@@ -20599,7 +20595,9 @@ var Controller = function (_Element) {
         }
     }, {
         key: 'update',
-        value: function update() {}
+        value: function update() {
+            tis.resetPos();
+        }
     }, {
         key: 'draw',
         value: function draw(context) {
