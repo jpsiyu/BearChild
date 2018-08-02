@@ -36,10 +36,6 @@ class Controller extends Element {
         this.childHandler = childHandler
     }
 
-    setRestartHandler(restartHandler) {
-        this.restartHandler = restartHandler
-    }
-
     setPageEndHandler(pageEndHandler) {
         this.pageEndHandler = pageEndHandler
     }
@@ -130,7 +126,7 @@ class Controller extends Element {
                 break
             case macro.StateGameOver:
                 if (key === ' ')
-                    this.restartHandler()
+                    window.g.gameEventListener.dispatch(macro.EventRestart)
                 break
         }
     }

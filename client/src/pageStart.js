@@ -1,5 +1,6 @@
 import tool from './tool'
 import drawing from './drawing'
+import macro from './macro';
 
 class PageStart {
     constructor() {
@@ -14,10 +15,6 @@ class PageStart {
             w: this.gameTextInfo.text.length * this.gameTextInfo.pt,
             h: 2 * this.gameTextInfo.pt,
         }
-    }
-
-    setRestartHandler(restartHandler) {
-        this.restartHandler = restartHandler
     }
 
     draw(context) {
@@ -44,8 +41,8 @@ class PageStart {
     }
 
     startGameClick() {
-        this.restartHandler()
         window.g.music.activeAllMusic()
+        window.g.gameEventListener.dispatch(macro.EventRestart)
     }
 }
 

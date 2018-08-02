@@ -1,5 +1,6 @@
 import { Indicator } from './indicator'
 import tool from './tool'
+import macro from './macro';
 
 class PageLoad {
     constructor() {
@@ -11,9 +12,6 @@ class PageLoad {
         this.pass = 0
         this.end = false
     }
-    setFinishHandler(handler) {
-        this.finishHandler = handler
-    }
 
     update(elapsed) {
         if(this.end) return
@@ -21,7 +19,7 @@ class PageLoad {
             this.pass += elapsed
         }else{
             this.end = true
-            this.finishHandler()
+            window.g.gameEventListener.dispatch(macro.EventLoad)
         }
     }
 

@@ -11,14 +11,6 @@ class PageEnd {
         this.restartRect = undefined
     }
 
-    setRestartHandler(restartHandler) {
-        this.restartHandler = restartHandler
-    }
-
-    setReadyHandler(readyHandler){
-        this.readyHandler = readyHandler
-    }
-
     draw(context) {
         if (window.g.gameState !== macro.StateGameOver)
             return
@@ -130,11 +122,11 @@ class PageEnd {
 
 
     quit() {
-        this.readyHandler()
+        window.g.gameEventListener.dispatch(macro.EventReady)
     }
 
     restart() {
-        this.restartHandler()
+        window.g.gameEventListener.dispatch(macro.EventRestart)
     }
 }
 

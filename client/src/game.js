@@ -21,12 +21,16 @@ class Game {
         this.pause = false
         this.child = undefined
         this.controller = this.initController()
-        this.pageEnd = this.initPageEnd()
-        this.pageStart = this.initPageStart()
-        this.pageLoad = this.initPageLoad()
+        this.pageEnd = new PageEnd()
+        this.pageStart = new PageStart()
+        this.pageLoad = new PageLoad()
         this.levelIndicator = new NumberIndicator('Level ', 70, 10, { pt: 12 })
         this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
         this.loadFlag = 0
+
+        window.g.gameEventListener.register(macro.EventRestart, this, ()=>{this.restartGame()})
+        window.g.gameEventListener.register(macro.EventReady, this, ()=>{this.readyForGame()})
+        window.g.gameEventListener.register(macro.EventLoad, this, ()=>{this.startLoad()})
 
         window.requestAnimationFrame(this.frame)
     }
@@ -49,30 +53,7 @@ class Game {
         controller.setChildHanlder(() => { return this.child })
         controller.setPageEndHandler(() => { return this.pageEnd })
         controller.setPageStartHandler(() => { return this.pageStart })
-        controller.setRestartHandler(() => { this.restartGame() })
         return controller
-    }
-
-    initPageLoad() {
-        const pageLoad = new PageLoad()
-        pageLoad.setFinishHandler(() => {
-            this.loadFlag++
-            this.loadFinish()
-        })
-        return pageLoad
-    }
-
-    initPageEnd() {
-        const pageEnd = new PageEnd()
-        pageEnd.setRestartHandler(() => { this.restartGame() })
-        pageEnd.setReadyHandler(() => { this.readyForGame() })
-        return pageEnd
-    }
-
-    initPageStart() {
-        const pageStart = new PageStart()
-        pageStart.setRestartHandler(() => { this.restartGame() })
-        return pageStart
     }
 
     readyForGame() {

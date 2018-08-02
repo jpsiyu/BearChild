@@ -11,8 +11,9 @@ export default {
     StateLevelUp: 'StateLevelUp',
     StateGameOver: 'StateGameOver',
 
-    ActionStateChange: 'ActionStateChange',
-    ActionSetContext: 'ActionSetContext',
-
     BgColor: 'rgb(238, 217, 255)',
+
+    EventRestart: 'EventRestart',
+    EventReady: 'EventReady',
+    EventLoad: 'EventLoad',
 }

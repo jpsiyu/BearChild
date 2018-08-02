@@ -2,6 +2,7 @@ import ResMgr from './resMgr'
 import Music from './music'
 import Map from './map'
 import macro from './macro'
+import GameEventListener from './gameEventListener'
 
 class Global {
     constructor() {
@@ -10,6 +11,7 @@ class Global {
         this.music = new Music()
         this.map = new Map()
         this.context = undefined
+        this.gameEventListener = new GameEventListener()
     }
 }
 
