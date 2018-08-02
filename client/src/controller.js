@@ -36,14 +36,6 @@ class Controller extends Element {
         this.childHandler = childHandler
     }
 
-    setPageEndHandler(pageEndHandler) {
-        this.pageEndHandler = pageEndHandler
-    }
-
-    setPageStartHandler(pageStartHandler) {
-        this.pageStartHandler = pageStartHandler
-    }
-
     resetPos() {
         this.radius = tool.gridSize() * 1
         this.posArrowUp = tool.grid2coord(tool.maxRow() - 2, tool.maxCol() - 2)
@@ -94,10 +86,10 @@ class Controller extends Element {
                 if (distance < this.radius) this.arrowRightClick()
                 break
             case macro.StateGameOver:
-                this.pageEndHandler().handleClick(pos)
+                window.g.pageMgr.getPage('PageEnd').handleClick(pos)
                 break
             case macro.StateReady:
-                this.pageStartHandler().handleClick(pos)
+                window.g.pageMgr.getPage('PageStart').handleClick(pos)
                 break
         }
     }

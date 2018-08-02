@@ -7,9 +7,6 @@ import { Grid } from './grid'
 import { NumberIndicator } from './indicator'
 import tool from './tool'
 import Controller from './controller'
-import PageEnd from './pageEnd'
-import PageStart from './pageStart'
-import PageLoad from './pageLoad'
 
 class Game {
     constructor(context) {
@@ -21,16 +18,13 @@ class Game {
         this.pause = false
         this.child = undefined
         this.controller = this.initController()
-        this.pageEnd = new PageEnd()
-        this.pageStart = new PageStart()
-        this.pageLoad = new PageLoad()
         this.levelIndicator = new NumberIndicator('Level ', 70, 10, { pt: 12 })
         this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
         this.loadFlag = 0
 
-        window.g.gameEventListener.register(macro.EventRestart, this, ()=>{this.restartGame()})
-        window.g.gameEventListener.register(macro.EventReady, this, ()=>{this.readyForGame()})
-        window.g.gameEventListener.register(macro.EventLoad, this, ()=>{this.startLoad()})
+        window.g.gameEventListener.register(macro.EventRestart, this, () => { this.restartGame() })
+        window.g.gameEventListener.register(macro.EventReady, this, () => { this.readyForGame() })
+        window.g.gameEventListener.register(macro.EventLoad, this, () => { this.startLoad() })
 
         window.requestAnimationFrame(this.frame)
     }
@@ -51,12 +45,12 @@ class Game {
     initController() {
         const controller = new Controller(this.context)
         controller.setChildHanlder(() => { return this.child })
-        controller.setPageEndHandler(() => { return this.pageEnd })
-        controller.setPageStartHandler(() => { return this.pageStart })
         return controller
     }
 
     readyForGame() {
+        window.g.pageMgr.hide('PageLoad')
+        window.g.pageMgr.show('PageStart')
         window.g.gameState = macro.StateReady
         this.level = 1
     }
@@ -136,7 +130,6 @@ class Game {
         this.fps = 1 / elapsed
         switch (window.g.gameState) {
             case macro.StateLoad:
-                this.pageLoad.update(elapsed)
                 break
             case macro.StateGame:
                 if (this.reachDoor()) {
@@ -150,6 +143,7 @@ class Game {
                     window.g.music.pauseBg()
                     window.g.music.lose()
                     window.g.gameState = macro.StateGameOver
+                    window.g.pageMgr.show('PageEnd')
                     return
                 }
                 if (this.childCatchMilk()) {
@@ -164,16 +158,15 @@ class Game {
             default:
                 break
         }
+        window.g.pageMgr.update(elapsed)
     }
 
     draw() {
         switch (window.g.gameState) {
             case macro.StateLoad:
-                this.pageLoad.draw(this.context)
                 break
             case macro.StateReady:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
-                this.pageStart.draw(this.context)
                 break
             case macro.StateLevelUp:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
@@ -201,9 +194,9 @@ class Game {
                 //this.fpsIndicator.draw(this.context, this.fps) 
                 this.controller.draw(this.context)
                 this.child.draw(this.context)
-                this.pageEnd.draw(this.context)
                 break
         }
+        window.g.pageMgr.draw(this.context)
     }
 }
 

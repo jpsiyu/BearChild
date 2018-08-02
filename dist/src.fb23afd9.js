@@ -20590,16 +20590,6 @@ var Controller = function (_Element) {
             this.childHandler = childHandler;
         }
     }, {
-        key: 'setPageEndHandler',
-        value: function setPageEndHandler(pageEndHandler) {
-            this.pageEndHandler = pageEndHandler;
-        }
-    }, {
-        key: 'setPageStartHandler',
-        value: function setPageStartHandler(pageStartHandler) {
-            this.pageStartHandler = pageStartHandler;
-        }
-    }, {
         key: 'resetPos',
         value: function resetPos() {
             this.radius = _tool2.default.gridSize() * 1;
@@ -20658,10 +20648,10 @@ var Controller = function (_Element) {
                     if (distance < this.radius) this.arrowRightClick();
                     break;
                 case _macro2.default.StateGameOver:
-                    this.pageEndHandler().handleClick(pos);
+                    window.g.pageMgr.getPage('PageEnd').handleClick(pos);
                     break;
                 case _macro2.default.StateReady:
-                    this.pageStartHandler().handleClick(pos);
+                    window.g.pageMgr.getPage('PageStart').handleClick(pos);
                     break;
             }
         }
@@ -20702,303 +20692,7 @@ var Controller = function (_Element) {
 }(_element2.default);
 
 exports.default = Controller;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js"}],"../src/pageEnd.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _tool = require('./tool');
-
-var _tool2 = _interopRequireDefault(_tool);
-
-var _drawing = require('./drawing');
-
-var _drawing2 = _interopRequireDefault(_drawing);
-
-var _macro = require('./macro');
-
-var _macro2 = _interopRequireDefault(_macro);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var PageEnd = function () {
-    function PageEnd() {
-        _classCallCheck(this, PageEnd);
-
-        this.mainText = 'Game Over';
-        this.quitText = 'Quit';
-        this.restartText = 'Restart';
-        this.quitRect = undefined;
-        this.restartRect = undefined;
-    }
-
-    _createClass(PageEnd, [{
-        key: 'draw',
-        value: function draw(context) {
-            if (window.g.gameState !== _macro2.default.StateGameOver) return;
-
-            var basePos = {
-                x: _tool2.default.gameWidth() / 2,
-                y: _tool2.default.gameHeight() / 2
-            };
-
-            var gridSize = _tool2.default.gridSize();
-            var mainPt = gridSize / 2;
-            var subPt = mainPt / 2;
-            var tw = gridSize * 4;
-            var th = gridSize * 2;
-            var pos = void 0,
-                absPos = { x: 0, y: 0 };
-            var rw = gridSize * 1.5;
-
-            //bg
-            pos = { x: basePos.x, y: basePos.y - gridSize };
-            context.save();
-            context.translate(pos.x, pos.y);
-            absPos = this.posAdd(absPos, pos);
-            context.beginPath();
-            context.fillStyle = 'rgba(255, 255, 0, 0.8)';
-            context.rect(-tw, -th / 2, 2 * tw, 2 * th);
-            context.fill();
-
-            //main text
-            _drawing2.default.drawLabel(context, this.mainText, 0, 0, { pt: mainPt });
-
-            //btn quit
-            pos = { x: -gridSize, y: 1.5 * gridSize };
-            context.beginPath();
-            context.translate(pos.x, pos.y);
-            absPos = this.posAdd(absPos, pos);
-            context.fillStyle = 'black';
-            context.rect(-rw / 2, -rw / 2, rw, rw);
-            this.quitRect = {
-                x: absPos.x - rw / 2,
-                y: absPos.y - rw / 2,
-                w: rw,
-                h: rw
-            };
-            context.fill();
-            _drawing2.default.drawLabel(context, '<', 0, mainPt / 2, { color: 'white', pt: mainPt });
-            context.translate(-pos.x, -pos.y);
-            absPos = this.posMin(absPos, pos);
-
-            //btn reload
-            pos = { x: gridSize, y: 1.5 * gridSize };
-            context.beginPath();
-            context.translate(pos.x, pos.y);
-            absPos = this.posAdd(absPos, pos);
-            context.fillStyle = 'black';
-            context.rect(-rw / 2, -rw / 2, rw, rw);
-            this.restartRect = {
-                x: absPos.x - rw / 2,
-                y: absPos.y - rw / 2,
-                w: rw,
-                h: rw
-            };
-            context.fill();
-            _drawing2.default.drawLabel(context, '↺', 0, mainPt / 2, { color: 'white', pt: mainPt });
-            context.translate(-pos.x, -pos.y);
-            absPos = this.posMin(absPos, pos);
-
-            //sub text
-            pos = { x: -gridSize, y: 2.2 * gridSize };
-            context.translate(pos.x, pos.y);
-            absPos = this.posAdd(absPos, pos);
-            _drawing2.default.drawLabel(context, this.quitText, 0, mainPt, { pt: subPt });
-            context.translate(-pos.x, -pos.y);
-            absPos = this.posMin(absPos, pos);
-
-            pos = { x: gridSize, y: 2.2 * gridSize };
-            context.translate(pos.x, pos.y);
-            absPos = this.posAdd(absPos, pos);
-            _drawing2.default.drawLabel(context, this.restartText, 0, mainPt, { pt: subPt });
-            absPos = this.posMin(absPos, pos);
-
-            context.restore();
-        }
-    }, {
-        key: 'posAdd',
-        value: function posAdd(a, b) {
-            return {
-                x: a.x + b.x,
-                y: a.y + b.y
-            };
-        }
-    }, {
-        key: 'posMin',
-        value: function posMin(a, b) {
-            return {
-                x: a.x - b.x,
-                y: a.y - b.y
-            };
-        }
-    }, {
-        key: 'handleClick',
-        value: function handleClick(pos) {
-            var rectInfo = this.quitRect;
-            if (pos.x > rectInfo.x && pos.x < rectInfo.x + rectInfo.w && pos.y > rectInfo.y && pos.y < rectInfo.y + rectInfo.h) this.quit();
-            rectInfo = this.restartRect;
-            if (pos.x > rectInfo.x && pos.x < rectInfo.x + rectInfo.w && pos.y > rectInfo.y && pos.y < rectInfo.y + rectInfo.h) this.restart();
-        }
-    }, {
-        key: 'quit',
-        value: function quit() {
-            window.g.gameEventListener.dispatch(_macro2.default.EventReady);
-        }
-    }, {
-        key: 'restart',
-        value: function restart() {
-            window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
-        }
-    }]);
-
-    return PageEnd;
-}();
-
-exports.default = PageEnd;
-},{"./tool":"../src/tool.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js"}],"../src/pageStart.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _tool = require('./tool');
-
-var _tool2 = _interopRequireDefault(_tool);
-
-var _drawing = require('./drawing');
-
-var _drawing2 = _interopRequireDefault(_drawing);
-
-var _macro = require('./macro');
-
-var _macro2 = _interopRequireDefault(_macro);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var PageStart = function () {
-    function PageStart() {
-        _classCallCheck(this, PageStart);
-
-        this.gameTextInfo = {
-            text: 'Start Game',
-            pt: 20,
-            color: 'white'
-        };
-        this.rectInfo = {
-            x: _tool2.default.gameWidth() / 2 - this.gameTextInfo.text.length * this.gameTextInfo.pt / 2,
-            y: _tool2.default.gameHeight() / 2 - 1.5 * this.gameTextInfo.pt,
-            w: this.gameTextInfo.text.length * this.gameTextInfo.pt,
-            h: 2 * this.gameTextInfo.pt
-        };
-    }
-
-    _createClass(PageStart, [{
-        key: 'draw',
-        value: function draw(context) {
-            this.drawStart(context);
-        }
-    }, {
-        key: 'drawStart',
-        value: function drawStart(context) {
-            var x = _tool2.default.gameWidth() / 2;
-            var y = _tool2.default.gameHeight() / 2;
-            context.save();
-            _drawing2.default.drawLabel(context, this.gameTextInfo.text, x, y, { color: this.gameTextInfo.color, pt: this.gameTextInfo.pt });
-
-            context.beginPath();
-            context.strokeStyle = this.gameTextInfo.color;
-            context.rect(this.rectInfo.x, this.rectInfo.y, this.rectInfo.w, this.rectInfo.h);
-            context.stroke();
-            context.restore();
-        }
-    }, {
-        key: 'handleClick',
-        value: function handleClick(pos) {
-            if (pos.x > this.rectInfo.x && pos.x < this.rectInfo.x + this.rectInfo.w && pos.y > this.rectInfo.y && pos.y < this.rectInfo.y + this.rectInfo.h) this.startGameClick();
-        }
-    }, {
-        key: 'startGameClick',
-        value: function startGameClick() {
-            window.g.music.activeAllMusic();
-            window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
-        }
-    }]);
-
-    return PageStart;
-}();
-
-exports.default = PageStart;
-},{"./tool":"../src/tool.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js"}],"../src/pageLoad.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _indicator = require('./indicator');
-
-var _tool = require('./tool');
-
-var _tool2 = _interopRequireDefault(_tool);
-
-var _macro = require('./macro');
-
-var _macro2 = _interopRequireDefault(_macro);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var PageLoad = function () {
-    function PageLoad() {
-        _classCallCheck(this, PageLoad);
-
-        var w = _tool2.default.gameWidth();
-        var h = _tool2.default.gameHeight();
-        var size = _tool2.default.gridSize();
-        this.load = new _indicator.Indicator('Loading  ', w / 3, h / 2, 4 * size, size / 3);
-        this.laodTime = 3;
-        this.pass = 0;
-        this.end = false;
-    }
-
-    _createClass(PageLoad, [{
-        key: 'update',
-        value: function update(elapsed) {
-            if (this.end) return;
-            if (this.pass < this.laodTime) {
-                this.pass += elapsed;
-            } else {
-                this.end = true;
-                window.g.gameEventListener.dispatch(_macro2.default.EventLoad);
-            }
-        }
-    }, {
-        key: 'draw',
-        value: function draw(context) {
-            this.load.draw(context, this.pass, this.laodTime);
-        }
-    }]);
-
-    return PageLoad;
-}();
-
-exports.default = PageLoad;
-},{"./indicator":"../src/indicator.js","./tool":"../src/tool.js","./macro":"../src/macro.js"}],"../src/game.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js"}],"../src/game.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21039,18 +20733,6 @@ var _controller = require('./controller');
 
 var _controller2 = _interopRequireDefault(_controller);
 
-var _pageEnd = require('./pageEnd');
-
-var _pageEnd2 = _interopRequireDefault(_pageEnd);
-
-var _pageStart = require('./pageStart');
-
-var _pageStart2 = _interopRequireDefault(_pageStart);
-
-var _pageLoad = require('./pageLoad');
-
-var _pageLoad2 = _interopRequireDefault(_pageLoad);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21069,9 +20751,6 @@ var Game = function () {
         this.pause = false;
         this.child = undefined;
         this.controller = this.initController();
-        this.pageEnd = new _pageEnd2.default();
-        this.pageStart = new _pageStart2.default();
-        this.pageLoad = new _pageLoad2.default();
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
         this.loadFlag = 0;
@@ -21114,17 +20793,13 @@ var Game = function () {
             controller.setChildHanlder(function () {
                 return _this3.child;
             });
-            controller.setPageEndHandler(function () {
-                return _this3.pageEnd;
-            });
-            controller.setPageStartHandler(function () {
-                return _this3.pageStart;
-            });
             return controller;
         }
     }, {
         key: 'readyForGame',
         value: function readyForGame() {
+            window.g.pageMgr.hide('PageLoad');
+            window.g.pageMgr.show('PageStart');
             window.g.gameState = _macro2.default.StateReady;
             this.level = 1;
         }
@@ -21214,7 +20889,6 @@ var Game = function () {
             this.fps = 1 / elapsed;
             switch (window.g.gameState) {
                 case _macro2.default.StateLoad:
-                    this.pageLoad.update(elapsed);
                     break;
                 case _macro2.default.StateGame:
                     if (this.reachDoor()) {
@@ -21230,6 +20904,7 @@ var Game = function () {
                         window.g.music.pauseBg();
                         window.g.music.lose();
                         window.g.gameState = _macro2.default.StateGameOver;
+                        window.g.pageMgr.show('PageEnd');
                         return;
                     }
                     if (this.childCatchMilk()) {
@@ -21244,6 +20919,7 @@ var Game = function () {
                 default:
                     break;
             }
+            window.g.pageMgr.update(elapsed);
         }
     }, {
         key: 'draw',
@@ -21252,11 +20928,9 @@ var Game = function () {
 
             switch (window.g.gameState) {
                 case _macro2.default.StateLoad:
-                    this.pageLoad.draw(this.context);
                     break;
                 case _macro2.default.StateReady:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
-                    this.pageStart.draw(this.context);
                     break;
                 case _macro2.default.StateLevelUp:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
@@ -21279,9 +20953,9 @@ var Game = function () {
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.controller.draw(this.context);
                     this.child.draw(this.context);
-                    this.pageEnd.draw(this.context);
                     break;
             }
+            window.g.pageMgr.draw(this.context);
         }
     }]);
 
@@ -21289,7 +20963,7 @@ var Game = function () {
 }();
 
 exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js","./pageEnd":"../src/pageEnd.js","./pageStart":"../src/pageStart.js","./pageLoad":"../src/pageLoad.js"}],"../src/resMgr.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js"}],"../src/resMgr.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21702,7 +21376,478 @@ var GameEventListener = function () {
 }();
 
 exports.default = GameEventListener;
-},{}],"../src/global.js":[function(require,module,exports) {
+},{}],"../src/page.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Page = function () {
+    function Page() {
+        _classCallCheck(this, Page);
+
+        this.active = false;
+    }
+
+    _createClass(Page, [{
+        key: "show",
+        value: function show() {
+            this.active = true;
+        }
+    }, {
+        key: "hide",
+        value: function hide() {
+            this.active = false;
+        }
+    }, {
+        key: "update",
+        value: function update() {}
+    }, {
+        key: "draw",
+        value: function draw() {}
+    }, {
+        key: "handleClick",
+        value: function handleClick(pos) {}
+    }]);
+
+    return Page;
+}();
+
+exports.default = Page;
+},{}],"../src/pageStart.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _page = require('./page');
+
+var _page2 = _interopRequireDefault(_page);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PageStart = function (_Page) {
+    _inherits(PageStart, _Page);
+
+    function PageStart() {
+        _classCallCheck(this, PageStart);
+
+        var _this = _possibleConstructorReturn(this, (PageStart.__proto__ || Object.getPrototypeOf(PageStart)).call(this));
+
+        _this.gameTextInfo = {
+            text: 'Start Game',
+            pt: 20,
+            color: 'white'
+        };
+        _this.rectInfo = {
+            x: _tool2.default.gameWidth() / 2 - _this.gameTextInfo.text.length * _this.gameTextInfo.pt / 2,
+            y: _tool2.default.gameHeight() / 2 - 1.5 * _this.gameTextInfo.pt,
+            w: _this.gameTextInfo.text.length * _this.gameTextInfo.pt,
+            h: 2 * _this.gameTextInfo.pt
+        };
+        return _this;
+    }
+
+    _createClass(PageStart, [{
+        key: 'draw',
+        value: function draw(context) {
+            this.drawStart(context);
+        }
+    }, {
+        key: 'drawStart',
+        value: function drawStart(context) {
+            var x = _tool2.default.gameWidth() / 2;
+            var y = _tool2.default.gameHeight() / 2;
+            context.save();
+            _drawing2.default.drawLabel(context, this.gameTextInfo.text, x, y, { color: this.gameTextInfo.color, pt: this.gameTextInfo.pt });
+
+            context.beginPath();
+            context.strokeStyle = this.gameTextInfo.color;
+            context.rect(this.rectInfo.x, this.rectInfo.y, this.rectInfo.w, this.rectInfo.h);
+            context.stroke();
+            context.restore();
+        }
+    }, {
+        key: 'handleClick',
+        value: function handleClick(pos) {
+            if (pos.x > this.rectInfo.x && pos.x < this.rectInfo.x + this.rectInfo.w && pos.y > this.rectInfo.y && pos.y < this.rectInfo.y + this.rectInfo.h) this.startGameClick();
+        }
+    }, {
+        key: 'startGameClick',
+        value: function startGameClick() {
+            this.hide();
+            window.g.music.activeAllMusic();
+            window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
+        }
+    }]);
+
+    return PageStart;
+}(_page2.default);
+
+exports.default = PageStart;
+},{"./tool":"../src/tool.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js","./page":"../src/page.js"}],"../src/pageEnd.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _page = require('./page');
+
+var _page2 = _interopRequireDefault(_page);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PageEnd = function (_Page) {
+    _inherits(PageEnd, _Page);
+
+    function PageEnd() {
+        _classCallCheck(this, PageEnd);
+
+        var _this = _possibleConstructorReturn(this, (PageEnd.__proto__ || Object.getPrototypeOf(PageEnd)).call(this));
+
+        _this.mainText = 'Game Over';
+        _this.quitText = 'Quit';
+        _this.restartText = 'Restart';
+        _this.quitRect = undefined;
+        _this.restartRect = undefined;
+        return _this;
+    }
+
+    _createClass(PageEnd, [{
+        key: 'draw',
+        value: function draw(context) {
+            if (window.g.gameState !== _macro2.default.StateGameOver) return;
+
+            var basePos = {
+                x: _tool2.default.gameWidth() / 2,
+                y: _tool2.default.gameHeight() / 2
+            };
+
+            var gridSize = _tool2.default.gridSize();
+            var mainPt = gridSize / 2;
+            var subPt = mainPt / 2;
+            var tw = gridSize * 4;
+            var th = gridSize * 2;
+            var pos = void 0,
+                absPos = { x: 0, y: 0 };
+            var rw = gridSize * 1.5;
+
+            //bg
+            pos = { x: basePos.x, y: basePos.y - gridSize };
+            context.save();
+            context.translate(pos.x, pos.y);
+            absPos = this.posAdd(absPos, pos);
+            context.beginPath();
+            context.fillStyle = 'rgba(255, 255, 0, 0.8)';
+            context.rect(-tw, -th / 2, 2 * tw, 2 * th);
+            context.fill();
+
+            //main text
+            _drawing2.default.drawLabel(context, this.mainText, 0, 0, { pt: mainPt });
+
+            //btn quit
+            pos = { x: -gridSize, y: 1.5 * gridSize };
+            context.beginPath();
+            context.translate(pos.x, pos.y);
+            absPos = this.posAdd(absPos, pos);
+            context.fillStyle = 'black';
+            context.rect(-rw / 2, -rw / 2, rw, rw);
+            this.quitRect = {
+                x: absPos.x - rw / 2,
+                y: absPos.y - rw / 2,
+                w: rw,
+                h: rw
+            };
+            context.fill();
+            _drawing2.default.drawLabel(context, '<', 0, mainPt / 2, { color: 'white', pt: mainPt });
+            context.translate(-pos.x, -pos.y);
+            absPos = this.posMin(absPos, pos);
+
+            //btn reload
+            pos = { x: gridSize, y: 1.5 * gridSize };
+            context.beginPath();
+            context.translate(pos.x, pos.y);
+            absPos = this.posAdd(absPos, pos);
+            context.fillStyle = 'black';
+            context.rect(-rw / 2, -rw / 2, rw, rw);
+            this.restartRect = {
+                x: absPos.x - rw / 2,
+                y: absPos.y - rw / 2,
+                w: rw,
+                h: rw
+            };
+            context.fill();
+            _drawing2.default.drawLabel(context, '↺', 0, mainPt / 2, { color: 'white', pt: mainPt });
+            context.translate(-pos.x, -pos.y);
+            absPos = this.posMin(absPos, pos);
+
+            //sub text
+            pos = { x: -gridSize, y: 2.2 * gridSize };
+            context.translate(pos.x, pos.y);
+            absPos = this.posAdd(absPos, pos);
+            _drawing2.default.drawLabel(context, this.quitText, 0, mainPt, { pt: subPt });
+            context.translate(-pos.x, -pos.y);
+            absPos = this.posMin(absPos, pos);
+
+            pos = { x: gridSize, y: 2.2 * gridSize };
+            context.translate(pos.x, pos.y);
+            absPos = this.posAdd(absPos, pos);
+            _drawing2.default.drawLabel(context, this.restartText, 0, mainPt, { pt: subPt });
+            absPos = this.posMin(absPos, pos);
+
+            context.restore();
+        }
+    }, {
+        key: 'posAdd',
+        value: function posAdd(a, b) {
+            return {
+                x: a.x + b.x,
+                y: a.y + b.y
+            };
+        }
+    }, {
+        key: 'posMin',
+        value: function posMin(a, b) {
+            return {
+                x: a.x - b.x,
+                y: a.y - b.y
+            };
+        }
+    }, {
+        key: 'handleClick',
+        value: function handleClick(pos) {
+            var rectInfo = this.quitRect;
+            if (pos.x > rectInfo.x && pos.x < rectInfo.x + rectInfo.w && pos.y > rectInfo.y && pos.y < rectInfo.y + rectInfo.h) this.quit();
+            rectInfo = this.restartRect;
+            if (pos.x > rectInfo.x && pos.x < rectInfo.x + rectInfo.w && pos.y > rectInfo.y && pos.y < rectInfo.y + rectInfo.h) this.restart();
+        }
+    }, {
+        key: 'quit',
+        value: function quit() {
+            window.g.gameEventListener.dispatch(_macro2.default.EventReady);
+            this.hide();
+        }
+    }, {
+        key: 'restart',
+        value: function restart() {
+            window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
+            this.hide();
+        }
+    }]);
+
+    return PageEnd;
+}(_page2.default);
+
+exports.default = PageEnd;
+},{"./tool":"../src/tool.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js","./page":"../src/page.js"}],"../src/pageLoad.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _indicator = require('./indicator');
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _page = require('./page');
+
+var _page2 = _interopRequireDefault(_page);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PageLoad = function (_Page) {
+    _inherits(PageLoad, _Page);
+
+    function PageLoad() {
+        _classCallCheck(this, PageLoad);
+
+        var _this = _possibleConstructorReturn(this, (PageLoad.__proto__ || Object.getPrototypeOf(PageLoad)).call(this));
+
+        var w = _tool2.default.gameWidth();
+        var h = _tool2.default.gameHeight();
+        var size = _tool2.default.gridSize();
+        _this.load = new _indicator.Indicator('Loading  ', w / 3, h / 2, 4 * size, size / 3);
+        _this.laodTime = 3;
+        _this.pass = 0;
+        _this.end = false;
+        return _this;
+    }
+
+    _createClass(PageLoad, [{
+        key: 'update',
+        value: function update(elapsed) {
+            if (this.end) return;
+            if (this.pass < this.laodTime) {
+                this.pass += elapsed;
+            } else {
+                this.end = true;
+                window.g.gameEventListener.dispatch(_macro2.default.EventLoad);
+            }
+        }
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            this.load.draw(context, this.pass, this.laodTime);
+        }
+    }]);
+
+    return PageLoad;
+}(_page2.default);
+
+exports.default = PageLoad;
+},{"./indicator":"../src/indicator.js","./tool":"../src/tool.js","./macro":"../src/macro.js","./page":"../src/page.js"}],"../src/pageMgr.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _pageStart = require('./pageStart');
+
+var _pageStart2 = _interopRequireDefault(_pageStart);
+
+var _pageEnd = require('./pageEnd');
+
+var _pageEnd2 = _interopRequireDefault(_pageEnd);
+
+var _pageLoad = require('./pageLoad');
+
+var _pageLoad2 = _interopRequireDefault(_pageLoad);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var PageMgr = function () {
+    function PageMgr() {
+        _classCallCheck(this, PageMgr);
+
+        this.pages = {};
+    }
+
+    _createClass(PageMgr, [{
+        key: 'update',
+        value: function update(elapsed) {
+            var _this = this;
+
+            Object.keys(this.pages).forEach(function (key) {
+                var page = _this.pages[key];
+                if (page.active) page.update(elapsed);
+            });
+        }
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            var _this2 = this;
+
+            Object.keys(this.pages).forEach(function (key) {
+                var page = _this2.pages[key];
+                if (page.active) page.draw(context);
+            });
+        }
+    }, {
+        key: 'getPage',
+        value: function getPage(pageName) {
+            var p = this.pages[pageName];
+            if (p) return p;
+
+            switch (pageName) {
+                case 'PageStart':
+                    p = new _pageStart2.default();
+                    break;
+                case 'PageEnd':
+                    p = new _pageEnd2.default();
+                    break;
+                case 'PageLoad':
+                    p = new _pageLoad2.default();
+                    break;
+            }
+            this.pages[pageName] = p;
+            return p;
+        }
+    }, {
+        key: 'show',
+        value: function show(pageName) {
+            var p = this.getPage(pageName);
+            if (p) p.show();
+        }
+    }, {
+        key: 'hide',
+        value: function hide(pageName) {
+            var p = this.getPage(pageName);
+            if (p) p.hide();
+        }
+    }]);
+
+    return PageMgr;
+}();
+
+exports.default = PageMgr;
+},{"./pageStart":"../src/pageStart.js","./pageEnd":"../src/pageEnd.js","./pageLoad":"../src/pageLoad.js"}],"../src/global.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21729,6 +21874,10 @@ var _gameEventListener = require('./gameEventListener');
 
 var _gameEventListener2 = _interopRequireDefault(_gameEventListener);
 
+var _pageMgr = require('./pageMgr');
+
+var _pageMgr2 = _interopRequireDefault(_pageMgr);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21742,13 +21891,14 @@ var Global = function Global() {
     this.map = new _map2.default();
     this.context = undefined;
     this.gameEventListener = new _gameEventListener2.default();
+    this.pageMgr = new _pageMgr2.default();
 };
 
 var g = new Global();
 window.g = g;
 
 exports.default = { g: g };
-},{"./resMgr":"../src/resMgr.js","./music":"../src/music.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js"}],"../src/mainScene.js":[function(require,module,exports) {
+},{"./resMgr":"../src/resMgr.js","./music":"../src/music.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
 
 'use strict';
 
@@ -21836,6 +21986,7 @@ var MainScene = function (_React$Component) {
         key: 'startLoading',
         value: function startLoading() {
             this.game = new _game2.default(this.context);
+            window.g.pageMgr.show('PageLoad');
             this.game.startLoad();
         }
     }, {

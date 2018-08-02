@@ -1,9 +1,11 @@
 import tool from './tool'
 import drawing from './drawing'
 import macro from './macro';
+import Page from './page'
 
-class PageStart {
+class PageStart extends Page {
     constructor() {
+        super()
         this.gameTextInfo = {
             text: 'Start Game',
             pt: 20,
@@ -41,6 +43,7 @@ class PageStart {
     }
 
     startGameClick() {
+        this.hide()
         window.g.music.activeAllMusic()
         window.g.gameEventListener.dispatch(macro.EventRestart)
     }

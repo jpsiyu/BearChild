@@ -1,9 +1,11 @@
 import tool from './tool'
 import drawing from './drawing'
 import macro from './macro'
+import Page from './page'
 
-class PageEnd {
+class PageEnd extends Page {
     constructor() {
+        super()
         this.mainText = 'Game Over'
         this.quitText = 'Quit'
         this.restartText = 'Restart'
@@ -123,10 +125,12 @@ class PageEnd {
 
     quit() {
         window.g.gameEventListener.dispatch(macro.EventReady)
+        this.hide()
     }
 
     restart() {
         window.g.gameEventListener.dispatch(macro.EventRestart)
+        this.hide()
     }
 }
 

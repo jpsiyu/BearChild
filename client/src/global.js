@@ -3,6 +3,7 @@ import Music from './music'
 import Map from './map'
 import macro from './macro'
 import GameEventListener from './gameEventListener'
+import PageMgr from './pageMgr'
 
 class Global {
     constructor() {
@@ -12,6 +13,7 @@ class Global {
         this.map = new Map()
         this.context = undefined
         this.gameEventListener = new GameEventListener()
+        this.pageMgr = new PageMgr()
     }
 }
 

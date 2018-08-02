@@ -1,9 +1,11 @@
 import { Indicator } from './indicator'
 import tool from './tool'
-import macro from './macro';
+import macro from './macro'
+import Page from './page'
 
-class PageLoad {
+class PageLoad extends Page {
     constructor() {
+        super()
         const w = tool.gameWidth()
         const h = tool.gameHeight()
         const size = tool.gridSize()
