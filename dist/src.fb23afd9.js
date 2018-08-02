@@ -19755,7 +19755,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
     Visiable: 3,
-    WidthHeightRatio: 2.5,
+    WidthHeightRatio: 2.2,
     GridNumInRow: 18,
     GridNumInCol: 8,
 
