@@ -19770,7 +19770,8 @@ exports.default = {
 
     EventRestart: 'EventRestart',
     EventReady: 'EventReady',
-    EventLoad: 'EventLoad'
+    EventLoad: 'EventLoad',
+    EventClick: 'EventClick'
 };
 },{}],"../src/tool.js":[function(require,module,exports) {
 'use strict';
@@ -20647,13 +20648,8 @@ var Controller = function (_Element) {
                     distance = _tool2.default.distancePos(pos, this.posArrowRight);
                     if (distance < this.radius) this.arrowRightClick();
                     break;
-                case _macro2.default.StateGameOver:
-                    window.g.pageMgr.getPage('PageEnd').handleClick(pos);
-                    break;
-                case _macro2.default.StateReady:
-                    window.g.pageMgr.getPage('PageStart').handleClick(pos);
-                    break;
             }
+            window.g.gameEventListener.dispatch(_macro2.default.EventClick, pos);
         }
     }, {
         key: 'getMousePos',
@@ -21778,6 +21774,10 @@ var _pageLoad = require('./pageLoad');
 
 var _pageLoad2 = _interopRequireDefault(_pageLoad);
 
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21790,22 +21790,31 @@ var PageMgr = function () {
     }
 
     _createClass(PageMgr, [{
-        key: 'update',
-        value: function update(elapsed) {
+        key: 'addListener',
+        value: function addListener() {
             var _this = this;
 
+            window.g.gameEventListener.register(_macro2.default.EventClick, this, function (pos) {
+                _this.handleClick(pos);
+            });
+        }
+    }, {
+        key: 'update',
+        value: function update(elapsed) {
+            var _this2 = this;
+
             Object.keys(this.pages).forEach(function (key) {
-                var page = _this.pages[key];
+                var page = _this2.pages[key];
                 if (page.active) page.update(elapsed);
             });
         }
     }, {
         key: 'draw',
         value: function draw(context) {
-            var _this2 = this;
+            var _this3 = this;
 
             Object.keys(this.pages).forEach(function (key) {
-                var page = _this2.pages[key];
+                var page = _this3.pages[key];
                 if (page.active) page.draw(context);
             });
         }
@@ -21841,13 +21850,23 @@ var PageMgr = function () {
             var p = this.getPage(pageName);
             if (p) p.hide();
         }
+    }, {
+        key: 'handleClick',
+        value: function handleClick(pos) {
+            var _this4 = this;
+
+            Object.keys(this.pages).forEach(function (key) {
+                var page = _this4.pages[key];
+                if (page.active) page.handleClick(pos);
+            });
+        }
     }]);
 
     return PageMgr;
 }();
 
 exports.default = PageMgr;
-},{"./pageStart":"../src/pageStart.js","./pageEnd":"../src/pageEnd.js","./pageLoad":"../src/pageLoad.js"}],"../src/global.js":[function(require,module,exports) {
+},{"./pageStart":"../src/pageStart.js","./pageEnd":"../src/pageEnd.js","./pageLoad":"../src/pageLoad.js","./macro":"../src/macro.js"}],"../src/global.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21986,6 +22005,7 @@ var MainScene = function (_React$Component) {
         key: 'startLoading',
         value: function startLoading() {
             this.game = new _game2.default(this.context);
+            window.g.pageMgr.addListener();
             window.g.pageMgr.show('PageLoad');
             this.game.startLoad();
         }

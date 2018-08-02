@@ -38,6 +38,7 @@ class MainScene extends React.Component {
 
     startLoading() {
         this.game = new Game(this.context)
+        window.g.pageMgr.addListener()
         window.g.pageMgr.show('PageLoad')
         this.game.startLoad()
     }

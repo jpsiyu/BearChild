@@ -1,33 +1,38 @@
 import PageStart from './pageStart'
 import PageEnd from './pageEnd'
 import PageLoad from './pageLoad'
+import macro from './macro'
 
-class PageMgr{
-    constructor(){
+class PageMgr {
+    constructor() {
         this.pages = {}
     }
 
-    update(elapsed){
-        Object.keys(this.pages).forEach( key => {
+    addListener(){
+        window.g.gameEventListener.register(macro.EventClick, this, (pos) => { this.handleClick(pos) })
+    }
+
+    update(elapsed) {
+        Object.keys(this.pages).forEach(key => {
             const page = this.pages[key]
-            if(page.active)
+            if (page.active)
                 page.update(elapsed)
         })
     }
 
-    draw(context){
-        Object.keys(this.pages).forEach( key => {
+    draw(context) {
+        Object.keys(this.pages).forEach(key => {
             const page = this.pages[key]
-            if(page.active)
+            if (page.active)
                 page.draw(context)
         })
     }
 
-    getPage(pageName){
+    getPage(pageName) {
         let p = this.pages[pageName]
-        if(p) return p
+        if (p) return p
 
-        switch(pageName){
+        switch (pageName) {
             case 'PageStart':
                 p = new PageStart()
                 break
@@ -42,14 +47,22 @@ class PageMgr{
         return p
     }
 
-    show(pageName){
+    show(pageName) {
         const p = this.getPage(pageName)
-        if(p) p.show()
+        if (p) p.show()
     }
 
-    hide(pageName){
+    hide(pageName) {
         const p = this.getPage(pageName)
-        if(p) p.hide()
+        if (p) p.hide()
+    }
+
+    handleClick(pos) {
+        Object.keys(this.pages).forEach(key => {
+            const page = this.pages[key]
+            if (page.active)
+                page.handleClick(pos)
+        })
     }
 }
 

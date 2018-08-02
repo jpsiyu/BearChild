@@ -16,4 +16,5 @@ export default {
     EventRestart: 'EventRestart',
     EventReady: 'EventReady',
     EventLoad: 'EventLoad',
+    EventClick: 'EventClick',
 }

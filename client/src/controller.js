@@ -30,6 +30,7 @@ class Controller extends Element {
             this.handleClick(pos)
             event.preventDefault()
         })
+
     }
 
     setChildHanlder(childHandler) {
@@ -85,13 +86,8 @@ class Controller extends Element {
                 distance = tool.distancePos(pos, this.posArrowRight)
                 if (distance < this.radius) this.arrowRightClick()
                 break
-            case macro.StateGameOver:
-                window.g.pageMgr.getPage('PageEnd').handleClick(pos)
-                break
-            case macro.StateReady:
-                window.g.pageMgr.getPage('PageStart').handleClick(pos)
-                break
         }
+        window.g.gameEventListener.dispatch(macro.EventClick, pos)
     }
 
     getMousePos(event) {
