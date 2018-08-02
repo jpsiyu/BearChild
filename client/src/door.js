@@ -1,13 +1,12 @@
 import drawing from './drawing'
 import tool from './tool'
 import Element from './element'
-import {storeState} from './store'
 
 class Door extends Element {
     constructor(x, y) {
         const radius = tool.gridSize()
         super(x, y, radius)
-        this.img = storeState().resMgr.getImg('door')
+        this.img = window.g.resMgr.getImg('door')
     }
 
     update() { }

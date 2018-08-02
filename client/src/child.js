@@ -1,7 +1,6 @@
 import drawing from './drawing'
 import macro from './macro'
 import Element from './element'
-import { storeState } from './store'
 import Sprite from './sprite'
 import tool from './tool'
 
@@ -9,7 +8,7 @@ class Child extends Element {
     constructor(x, y) {
         const radius = tool.gridSize() / 2
         super(x, y, radius)
-        this.sprite = new Sprite(2, 2, storeState().resMgr.getImg('child-roll'), { frameUpdateTime: 1 })
+        this.sprite = new Sprite(2, 2, window.g.resMgr.getImg('child-roll'), { frameUpdateTime: 1 })
 
         this.drinkMilk = false
         this.drinkMilkTime = 2
@@ -20,7 +19,7 @@ class Child extends Element {
 
 
     update(elapsed) {
-        switch (storeState().gameState) {
+        switch (window.g.gameState) {
             case macro.StateGame:
                 if (this.drinkMilk) {
                     if (this.pass < this.drinkMilkTime) {
@@ -45,7 +44,7 @@ class Child extends Element {
     }
 
     draw(context) {
-        switch (storeState().gameState) {
+        switch (window.g.gameState) {
             case macro.StateGameOver:
                 break
             case macro.StateGame:
@@ -54,7 +53,7 @@ class Child extends Element {
                 context.translate(this.x, this.y)
                 if (this.drinkMilk) {
                     context.rotate(this.angle)
-                    this.img = storeState().resMgr.getImg('drink')
+                    this.img = window.g.resMgr.getImg('drink')
                     drawing.drawImg(context, -tool.gridSize()/ 2, -tool.gridSize()/ 2, this.radius, this.img)
 
                 } else {
@@ -92,7 +91,7 @@ class Child extends Element {
 
     checkPosInFense(pos) {
         let inFense = false
-        storeState().map.fences.forEach(fence => {
+        window.g.map.fences.forEach(fence => {
             if (tool.distancePos(pos, fence.pos()) < fence.radius)
                 inFense = true
         })

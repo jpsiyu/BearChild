@@ -1,5 +1,4 @@
 import macro from './macro'
-import { storeState } from './store'
 
 const grid2coord = (row, col) => {
     const x = gridSize() / 2 + col * gridSize()
@@ -32,17 +31,17 @@ const distancePos = (pos1, pos2) => {
 }
 
 const gridSize = () => {
-    const context = storeState().context
+    const context = window.g.context
     return context.canvas.width / macro.GridNumInRow
 }
 
 const gameWidth = () => {
-    const context = storeState().context
+    const context = window.g.context
     return context.canvas.width
 }
 
 const gameHeight = () => {
-    const context = storeState().context
+    const context = window.g.context
     return context.canvas.height
 }
 

@@ -2,7 +2,6 @@ import drawing from './drawing'
 import macro from './macro'
 import Element from './element'
 import tool from './tool'
-import { storeState, changeState } from './store'
 
 class Controller extends Element {
     constructor(context) {
@@ -58,7 +57,7 @@ class Controller extends Element {
     update() { }
 
     draw(context) {
-        switch (storeState().gameState) {
+        switch (window.g.gameState) {
             case macro.StateGame:
                 this.drawArrow(context, this.posArrowUp, '↑')
                 this.drawArrow(context, this.posArrowRight, '→')
@@ -90,7 +89,7 @@ class Controller extends Element {
 
     handleClick(pos) {
         let distance
-        switch (storeState().gameState) {
+        switch (window.g.gameState) {
             case macro.StateGame:
                 distance = tool.distancePos(pos, this.posArrowUp)
                 if (distance < this.radius) this.arrowUpClick()
@@ -124,7 +123,7 @@ class Controller extends Element {
     }
 
     keyHandler(key) {
-        switch (storeState().gameState) {
+        switch (window.g.gameState) {
             case macro.StateGame:
                 const c = this.childHandler()
                 c.move(this.context, key)

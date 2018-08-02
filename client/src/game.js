@@ -6,7 +6,6 @@ import macro from './macro'
 import { Grid } from './grid'
 import { NumberIndicator } from './indicator'
 import tool from './tool'
-import { storeState, changeState } from './store'
 import Controller from './controller'
 import PageEnd from './pageEnd'
 import PageStart from './pageStart'
@@ -33,8 +32,8 @@ class Game {
     }
 
     startLoad() {
-        changeState(macro.StateLoad)
-        storeState().resMgr.loadRes(() => {
+        window.g.gameState = macro.StateLoad
+        window.g.resMgr.loadRes(() => {
             this.loadFlag++
             this.loadFinish()
         })
@@ -77,18 +76,19 @@ class Game {
     }
 
     readyForGame() {
-        changeState(macro.StateReady)
+        window.g.gameState = macro.StateReady
         this.level = 1
     }
 
     restartGame() {
-        changeState(macro.StateGame)
+        window.g.gameState = macro.StateGame
+        this.level = 1
         this.level = 1
         this.resetGame()
     }
 
     resetGame() {
-        storeState().music.playBg()
+        window.g.music.playBg()
         this.grid = new Grid()
 
         let pos = tool.grid2coord(tool.maxRow(), 2)
@@ -102,15 +102,15 @@ class Game {
             tool.gridSize(),
         )
 
-        storeState().map.reset()
+        window.g.map.reset()
     }
 
     levelUp() {
-        changeState(macro.StateLevelUp)
+        window.g.gameState = macro.StateLevelUp
         this.level += 1
         this.resetGame()
         setTimeout(() => {
-            changeState(macro.StateGame)
+            window.g.gameState = macro.StateGame
         }, 2 * 1000)
     }
 
@@ -126,11 +126,11 @@ class Game {
 
     childCatchMilk() {
         let drink = false
-        storeState().map.milks.forEach((milk, i) => {
+        window.g.map.milks.forEach((milk, i) => {
             const dis = tool.distance(this.child, milk)
             if (dis < (this.child.radius + milk.radius)) {
                 drink = true
-                storeState().map.milks.splice(i, 1)
+                window.g.map.milks.splice(i, 1)
             }
         })
         return drink
@@ -153,22 +153,22 @@ class Game {
 
     update(elapsed) {
         this.fps = 1 / elapsed
-        switch (storeState().gameState) {
+        switch (window.g.gameState) {
             case macro.StateLoad:
                 this.pageLoad.update(elapsed)
                 break
             case macro.StateGame:
                 if (this.reachDoor()) {
-                    storeState().music.pauseBg()
-                    changeState(macro.StateReachDoor)
+                    window.g.music.pauseBg()
+                    window.g.gameState = macro.StateReachDoor
                     setTimeout(() => { this.levelUp() }, 2 * 1000)
-                    storeState().music.win()
+                    window.g.music.win()
                     return
                 }
                 if (this.momCatchChild()) {
-                    storeState().music.pauseBg()
-                    storeState().music.lose()
-                    changeState(macro.StateGameOver)
+                    window.g.music.pauseBg()
+                    window.g.music.lose()
+                    window.g.gameState = macro.StateGameOver
                     return
                 }
                 if (this.childCatchMilk()) {
@@ -186,7 +186,7 @@ class Game {
     }
 
     draw() {
-        switch (storeState().gameState) {
+        switch (window.g.gameState) {
             case macro.StateLoad:
                 this.pageLoad.draw(this.context)
                 break
@@ -206,10 +206,10 @@ class Game {
             default:
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 this.grid.draw(this.context)
-                storeState().map.milks.forEach(milk => {
+                window.g.map.milks.forEach(milk => {
                     milk.draw(this.context)
                 })
-                storeState().map.fences.forEach(fence => {
+                window.g.map.fences.forEach(fence => {
                     fence.draw(this.context)
                 })
                 this.mom.draw(this.context)

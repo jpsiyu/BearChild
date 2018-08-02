@@ -1,13 +1,12 @@
 import drawing from './drawing'
 import tool from './tool'
 import Element from './element'
-import {storeState} from './store'
 
 class Fence extends Element {
     constructor(x, y) {
         const radius = tool.gridSize()/2
         super(x, y, radius)
-        this.img = storeState().resMgr.getImg('fence')
+        this.img = window.g.resMgr.getImg('fence')
     }
 
     update() { }

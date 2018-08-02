@@ -1,7 +1,7 @@
 import React from 'react'
 import macro from './macro'
 import Game from './game';
-import { setContext, storeState } from './store'
+import global from './global'
 
 class MainScene extends React.Component {
     constructor() {
@@ -22,12 +22,12 @@ class MainScene extends React.Component {
         this.canvas = this.refs.canvasGame
         this.canvas.focus()
         this.context = this.canvas.getContext('2d')
-        setContext(this.context)
+        window.g.context = this.context
 
         this.resizeCanvas()
 
         document.addEventListener('visibilitychange', () => {
-            document.hidden ? storeState().music.pauseBg() : storeState().music.playBg()
+            document.hidden ? window.g.music.pauseBg() : window.g.music.playBg()
             this.game.setPause(document.hidden)
         })
         window.addEventListener('resize', ev => { this.resizeCanvas() })
@@ -36,7 +36,7 @@ class MainScene extends React.Component {
         this.startLoading()
     }
 
-    startLoading(){
+    startLoading() {
         this.game = new Game(this.context)
         this.game.startLoad()
     }

@@ -1,5 +1,3 @@
-import { timingSafeEqual } from "crypto";
-
 class Indicator {
     constructor(label, x, y, width, height) {
         this.label = label

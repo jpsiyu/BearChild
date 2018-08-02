@@ -1,4 +1,3 @@
-import {storeState} from './store'
 
 class ResMgr {
     constructor() {
@@ -16,7 +15,7 @@ class ResMgr {
 
     loadRes(callback){
         this.loadImgs( () => {
-            storeState().music.loadMusics(callback)
+            window.g.music.loadMusics(callback)
         })
     }
 

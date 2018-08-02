@@ -1,6 +1,5 @@
 import tool from './tool'
 import drawing from './drawing'
-import {storeState} from './store'
 
 class PageStart {
     constructor() {
@@ -46,7 +45,7 @@ class PageStart {
 
     startGameClick() {
         this.restartHandler()
-        storeState().music.activeAllMusic()
+        window.g.music.activeAllMusic()
     }
 }
 

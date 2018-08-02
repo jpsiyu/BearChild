@@ -1,6 +1,5 @@
 import tool from './tool'
 import drawing from './drawing'
-import { storeState } from './store'
 import macro from './macro'
 
 class PageEnd {
@@ -21,7 +20,7 @@ class PageEnd {
     }
 
     draw(context) {
-        if (storeState().gameState !== macro.StateGameOver)
+        if (window.g.gameState !== macro.StateGameOver)
             return
 
         const basePos = {

@@ -1,13 +1,12 @@
 import drawing from './drawing'
 import tool from './tool'
 import Element from './element'
-import {storeState} from './store'
 
 class Milk extends Element {
     constructor(x, y) {
         const radius = tool.gridSize() / 3
         super(x, y, radius)
-        this.img = storeState().resMgr.getImg('milk')
+        this.img = window.g.resMgr.getImg('milk')
     }
 
     update() { }

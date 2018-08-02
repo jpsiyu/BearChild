@@ -1,7 +1,6 @@
 import Element from './element'
 import drawing from './drawing'
 import macro from './macro'
-import {storeState} from './store'
 import Sprite from './sprite'
 import tool from './tool'
 
@@ -12,8 +11,8 @@ class Mom extends Element {
         this.chaseSpeed = 80
         this.waitTime = 1
         this.waitPass = 0
-        this.sprite = new Sprite(2, 2, storeState().resMgr.getImg('mom-run'))
-        this.img = storeState().resMgr.getImg('catched')
+        this.sprite = new Sprite(2, 2, window.g.resMgr.getImg('mom-run'))
+        this.img = window.g.resMgr.getImg('catched')
 
     }
 
@@ -37,7 +36,7 @@ class Mom extends Element {
     draw(context) {
         context.save()
         context.translate(this.x, this.y)
-        switch (storeState().gameState) {
+        switch (window.g.gameState) {
             case macro.StateGame:
             case macro.StateReachDoor:
                 this.sprite.draw(context)
