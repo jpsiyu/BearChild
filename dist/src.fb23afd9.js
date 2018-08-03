@@ -19957,7 +19957,24 @@ var drawLabel = function drawLabel(context, label, x, y, options) {
     context.restore();
 };
 
+var drawCloud = function drawCloud(context, radius, shape, options) {
+    options = options || {};
+    context.strokeStyle = options.stroke || 'black';
+    context.fillStyle = options.fill || 'white';
+    context.save();
+    context.beginPath();
+    for (var i = 0; i < shape.length; i++) {
+        context.rotate(2 * Math.PI / shape.length);
+        context.lineTo(radius + radius * options.noise * shape[i], 0);
+    }
+    context.closePath();
+    context.fill();
+    context.stroke();
+    context.restore();
+};
+
 exports.default = {
+    drawCloud: drawCloud,
     drawGrid: drawGrid,
     drawImg: drawImg,
     drawReachable: drawReachable,
@@ -20412,9 +20429,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Grid = function () {
     function Grid() {
         _classCallCheck(this, Grid);
+
+        this.xCover = 0;
+        this.yCover = 0;
     }
 
     _createClass(Grid, [{
+        key: 'update',
+        value: function update(elapsed, child) {
+            var gridSize = _tool2.default.gridSize();
+            this.xCover = child.x - gridSize / 2 + gridSize * _macro2.default.Visiable;
+            this.yCover = child.y + gridSize / 2 - gridSize * _macro2.default.Visiable;
+        }
+    }, {
         key: 'draw',
         value: function draw(context) {
             context.save();
@@ -20424,13 +20451,16 @@ var Grid = function () {
         }
     }, {
         key: 'drawMask',
-        value: function drawMask(context, child) {
+        value: function drawMask(context) {
             context.save();
-            var gridSize = _tool2.default.gridSize(context);
-            _drawing2.default.drawCoverRight(context, 'rgb(240, 240, 240)', child.x - gridSize / 2 + gridSize * _macro2.default.Visiable);
-            _drawing2.default.drawCoverTop(context, 'rgb(240, 240, 240)', child.y + gridSize / 2 - gridSize * _macro2.default.Visiable);
+            _drawing2.default.drawCoverRight(context, 'rgb(240, 240, 240)', this.xCover);
+            _drawing2.default.drawCoverTop(context, 'rgb(240, 240, 240)', this.yCover);
             context.restore();
+            this.drawCloud(context);
         }
+    }, {
+        key: 'drawCloud',
+        value: function drawCloud(context) {}
     }]);
 
     return Grid;
@@ -20924,6 +20954,7 @@ var Game = function () {
                     this.child.update(elapsed);
                     this.mom.update(this.child, elapsed);
                     this.controller.update(elapsed);
+                    this.grid.update(elapsed, this.child);
                     break;
                 case _macro2.default.StateReachDoor:
                     this.child.update(elapsed);
@@ -20958,7 +20989,7 @@ var Game = function () {
                         fence.draw(_this6.context);
                     });
                     this.mom.draw(this.context);
-                    this.grid.drawMask(this.context, this.child);
+                    this.grid.drawMask(this.context);
                     this.door.draw(this.context);
 
                     this.levelIndicator.draw(this.context, this.level);
@@ -22160,7 +22191,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49194' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49210' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

@@ -99,7 +99,24 @@ const drawLabel = (context, label, x, y, options) => {
     context.restore()
 }
 
+const drawCloud = (context, radius, shape, options) => {
+    options = options || {}
+    context.strokeStyle = options.stroke || 'black'
+    context.fillStyle = options.fill || 'white'
+    context.save()
+    context.beginPath()
+    for(let i = 0; i < shape.length; i++){
+        context.rotate( 2 * Math.PI / shape.length)
+        context.lineTo(radius + radius*options.noise*shape[i], 0)
+    }
+    context.closePath()
+    context.fill()
+    context.stroke()
+    context.restore()
+}
+
 export default {
+    drawCloud,
     drawGrid,
     drawImg,
     drawReachable,

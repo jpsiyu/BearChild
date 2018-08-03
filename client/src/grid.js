@@ -3,6 +3,18 @@ import macro from './macro'
 import tool from './tool'
 
 class Grid {
+    constructor() {
+        this.xCover = 0
+        this.yCover = 0
+    }
+
+
+    update(elapsed, child) {
+        const gridSize = tool.gridSize()
+        this.xCover = child.x - gridSize / 2 + gridSize * macro.Visiable
+        this.yCover = child.y + gridSize / 2 - gridSize * macro.Visiable
+    }
+
     draw(context) {
         context.save()
         drawing.drawCover(context, macro.BgColor)
@@ -10,20 +22,23 @@ class Grid {
         context.restore()
     }
 
-    drawMask(context, child) {
+    drawMask(context) {
         context.save()
-        const gridSize = tool.gridSize(context)
         drawing.drawCoverRight(
             context,
             'rgb(240, 240, 240)',
-            child.x - gridSize / 2 + gridSize * macro.Visiable,
+            this.xCover,
         )
         drawing.drawCoverTop(
             context,
             'rgb(240, 240, 240)',
-            child.y + gridSize / 2 - gridSize * macro.Visiable,
+            this.yCover
         )
         context.restore()
+        this.drawCloud(context)
+    }
+
+    drawCloud(context) {
     }
 }
 

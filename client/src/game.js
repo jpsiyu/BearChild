@@ -152,6 +152,7 @@ class Game {
                 this.child.update(elapsed)
                 this.mom.update(this.child, elapsed)
                 this.controller.update(elapsed)
+                this.grid.update(elapsed, this.child)
                 break
             case macro.StateReachDoor:
                 this.child.update(elapsed)
@@ -188,7 +189,7 @@ class Game {
                     fence.draw(this.context)
                 })
                 this.mom.draw(this.context)
-                this.grid.drawMask(this.context, this.child)
+                this.grid.drawMask(this.context)
                 this.door.draw(this.context)
 
                 this.levelIndicator.draw(this.context, this.level)
