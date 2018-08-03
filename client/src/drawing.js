@@ -31,26 +31,6 @@ const drawCover = (context, color) => {
     context.restore()
 }
 
-const drawCoverRight = (context, color, x) => {
-    color = color || 'yellow'
-    context.save()
-    context.beginPath()
-    context.fillStyle = color
-    context.rect(x, 0, context.canvas.width - x, context.canvas.height)
-    context.fill()
-    context.restore()
-}
-
-const drawCoverTop = (context, color, h) => {
-    color = color || 'yellow'
-    context.save()
-    context.beginPath()
-    context.fillStyle = color
-    context.rect(0, 0, tool.gameWidth(), h)
-    context.fill()
-    context.restore()
-}
-
 const drawButton = (context, radius, text, options = {}) => {
     context.save()
     context.beginPath()
@@ -99,30 +79,12 @@ const drawLabel = (context, label, x, y, options) => {
     context.restore()
 }
 
-const drawCloud = (context, radius, shape, options) => {
-    options = options || {}
-    context.strokeStyle = options.stroke || 'black'
-    context.fillStyle = options.fill || 'white'
-    context.save()
-    context.beginPath()
-    for(let i = 0; i < shape.length; i++){
-        context.rotate( 2 * Math.PI / shape.length)
-        context.lineTo(radius + radius*options.noise*shape[i], 0)
-    }
-    context.closePath()
-    context.fill()
-    context.stroke()
-    context.restore()
-}
 
 export default {
-    drawCloud,
     drawGrid,
     drawImg,
     drawReachable,
     drawCover,
-    drawCoverRight,
-    drawCoverTop,
     drawLabel,
     drawButton,
 }

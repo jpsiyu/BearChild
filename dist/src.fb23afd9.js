@@ -19886,26 +19886,6 @@ var drawCover = function drawCover(context, color) {
     context.restore();
 };
 
-var drawCoverRight = function drawCoverRight(context, color, x) {
-    color = color || 'yellow';
-    context.save();
-    context.beginPath();
-    context.fillStyle = color;
-    context.rect(x, 0, context.canvas.width - x, context.canvas.height);
-    context.fill();
-    context.restore();
-};
-
-var drawCoverTop = function drawCoverTop(context, color, h) {
-    color = color || 'yellow';
-    context.save();
-    context.beginPath();
-    context.fillStyle = color;
-    context.rect(0, 0, _tool2.default.gameWidth(), h);
-    context.fill();
-    context.restore();
-};
-
 var drawButton = function drawButton(context, radius, text) {
     var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
@@ -19957,30 +19937,11 @@ var drawLabel = function drawLabel(context, label, x, y, options) {
     context.restore();
 };
 
-var drawCloud = function drawCloud(context, radius, shape, options) {
-    options = options || {};
-    context.strokeStyle = options.stroke || 'black';
-    context.fillStyle = options.fill || 'white';
-    context.save();
-    context.beginPath();
-    for (var i = 0; i < shape.length; i++) {
-        context.rotate(2 * Math.PI / shape.length);
-        context.lineTo(radius + radius * options.noise * shape[i], 0);
-    }
-    context.closePath();
-    context.fill();
-    context.stroke();
-    context.restore();
-};
-
 exports.default = {
-    drawCloud: drawCloud,
     drawGrid: drawGrid,
     drawImg: drawImg,
     drawReachable: drawReachable,
     drawCover: drawCover,
-    drawCoverRight: drawCoverRight,
-    drawCoverTop: drawCoverTop,
     drawLabel: drawLabel,
     drawButton: drawButton
 };
@@ -20432,11 +20393,15 @@ var Grid = function () {
 
         this.xCover = 0;
         this.yCover = 0;
+        this.imgMove = 0;
+        this.imgSpeed = 50;
+        this.imgScale = 1.5;
     }
 
     _createClass(Grid, [{
         key: 'update',
         value: function update(elapsed, child) {
+            this.imgMove += elapsed * this.imgSpeed;
             var gridSize = _tool2.default.gridSize();
             this.xCover = child.x - gridSize / 2 + gridSize * _macro2.default.Visiable;
             this.yCover = child.y + gridSize / 2 - gridSize * _macro2.default.Visiable;
@@ -20453,14 +20418,21 @@ var Grid = function () {
         key: 'drawMask',
         value: function drawMask(context) {
             context.save();
-            _drawing2.default.drawCoverRight(context, 'rgb(240, 240, 240)', this.xCover);
-            _drawing2.default.drawCoverTop(context, 'rgb(240, 240, 240)', this.yCover);
+            var imageData = context.getImageData(0, this.yCover, this.xCover, _tool2.default.gameHeight() - this.yCover);
+
+            var img = window.g.resMgr.getImg('sky');
+            var imgW = img.width * this.imgScale;
+            var imgH = _tool2.default.gameHeight();
+            var adjustMove = this.imgMove % imgW;
+            context.drawImage(img, -adjustMove, 0, imgW, imgH);
+            var diff = imgW - adjustMove;
+            if (diff < _tool2.default.gameWidth()) {
+                context.drawImage(img, diff, 0, imgW, imgH);
+            }
+
+            context.putImageData(imageData, 0, this.yCover);
             context.restore();
-            this.drawCloud(context);
         }
-    }, {
-        key: 'drawCloud',
-        value: function drawCloud(context) {}
     }]);
 
     return Grid;
@@ -21021,7 +20993,7 @@ var ResMgr = function () {
     function ResMgr() {
         _classCallCheck(this, ResMgr);
 
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll'];
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky'];
         this.images = {};
     }
 

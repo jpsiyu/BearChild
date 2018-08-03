@@ -9,6 +9,7 @@ class ResMgr {
             'catched',
             'mom-run',
             'child-roll',
+            'sky',
         ]
         this.images = {}
     }
