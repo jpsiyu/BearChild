@@ -35,6 +35,7 @@ class MainScene extends React.Component {
 
 
     startLoading() {
+        this.resizeCanvas()
         window.g.context = this.context
         window.g.map.setResizeCallback(() => { this.resizeCanvas() })
         window.g.map.init()

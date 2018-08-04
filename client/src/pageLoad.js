@@ -6,9 +6,6 @@ import Page from './page'
 class PageLoad extends Page {
     constructor() {
         super()
-        const w = tool.gameWidth()
-        const h = tool.gameHeight()
-        const size = tool.gridSize()
         this.load = new Indicator('Loading  ', this.loadingBarPos.bind(this))
         this.laodTime = 3
         this.pass = 0

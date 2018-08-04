@@ -19777,7 +19777,12 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var mapConfig = [{ lv: 1, gridInRow: 8, milks: 1, fences: 0 }, { lv: 5, gridInRow: 12, milks: 3, fences: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3 }];
+var mapConfig = [
+/*
+{ lv: 1, gridInRow: 8, milks: 1, fences: 0 },
+{ lv: 5, gridInRow: 12, milks: 3, fences: 1 },
+*/
+{ lv: 999, gridInRow: 18, milks: 14, fences: 3 }];
 
 exports.default = {
     mapConfig: mapConfig
@@ -21785,9 +21790,6 @@ var PageLoad = function (_Page) {
 
         var _this = _possibleConstructorReturn(this, (PageLoad.__proto__ || Object.getPrototypeOf(PageLoad)).call(this));
 
-        var w = _tool2.default.gameWidth();
-        var h = _tool2.default.gameHeight();
-        var size = _tool2.default.gridSize();
         _this.load = new _indicator.Indicator('Loading  ', _this.loadingBarPos.bind(_this));
         _this.laodTime = 3;
         _this.pass = 0;
@@ -22094,6 +22096,7 @@ var MainScene = function (_React$Component) {
         value: function startLoading() {
             var _this3 = this;
 
+            this.resizeCanvas();
             window.g.context = this.context;
             window.g.map.setResizeCallback(function () {
                 _this3.resizeCanvas();
