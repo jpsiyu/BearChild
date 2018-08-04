@@ -1,5 +1,4 @@
 import ResMgr from './resMgr'
-import Music from './music'
 import GameAudio from './gameAudio'
 import Map from './map'
 import macro from './macro'
@@ -11,7 +10,6 @@ class Global {
         this.gameState = macro.StateLoad
         this.gameLv = 1
         this.resMgr = new ResMgr()
-        this.music = new Music()
         this.map = new Map()
         this.gameAudio = new GameAudio()
         this.context = undefined

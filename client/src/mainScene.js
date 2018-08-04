@@ -24,7 +24,7 @@ class MainScene extends React.Component {
 
         this.div.addEventListener('touchstart', event => { event.preventDefault() })
         document.addEventListener('visibilitychange', () => {
-            document.hidden ? window.g.music.pauseBg() : window.g.music.playBg()
+            document.hidden ? window.g.gameAudio.pause('bg.mp3'): window.g.gameAudio.play('bg.mp3')
             this.game.setPause(document.hidden)
         })
         window.addEventListener('resize', ev => { this.resizeCanvas() })

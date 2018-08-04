@@ -90,7 +90,7 @@ class GameAudio {
         clip.source.start()
     }
 
-    pauseMusic(name) {
+    pause(name) {
         let music = this.musics[name]
         if (!music) return
         music.gainNode.disconnect()

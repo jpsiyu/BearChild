@@ -128,14 +128,14 @@ class Game {
                 break
             case macro.StateGame:
                 if (this.reachDoor()) {
-                    window.g.gameAudio.pauseMusic('bg.mp3')
+                    window.g.gameAudio.pause('bg.mp3')
                     window.g.gameState = macro.StateReachDoor
                     setTimeout(() => { this.levelUp() }, 2 * 1000)
                     window.g.gameAudio.play('win.mp3')
                     return
                 }
                 if (this.momCatchChild()) {
-                    window.g.gameAudio.pauseMusic('bg.mp3')
+                    window.g.gameAudio.pause('bg.mp3')
                     window.g.gameAudio.play('lose.mp3')
                     window.g.gameState = macro.StateGameOver
                     window.g.pageMgr.show('PageEnd')

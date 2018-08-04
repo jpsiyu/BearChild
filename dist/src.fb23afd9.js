@@ -20927,7 +20927,7 @@ var Game = function () {
                     break;
                 case _macro2.default.StateGame:
                     if (this.reachDoor()) {
-                        window.g.gameAudio.pauseMusic('bg.mp3');
+                        window.g.gameAudio.pause('bg.mp3');
                         window.g.gameState = _macro2.default.StateReachDoor;
                         setTimeout(function () {
                             _this5.levelUp();
@@ -20936,7 +20936,7 @@ var Game = function () {
                         return;
                     }
                     if (this.momCatchChild()) {
-                        window.g.gameAudio.pauseMusic('bg.mp3');
+                        window.g.gameAudio.pause('bg.mp3');
                         window.g.gameAudio.play('lose.mp3');
                         window.g.gameState = _macro2.default.StateGameOver;
                         window.g.pageMgr.show('PageEnd');
@@ -21055,117 +21055,7 @@ var ResMgr = function () {
 }();
 
 exports.default = ResMgr;
-},{}],"../src/music.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _tool = require('./tool');
-
-var _tool2 = _interopRequireDefault(_tool);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Music = function () {
-    function Music() {
-        _classCallCheck(this, Music);
-
-        this.names = ['bg', 'win', 'lose'];
-        this.musics = {};
-        this.active = false;
-    }
-
-    _createClass(Music, [{
-        key: 'loadMusics',
-        value: function loadMusics(callback) {
-            var _this = this;
-
-            var readyNum = 0;
-            var totalNum = this.names.length;
-            this.names.forEach(function (name) {
-                var m = new Audio(name + '.mp3');
-                m.muted = true;
-                if (_tool2.default.isSmartPhone()) {
-                    readyNum++;
-                    _this.musics[name] = m;
-                    if (readyNum === totalNum && callback) {
-                        callback();
-                    }
-                } else {
-                    m.oncanplay = function () {
-                        readyNum++;
-                        _this.musics[name] = m;
-                        if (readyNum === totalNum && callback) {
-                            callback();
-                        }
-                    };
-                }
-            });
-        }
-    }, {
-        key: 'win',
-        value: function win() {
-            this.playClip('win');
-        }
-    }, {
-        key: 'lose',
-        value: function lose() {
-            this.playClip('lose');
-        }
-    }, {
-        key: 'playClip',
-        value: function playClip(name) {
-            if (!this.active) return;
-            var m = this.musics[name];
-            if (!m) return;
-            if (m.muted) m.muted = false;
-            m.volume = 0.5;
-            m.currentTime = 0;
-            m.play();
-        }
-    }, {
-        key: 'playBg',
-        value: function playBg() {
-            if (!this.active) return;
-            var bgMusic = this.musics['bg'];
-            if (!bgMusic) return;
-
-            if (bgMusic.muted) bgMusic.muted = false;
-            if (!bgMusic.loop) bgMusic.loop = true;
-            bgMusic.volume = 0.2;
-            bgMusic.play();
-        }
-    }, {
-        key: 'pauseBg',
-        value: function pauseBg() {
-            var bgMusic = this.musics['bg'];
-            if (bgMusic) bgMusic.pause();
-        }
-    }, {
-        key: 'activeAllMusic',
-        value: function activeAllMusic() {
-            var _this2 = this;
-
-            if (this.active) return;
-            this.active = true;
-            Object.keys(this.musics).forEach(function (key) {
-                _this2.musics[key].play();
-            });
-            this.playBg();
-        }
-    }]);
-
-    return Music;
-}();
-
-exports.default = Music;
-},{"./tool":"../src/tool.js"}],"../src/gameAudio.js":[function(require,module,exports) {
+},{}],"../src/gameAudio.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21277,8 +21167,8 @@ var GameAudio = function () {
             clip.source.start();
         }
     }, {
-        key: 'pauseMusic',
-        value: function pauseMusic(name) {
+        key: 'pause',
+        value: function pause(name) {
             var music = this.musics[name];
             if (!music) return;
             music.gainNode.disconnect();
@@ -21718,7 +21608,6 @@ var PageStart = function (_Page) {
         key: 'startGameClick',
         value: function startGameClick() {
             this.hide();
-            window.g.music.activeAllMusic();
             window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
         }
     }]);
@@ -22110,10 +21999,6 @@ var _resMgr = require('./resMgr');
 
 var _resMgr2 = _interopRequireDefault(_resMgr);
 
-var _music = require('./music');
-
-var _music2 = _interopRequireDefault(_music);
-
 var _gameAudio = require('./gameAudio');
 
 var _gameAudio2 = _interopRequireDefault(_gameAudio);
@@ -22145,7 +22030,6 @@ var Global = function () {
         this.gameState = _macro2.default.StateLoad;
         this.gameLv = 1;
         this.resMgr = new _resMgr2.default();
-        this.music = new _music2.default();
         this.map = new _map2.default();
         this.gameAudio = new _gameAudio2.default();
         this.context = undefined;
@@ -22167,7 +22051,7 @@ var g = new Global();
 window.g = g;
 
 exports.default = { g: g };
-},{"./resMgr":"../src/resMgr.js","./music":"../src/music.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
+},{"./resMgr":"../src/resMgr.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
 
 'use strict';
 
@@ -22234,7 +22118,7 @@ var MainScene = function (_React$Component) {
                 event.preventDefault();
             });
             document.addEventListener('visibilitychange', function () {
-                document.hidden ? window.g.music.pauseBg() : window.g.music.playBg();
+                document.hidden ? window.g.gameAudio.pause('bg.mp3') : window.g.gameAudio.play('bg.mp3');
                 _this2.game.setPause(document.hidden);
             });
             window.addEventListener('resize', function (ev) {

@@ -53,7 +53,6 @@ class PageStart extends Page {
 
     startGameClick() {
         this.hide()
-        window.g.music.activeAllMusic()
         window.g.gameEventListener.dispatch(macro.EventRestart)
     }
 }
