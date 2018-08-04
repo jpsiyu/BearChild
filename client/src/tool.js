@@ -35,6 +35,11 @@ const gridSize = () => {
     return window.g.map.gridSize
 }
 
+const viewUnit = () => {
+    const context = window.g.context
+    return context.canvas.height / 8
+}
+
 const gameWidth = () => {
     const context = window.g.context
     return context.canvas.width
@@ -56,6 +61,7 @@ export default {
     distance,
     distancePos,
     gridSize,
+    viewUnit,
     gameWidth,
     gameHeight,
     isSmartPhone,

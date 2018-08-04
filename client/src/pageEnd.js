@@ -22,16 +22,16 @@ class PageEnd extends Page {
             y: tool.gameHeight() / 2
         }
 
-        const gridSize = tool.gridSize()
-        const mainPt = gridSize / 2
+        const viewUnit = tool.viewUnit()
+        const mainPt = viewUnit / 2
         const subPt = mainPt / 2
-        const tw = gridSize * 4
-        const th = gridSize * 2
+        const tw = viewUnit * 4
+        const th = viewUnit * 2
         let pos, absPos = { x: 0, y: 0 }
-        let rw = gridSize * 1.5
+        let rw = viewUnit * 1.5
 
         //bg
-        pos = { x: basePos.x, y: basePos.y - gridSize }
+        pos = { x: basePos.x, y: basePos.y - viewUnit }
         context.save()
         context.translate(pos.x, pos.y)
         absPos = this.posAdd(absPos, pos)
@@ -44,7 +44,7 @@ class PageEnd extends Page {
         drawing.drawLabel(context, this.mainText, 0, 0, { pt: mainPt })
 
         //btn quit
-        pos = { x: -gridSize, y: 1.5*gridSize }
+        pos = { x: -viewUnit, y: 1.5*viewUnit }
         context.beginPath()
         context.translate(pos.x, pos.y)
         absPos = this.posAdd(absPos, pos)
@@ -62,7 +62,7 @@ class PageEnd extends Page {
         absPos = this.posMin(absPos, pos)
 
         //btn reload
-        pos = { x: gridSize, y: 1.5*gridSize }
+        pos = { x: viewUnit, y: 1.5*viewUnit }
         context.beginPath()
         context.translate(pos.x, pos.y)
         absPos = this.posAdd(absPos, pos)
@@ -80,14 +80,14 @@ class PageEnd extends Page {
         absPos = this.posMin(absPos, pos)
 
         //sub text
-        pos = { x: -gridSize, y: 2.2 * gridSize }
+        pos = { x: -viewUnit, y: 2.2 * viewUnit }
         context.translate(pos.x, pos.y)
         absPos = this.posAdd(absPos, pos)
         drawing.drawLabel(context, this.quitText, 0, mainPt, { pt: subPt })
         context.translate(-pos.x, -pos.y)
         absPos = this.posMin(absPos, pos)
 
-        pos = { x: gridSize, y: 2.2 * gridSize }
+        pos = { x: viewUnit, y: 2.2 * viewUnit }
         context.translate(pos.x, pos.y)
         absPos = this.posAdd(absPos, pos)
         drawing.drawLabel(context, this.restartText, 0, mainPt, { pt: subPt })

@@ -19777,12 +19777,7 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var mapConfig = [
-/*
-{ lv: 1, gridInRow: 8, milks: 1, fences: 0 },
-{ lv: 5, gridInRow: 12, milks: 3, fences: 1 },
-*/
-{ lv: 999, gridInRow: 18, milks: 14, fences: 3 }];
+var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3 }];
 
 exports.default = {
     mapConfig: mapConfig
@@ -19834,6 +19829,11 @@ var gridSize = function gridSize() {
     return window.g.map.gridSize;
 };
 
+var viewUnit = function viewUnit() {
+    var context = window.g.context;
+    return context.canvas.height / 8;
+};
+
 var gameWidth = function gameWidth() {
     var context = window.g.context;
     return context.canvas.width;
@@ -19855,6 +19855,7 @@ exports.default = {
     distance: distance,
     distancePos: distancePos,
     gridSize: gridSize,
+    viewUnit: viewUnit,
     gameWidth: gameWidth,
     gameHeight: gameHeight,
     isSmartPhone: isSmartPhone
@@ -20587,7 +20588,7 @@ var Controller = function (_Element) {
     function Controller(context) {
         _classCallCheck(this, Controller);
 
-        var radius = _tool2.default.gridSize() * 1;
+        var radius = _tool2.default.viewUnit() * 1;
 
         var _this = _possibleConstructorReturn(this, (Controller.__proto__ || Object.getPrototypeOf(Controller)).call(this, 0, 0, radius));
 
@@ -20626,9 +20627,15 @@ var Controller = function (_Element) {
     }, {
         key: 'resetPos',
         value: function resetPos() {
-            this.radius = _tool2.default.gridSize() * 1;
-            this.posArrowUp = _tool2.default.grid2coord(_tool2.default.maxRow() - 2, _tool2.default.maxCol() - 2);
-            this.posArrowRight = _tool2.default.grid2coord(_tool2.default.maxRow() - 0.5, _tool2.default.maxCol() - 0.5);
+            this.radius = _tool2.default.viewUnit() * 1;
+            this.posArrowUp = {
+                x: _tool2.default.gameWidth() - this.radius * 2.5,
+                y: _tool2.default.gameHeight() - this.radius * 2.5
+            };
+            this.posArrowRight = {
+                x: _tool2.default.gameWidth() - this.radius,
+                y: _tool2.default.gameHeight() - this.radius
+            };
         }
     }, {
         key: 'update',
@@ -21646,17 +21653,17 @@ var PageEnd = function (_Page) {
                 y: _tool2.default.gameHeight() / 2
             };
 
-            var gridSize = _tool2.default.gridSize();
-            var mainPt = gridSize / 2;
+            var viewUnit = _tool2.default.viewUnit();
+            var mainPt = viewUnit / 2;
             var subPt = mainPt / 2;
-            var tw = gridSize * 4;
-            var th = gridSize * 2;
+            var tw = viewUnit * 4;
+            var th = viewUnit * 2;
             var pos = void 0,
                 absPos = { x: 0, y: 0 };
-            var rw = gridSize * 1.5;
+            var rw = viewUnit * 1.5;
 
             //bg
-            pos = { x: basePos.x, y: basePos.y - gridSize };
+            pos = { x: basePos.x, y: basePos.y - viewUnit };
             context.save();
             context.translate(pos.x, pos.y);
             absPos = this.posAdd(absPos, pos);
@@ -21669,7 +21676,7 @@ var PageEnd = function (_Page) {
             _drawing2.default.drawLabel(context, this.mainText, 0, 0, { pt: mainPt });
 
             //btn quit
-            pos = { x: -gridSize, y: 1.5 * gridSize };
+            pos = { x: -viewUnit, y: 1.5 * viewUnit };
             context.beginPath();
             context.translate(pos.x, pos.y);
             absPos = this.posAdd(absPos, pos);
@@ -21687,7 +21694,7 @@ var PageEnd = function (_Page) {
             absPos = this.posMin(absPos, pos);
 
             //btn reload
-            pos = { x: gridSize, y: 1.5 * gridSize };
+            pos = { x: viewUnit, y: 1.5 * viewUnit };
             context.beginPath();
             context.translate(pos.x, pos.y);
             absPos = this.posAdd(absPos, pos);
@@ -21705,14 +21712,14 @@ var PageEnd = function (_Page) {
             absPos = this.posMin(absPos, pos);
 
             //sub text
-            pos = { x: -gridSize, y: 2.2 * gridSize };
+            pos = { x: -viewUnit, y: 2.2 * viewUnit };
             context.translate(pos.x, pos.y);
             absPos = this.posAdd(absPos, pos);
             _drawing2.default.drawLabel(context, this.quitText, 0, mainPt, { pt: subPt });
             context.translate(-pos.x, -pos.y);
             absPos = this.posMin(absPos, pos);
 
-            pos = { x: gridSize, y: 2.2 * gridSize };
+            pos = { x: viewUnit, y: 2.2 * viewUnit };
             context.translate(pos.x, pos.y);
             absPos = this.posAdd(absPos, pos);
             _drawing2.default.drawLabel(context, this.restartText, 0, mainPt, { pt: subPt });
@@ -21813,7 +21820,7 @@ var PageLoad = function (_Page) {
         value: function loadingBarPos() {
             var w = _tool2.default.gameWidth();
             var h = _tool2.default.gameHeight();
-            var size = _tool2.default.gridSize();
+            var size = _tool2.default.viewUnit();
             return {
                 x: w / 3,
                 y: h / 2,

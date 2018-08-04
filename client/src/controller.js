@@ -5,7 +5,7 @@ import tool from './tool'
 
 class Controller extends Element {
     constructor(context) {
-        const radius = tool.gridSize() * 1
+        const radius = tool.viewUnit() * 1
         super(0, 0, radius)
         this.context = context
         this.resetPos()
@@ -37,12 +37,18 @@ class Controller extends Element {
     }
 
     resetPos() {
-        this.radius = tool.gridSize() * 1
-        this.posArrowUp = tool.grid2coord(tool.maxRow() - 2, tool.maxCol() - 2)
-        this.posArrowRight = tool.grid2coord(tool.maxRow() - 0.5, tool.maxCol() - 0.5)
+        this.radius = tool.viewUnit() * 1
+        this.posArrowUp = {
+            x: tool.gameWidth() - this.radius * 2.5,
+            y: tool.gameHeight() - this.radius * 2.5,
+        }
+        this.posArrowRight = {
+            x: tool.gameWidth() - this.radius,
+            y: tool.gameHeight() - this.radius,
+        }
     }
 
-    update(elapsed) { 
+    update(elapsed) {
         this.resetPos()
     }
 

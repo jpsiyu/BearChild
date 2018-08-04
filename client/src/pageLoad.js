@@ -15,7 +15,7 @@ class PageLoad extends Page {
     loadingBarPos(){
         const w = tool.gameWidth()
         const h = tool.gameHeight()
-        const size = tool.gridSize()
+        const size = tool.viewUnit()
         return {
             x: w / 3,
             y: h / 2,
