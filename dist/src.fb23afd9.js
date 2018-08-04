@@ -20410,7 +20410,8 @@ var Grid = function () {
         key: 'draw',
         value: function draw(context) {
             context.save();
-            _drawing2.default.drawCover(context, _macro2.default.BgColor);
+            var bg = window.g.resMgr.getImg('grassland');
+            context.drawImage(bg, 0, 0, _tool2.default.gameWidth(), _tool2.default.gameHeight());
             _drawing2.default.drawGrid(context);
             context.restore();
         }
@@ -20993,7 +20994,7 @@ var ResMgr = function () {
     function ResMgr() {
         _classCallCheck(this, ResMgr);
 
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky'];
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland'];
         this.images = {};
     }
 
@@ -22163,7 +22164,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49210' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49653' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

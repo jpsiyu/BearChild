@@ -10,6 +10,7 @@ class ResMgr {
             'mom-run',
             'child-roll',
             'sky',
+            'grassland',
         ]
         this.images = {}
     }

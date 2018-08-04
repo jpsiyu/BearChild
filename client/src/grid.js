@@ -21,7 +21,8 @@ class Grid {
 
     draw(context) {
         context.save()
-        drawing.drawCover(context, macro.BgColor)
+        const bg = window.g.resMgr.getImg('grassland')
+        context.drawImage(bg, 0, 0, tool.gameWidth(), tool.gameHeight())
         drawing.drawGrid(context)
         context.restore()
     }
