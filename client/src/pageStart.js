@@ -11,10 +11,14 @@ class PageStart extends Page {
             pt: 20,
             color: 'white',
         }
-        this.rectInfo = undefined
+        this.setRectInfo()
     }
 
-    update(elapsed){
+    update(elapsed) {
+        this.setRectInfo()
+    }
+
+    setRectInfo() {
         this.rectInfo = {
             x: tool.gameWidth() / 2 - this.gameTextInfo.text.length * this.gameTextInfo.pt / 2,
             y: tool.gameHeight() / 2 - 1.5 * this.gameTextInfo.pt,
@@ -28,6 +32,7 @@ class PageStart extends Page {
     }
 
     drawStart(context) {
+        if (!this.rectInfo) return
         const x = tool.gameWidth() / 2
         const y = tool.gameHeight() / 2
         context.save()

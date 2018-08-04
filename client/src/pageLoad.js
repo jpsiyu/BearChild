@@ -30,7 +30,7 @@ class PageLoad extends Page {
             this.pass += elapsed
         }else{
             this.end = true
-            window.g.gameEventListener.dispatch(macro.EventLoad)
+            window.g.gameEventListener.dispatch(macro.EventLoadFinish)
         }
         this.load.update(elapsed)
     }

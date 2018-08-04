@@ -17,7 +17,8 @@ class ResMgr {
 
     loadRes(callback){
         this.loadImgs( () => {
-            window.g.music.loadMusics(callback)
+            //window.g.music.loadMusics(callback)
+            window.g.gameAudio.loadAll(callback)
         })
     }
 

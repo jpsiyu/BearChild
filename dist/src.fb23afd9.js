@@ -19768,7 +19768,7 @@ exports.default = {
 
     EventRestart: 'EventRestart',
     EventReady: 'EventReady',
-    EventLoad: 'EventLoad',
+    EventLoadFinish: 'EventLoadFinish',
     EventClick: 'EventClick'
 };
 },{}],"../src/gameConfig.js":[function(require,module,exports) {
@@ -20665,6 +20665,7 @@ var Controller = function (_Element) {
     }, {
         key: 'arrowRightClick',
         value: function arrowRightClick() {
+            window.g.gameAudio.play('click.wav');
             var c = this.childHandler();
             if (c) {
                 c.moveRight();
@@ -20673,6 +20674,7 @@ var Controller = function (_Element) {
     }, {
         key: 'arrowUpClick',
         value: function arrowUpClick() {
+            window.g.gameAudio.play('click.wav');
             var c = this.childHandler();
             if (c) {
                 c.moveUp();
@@ -20798,8 +20800,8 @@ var Game = function () {
         window.g.gameEventListener.register(_macro2.default.EventReady, this, function () {
             _this.readyForGame();
         });
-        window.g.gameEventListener.register(_macro2.default.EventLoad, this, function () {
-            _this.startLoad();
+        window.g.gameEventListener.register(_macro2.default.EventLoadFinish, this, function () {
+            _this.loadFinish();
         });
 
         window.requestAnimationFrame(this.frame);
@@ -20812,13 +20814,13 @@ var Game = function () {
 
             window.g.gameState = _macro2.default.StateLoad;
             window.g.resMgr.loadRes(function () {
-                _this2.loadFlag++;
                 _this2.loadFinish();
             });
         }
     }, {
         key: 'loadFinish',
         value: function loadFinish() {
+            this.loadFlag++;
             if (this.loadFlag >= 2) this.readyForGame();
         }
     }, {
@@ -20850,7 +20852,7 @@ var Game = function () {
     }, {
         key: 'resetGame',
         value: function resetGame() {
-            window.g.music.playBg();
+            window.g.gameAudio.play('bg.mp3');
             window.g.map.reset();
 
             this.grid = new _grid.Grid();
@@ -20925,17 +20927,17 @@ var Game = function () {
                     break;
                 case _macro2.default.StateGame:
                     if (this.reachDoor()) {
-                        window.g.music.pauseBg();
+                        window.g.gameAudio.pauseMusic('bg.mp3');
                         window.g.gameState = _macro2.default.StateReachDoor;
                         setTimeout(function () {
                             _this5.levelUp();
                         }, 2 * 1000);
-                        window.g.music.win();
+                        window.g.gameAudio.play('win.mp3');
                         return;
                     }
                     if (this.momCatchChild()) {
-                        window.g.music.pauseBg();
-                        window.g.music.lose();
+                        window.g.gameAudio.pauseMusic('bg.mp3');
+                        window.g.gameAudio.play('lose.mp3');
                         window.g.gameState = _macro2.default.StateGameOver;
                         window.g.pageMgr.show('PageEnd');
                         return;
@@ -21021,7 +21023,8 @@ var ResMgr = function () {
         key: 'loadRes',
         value: function loadRes(callback) {
             this.loadImgs(function () {
-                window.g.music.loadMusics(callback);
+                //window.g.music.loadMusics(callback)
+                window.g.gameAudio.loadAll(callback);
             });
         }
     }, {
@@ -21162,7 +21165,131 @@ var Music = function () {
 }();
 
 exports.default = Music;
-},{"./tool":"../src/tool.js"}],"../src/milk.js":[function(require,module,exports) {
+},{"./tool":"../src/tool.js"}],"../src/gameAudio.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var musicConfig = {
+    'bg.mp3': { loop: true },
+    'win.mp3': { loop: false },
+    'lose.mp3': { loop: false },
+    'click.wav': { loop: false }
+};
+
+var GameAudio = function () {
+    function GameAudio() {
+        _classCallCheck(this, GameAudio);
+
+        this.buffers = {};
+        this.musics = {};
+        this.clips = {};
+
+        this.loadedNum = 0;
+        try {
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            this.ac = new window.AudioContext();
+        } catch (e) {
+            console.log('Error', 'Not Support Web Audio API');
+        }
+    }
+
+    _createClass(GameAudio, [{
+        key: 'loadAll',
+        value: function loadAll(callback) {
+            var _this = this;
+
+            var keys = Object.keys(musicConfig);
+            keys.forEach(function (name) {
+                _this.loadMusic(name, function () {
+                    _this.loadedNum++;
+                    if (_this.loadedNum === keys.length) {
+                        callback();
+                    }
+                });
+            });
+        }
+    }, {
+        key: 'loadMusic',
+        value: function loadMusic(name, success) {
+            var _this2 = this;
+
+            var req = new XMLHttpRequest();
+            req.open('GET', name, true);
+            req.responseType = 'arraybuffer';
+            req.onload = function () {
+                _this2.ac.decodeAudioData(req.response, function (buffer) {
+                    _this2.buffers[name] = buffer;
+                    if (success) success();
+                }, function () {
+                    console.log('Load Music Buff Error');
+                });
+            };
+            req.send();
+        }
+    }, {
+        key: 'createSource',
+        value: function createSource(buffer) {
+            var source = this.ac.createBufferSource();
+            source.buffer = buffer;
+            var gainNode = this.ac.createGain();
+            source.connect(gainNode);
+            gainNode.connect(this.ac.destination);
+            return { source: source, gainNode: gainNode };
+        }
+    }, {
+        key: 'play',
+        value: function play(name) {
+            var cfg = musicConfig[name];
+            if (!cfg) return;
+            if (cfg.loop) this.playMusic(name);else this.playClip(name);
+        }
+    }, {
+        key: 'playMusic',
+        value: function playMusic(name) {
+            var music = this.musics[name];
+            if (!music) {
+                var buffer = this.buffers[name];
+                if (!buffer) return;
+                music = this.createSource(buffer);
+                this.musics[name] = music;
+                music.source.loop = true;
+                music.gainNode.gain.value = 0.5;
+                music.source.start();
+            } else {
+                music.gainNode.connect(this.ac.destination);
+            }
+        }
+    }, {
+        key: 'playClip',
+        value: function playClip(name) {
+            var buffer = this.buffers[name];
+            if (!buffer) return;
+            var clip = this.createSource(buffer);
+            this.clips[name] = clip;
+            clip.gainNode.gain.value = 0.8;
+            clip.source.start();
+        }
+    }, {
+        key: 'pauseMusic',
+        value: function pauseMusic(name) {
+            var music = this.musics[name];
+            if (!music) return;
+            music.gainNode.disconnect();
+        }
+    }]);
+
+    return GameAudio;
+}();
+
+exports.default = GameAudio;
+},{}],"../src/milk.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21543,13 +21670,18 @@ var PageStart = function (_Page) {
             pt: 20,
             color: 'white'
         };
-        _this.rectInfo = undefined;
+        _this.setRectInfo();
         return _this;
     }
 
     _createClass(PageStart, [{
         key: 'update',
         value: function update(elapsed) {
+            this.setRectInfo();
+        }
+    }, {
+        key: 'setRectInfo',
+        value: function setRectInfo() {
             this.rectInfo = {
                 x: _tool2.default.gameWidth() / 2 - this.gameTextInfo.text.length * this.gameTextInfo.pt / 2,
                 y: _tool2.default.gameHeight() / 2 - 1.5 * this.gameTextInfo.pt,
@@ -21565,6 +21697,7 @@ var PageStart = function (_Page) {
     }, {
         key: 'drawStart',
         value: function drawStart(context) {
+            if (!this.rectInfo) return;
             var x = _tool2.default.gameWidth() / 2;
             var y = _tool2.default.gameHeight() / 2;
             context.save();
@@ -21836,7 +21969,7 @@ var PageLoad = function (_Page) {
                 this.pass += elapsed;
             } else {
                 this.end = true;
-                window.g.gameEventListener.dispatch(_macro2.default.EventLoad);
+                window.g.gameEventListener.dispatch(_macro2.default.EventLoadFinish);
             }
             this.load.update(elapsed);
         }
@@ -21981,6 +22114,10 @@ var _music = require('./music');
 
 var _music2 = _interopRequireDefault(_music);
 
+var _gameAudio = require('./gameAudio');
+
+var _gameAudio2 = _interopRequireDefault(_gameAudio);
+
 var _map = require('./map');
 
 var _map2 = _interopRequireDefault(_map);
@@ -22010,6 +22147,7 @@ var Global = function () {
         this.resMgr = new _resMgr2.default();
         this.music = new _music2.default();
         this.map = new _map2.default();
+        this.gameAudio = new _gameAudio2.default();
         this.context = undefined;
         this.gameEventListener = new _gameEventListener2.default();
         this.pageMgr = new _pageMgr2.default();
@@ -22029,7 +22167,7 @@ var g = new Global();
 window.g = g;
 
 exports.default = { g: g };
-},{"./resMgr":"../src/resMgr.js","./music":"../src/music.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
+},{"./resMgr":"../src/resMgr.js","./music":"../src/music.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
 
 'use strict';
 
@@ -22240,7 +22378,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49653' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49210' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

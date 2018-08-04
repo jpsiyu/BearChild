@@ -1,5 +1,6 @@
 import ResMgr from './resMgr'
 import Music from './music'
+import GameAudio from './gameAudio'
 import Map from './map'
 import macro from './macro'
 import GameEventListener from './gameEventListener'
@@ -12,6 +13,7 @@ class Global {
         this.resMgr = new ResMgr()
         this.music = new Music()
         this.map = new Map()
+        this.gameAudio = new GameAudio()
         this.context = undefined
         this.gameEventListener = new GameEventListener()
         this.pageMgr = new PageMgr()

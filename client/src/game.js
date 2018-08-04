@@ -23,7 +23,7 @@ class Game {
 
         window.g.gameEventListener.register(macro.EventRestart, this, () => { this.restartGame() })
         window.g.gameEventListener.register(macro.EventReady, this, () => { this.readyForGame() })
-        window.g.gameEventListener.register(macro.EventLoad, this, () => { this.startLoad() })
+        window.g.gameEventListener.register(macro.EventLoadFinish, this, () => { this.loadFinish() })
 
         window.requestAnimationFrame(this.frame)
     }
@@ -31,12 +31,12 @@ class Game {
     startLoad() {
         window.g.gameState = macro.StateLoad
         window.g.resMgr.loadRes(() => {
-            this.loadFlag++
             this.loadFinish()
         })
     }
 
     loadFinish() {
+        this.loadFlag++
         if (this.loadFlag >= 2)
             this.readyForGame()
     }
@@ -61,7 +61,7 @@ class Game {
     }
 
     resetGame() {
-        window.g.music.playBg()
+        window.g.gameAudio.play('bg.mp3')
         window.g.map.reset()
 
         this.grid = new Grid()
@@ -128,15 +128,15 @@ class Game {
                 break
             case macro.StateGame:
                 if (this.reachDoor()) {
-                    window.g.music.pauseBg()
+                    window.g.gameAudio.pauseMusic('bg.mp3')
                     window.g.gameState = macro.StateReachDoor
                     setTimeout(() => { this.levelUp() }, 2 * 1000)
-                    window.g.music.win()
+                    window.g.gameAudio.play('win.mp3')
                     return
                 }
                 if (this.momCatchChild()) {
-                    window.g.music.pauseBg()
-                    window.g.music.lose()
+                    window.g.gameAudio.pauseMusic('bg.mp3')
+                    window.g.gameAudio.play('lose.mp3')
                     window.g.gameState = macro.StateGameOver
                     window.g.pageMgr.show('PageEnd')
                     return

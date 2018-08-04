@@ -69,6 +69,7 @@ class Controller extends Element {
     }
 
     arrowRightClick() {
+        window.g.gameAudio.play('click.wav')
         const c = this.childHandler()
         if (c) {
             c.moveRight()
@@ -76,6 +77,7 @@ class Controller extends Element {
     }
 
     arrowUpClick() {
+        window.g.gameAudio.play('click.wav')
         const c = this.childHandler()
         if (c) {
             c.moveUp()

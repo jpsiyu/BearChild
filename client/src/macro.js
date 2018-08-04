@@ -13,6 +13,6 @@ export default {
 
     EventRestart: 'EventRestart',
     EventReady: 'EventReady',
-    EventLoad: 'EventLoad',
+    EventLoadFinish: 'EventLoadFinish',
     EventClick: 'EventClick',
 }
