@@ -35,10 +35,8 @@ class MainScene extends React.Component {
 
 
     startLoading() {
-        this.resizeCanvas()
         window.g.context = this.context
-        window.g.map.setResizeCallback(() => { this.resizeCanvas() })
-        window.g.map.init()
+        window.g.map.init(() => { this.resizeCanvas() })
 
         this.game = new Game(this.context)
         window.g.pageMgr.addListener()
@@ -58,7 +56,7 @@ class MainScene extends React.Component {
             this.canvas.height = this.canvas.width / macro.WidthHeightRatio
         }
 
-        const size = window.g.map.gridSize
+        const size = this.canvas.width / window.g.map.mapCfg.gridInRow
         this.canvas.height -= this.canvas.height % size
 
         updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2

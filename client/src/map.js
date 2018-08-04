@@ -13,14 +13,16 @@ class Map {
         this.resizeCallback = undefined
     }
 
-    setResizeCallback(resizeCallback){
-        this.resizeCallback = resizeCallback
+    init(resizeCallback){
+        if(resizeCallback) this.resizeCallback = resizeCallback
+
+        this.setMapCfg()
+        this.resizeCallback()
+        this.gridSize = window.g.context.canvas.width / this.mapCfg.gridInRow
     }
 
-    init(){
-        this.mapCfg = this.setMapCfg()
-        this.gridSize = window.g.context.canvas.width / this.mapCfg.gridInRow
-        this.resizeCallback()
+    setResizeCallback(resizeCallback){
+        this.resizeCallback = resizeCallback
     }
 
     setMapCfg() {
@@ -33,7 +35,7 @@ class Map {
                 curCfg = cfg
             }
         })
-        return curCfg
+        this.mapCfg = curCfg
     }
 
     reset() {
@@ -41,6 +43,15 @@ class Map {
         this.posList = []
         this.randomMilk()
         this.randomFence()
+    }
+
+    posExit(gridPos){
+        let exit = false
+        this.posList.forEach( gPos => {
+            if( gPos[0] === gridPos[0] && gPos[1] === gridPos[1])
+                exit = true
+        })
+        return exit
     }
 
     randomFence() {
@@ -53,7 +64,7 @@ class Map {
             const row = Math.round(Math.random() * tool.maxRow())
             const col = Math.round(Math.random() * tool.maxCol())
             const g = [row, col]
-            if (!this.posList.includes(g) && inLimit(row, col)) {
+            if (!this.posExit(g) && inLimit(row, col)) {
                 this.posList.push(g)
                 const pos = tool.grid2coord(row, col)
                 this.fences.push(new Fence(pos.x, pos.y))
@@ -71,7 +82,7 @@ class Map {
             const row = Math.round(Math.random() * tool.maxRow())
             const col = Math.round(Math.random() * tool.maxCol())
             const g = [row, col]
-            if (!this.posList.includes(g) && inLimit(row, col)) {
+            if (!this.posExit(g) && inLimit(row, col)) {
                 this.posList.push(g)
                 const pos = tool.grid2coord(row, col)
                 this.milks.push(new Milk(pos.x, pos.y))

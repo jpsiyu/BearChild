@@ -21317,16 +21317,18 @@ var Map = function () {
     }
 
     _createClass(Map, [{
+        key: 'init',
+        value: function init(resizeCallback) {
+            if (resizeCallback) this.resizeCallback = resizeCallback;
+
+            this.setMapCfg();
+            this.resizeCallback();
+            this.gridSize = window.g.context.canvas.width / this.mapCfg.gridInRow;
+        }
+    }, {
         key: 'setResizeCallback',
         value: function setResizeCallback(resizeCallback) {
             this.resizeCallback = resizeCallback;
-        }
-    }, {
-        key: 'init',
-        value: function init() {
-            this.mapCfg = this.setMapCfg();
-            this.gridSize = window.g.context.canvas.width / this.mapCfg.gridInRow;
-            this.resizeCallback();
         }
     }, {
         key: 'setMapCfg',
@@ -21340,7 +21342,7 @@ var Map = function () {
                     curCfg = cfg;
                 }
             });
-            return curCfg;
+            this.mapCfg = curCfg;
         }
     }, {
         key: 'reset',
@@ -21349,6 +21351,15 @@ var Map = function () {
             this.posList = [];
             this.randomMilk();
             this.randomFence();
+        }
+    }, {
+        key: 'posExit',
+        value: function posExit(gridPos) {
+            var exit = false;
+            this.posList.forEach(function (gPos) {
+                if (gPos[0] === gridPos[0] && gPos[1] === gridPos[1]) exit = true;
+            });
+            return exit;
         }
     }, {
         key: 'randomFence',
@@ -21362,7 +21373,7 @@ var Map = function () {
                 var row = Math.round(Math.random() * _tool2.default.maxRow());
                 var col = Math.round(Math.random() * _tool2.default.maxCol());
                 var g = [row, col];
-                if (!this.posList.includes(g) && inLimit(row, col)) {
+                if (!this.posExit(g) && inLimit(row, col)) {
                     this.posList.push(g);
                     var pos = _tool2.default.grid2coord(row, col);
                     this.fences.push(new _fence2.default(pos.x, pos.y));
@@ -21381,7 +21392,7 @@ var Map = function () {
                 var row = Math.round(Math.random() * _tool2.default.maxRow());
                 var col = Math.round(Math.random() * _tool2.default.maxCol());
                 var g = [row, col];
-                if (!this.posList.includes(g) && inLimit(row, col)) {
+                if (!this.posExit(g) && inLimit(row, col)) {
                     this.posList.push(g);
                     var pos = _tool2.default.grid2coord(row, col);
                     this.milks.push(new _milk2.default(pos.x, pos.y));
@@ -22096,12 +22107,10 @@ var MainScene = function (_React$Component) {
         value: function startLoading() {
             var _this3 = this;
 
-            this.resizeCanvas();
             window.g.context = this.context;
-            window.g.map.setResizeCallback(function () {
+            window.g.map.init(function () {
                 _this3.resizeCanvas();
             });
-            window.g.map.init();
 
             this.game = new _game2.default(this.context);
             window.g.pageMgr.addListener();
@@ -22122,7 +22131,7 @@ var MainScene = function (_React$Component) {
                 this.canvas.height = this.canvas.width / _macro2.default.WidthHeightRatio;
             }
 
-            var size = window.g.map.gridSize;
+            var size = this.canvas.width / window.g.map.mapCfg.gridInRow;
             this.canvas.height -= this.canvas.height % size;
 
             updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2;
