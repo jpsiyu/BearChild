@@ -18,25 +18,27 @@ class MainScene extends React.Component {
 
     componentDidMount() {
         this.div = this.refs.div
-        this.div.addEventListener('touchstart', event => { event.preventDefault() })
         this.canvas = this.refs.canvasGame
         this.canvas.focus()
         this.context = this.canvas.getContext('2d')
-        window.g.context = this.context
 
-        this.resizeCanvas()
-
+        this.div.addEventListener('touchstart', event => { event.preventDefault() })
         document.addEventListener('visibilitychange', () => {
             document.hidden ? window.g.music.pauseBg() : window.g.music.playBg()
             this.game.setPause(document.hidden)
         })
         window.addEventListener('resize', ev => { this.resizeCanvas() })
         window.addEventListener('orientationchange', ev => { setTimeout(() => { this.resizeCanvas() }, 200); })
-
         this.startLoading()
     }
 
+
+
     startLoading() {
+        window.g.context = this.context
+        window.g.map.setResizeCallback(() => { this.resizeCanvas() })
+        window.g.map.init()
+
         this.game = new Game(this.context)
         window.g.pageMgr.addListener()
         window.g.pageMgr.show('PageLoad')
@@ -55,7 +57,7 @@ class MainScene extends React.Component {
             this.canvas.height = this.canvas.width / macro.WidthHeightRatio
         }
 
-        const size = this.canvas.width / macro.GridNumInRow
+        const size = window.g.map.gridSize
         this.canvas.height -= this.canvas.height % size
 
         updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2

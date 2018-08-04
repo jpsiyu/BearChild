@@ -14,7 +14,6 @@ class Game {
         this.previous = undefined
         this.frame = this.frame.bind(this)
         this.fps = 0
-        this.level = 1
         this.pause = false
         this.child = undefined
         this.controller = this.initController()
@@ -52,37 +51,33 @@ class Game {
         window.g.pageMgr.hide('PageLoad')
         window.g.pageMgr.show('PageStart')
         window.g.gameState = macro.StateReady
-        this.level = 1
+        window.g.gameLv = 1
     }
 
     restartGame() {
         window.g.gameState = macro.StateGame
-        this.level = 1
-        this.level = 1
+        window.g.gameLv = 1
         this.resetGame()
     }
 
     resetGame() {
         window.g.music.playBg()
-        this.grid = new Grid()
+        window.g.map.reset()
 
+        this.grid = new Grid()
         let pos = tool.grid2coord(tool.maxRow(), 2)
         this.child = new Child(pos.x, pos.y)
-
         pos = tool.grid2coord(tool.maxRow(), 0)
         this.mom = new Mom(pos.x, pos.y)
-
         this.door = new Door(
             this.context.canvas.width - tool.gridSize(),
             tool.gridSize(),
         )
-
-        window.g.map.reset()
     }
 
     levelUp() {
         window.g.gameState = macro.StateLevelUp
-        this.level += 1
+        window.g.gameLv += 1
         this.resetGame()
         setTimeout(() => {
             window.g.gameState = macro.StateGame
@@ -174,7 +169,7 @@ class Game {
                 this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 drawing.drawLabel(
                     this.context,
-                    `Level ${this.level}`,
+                    `Level ${window.g.gameLv}`,
                     this.context.canvas.width / 2,
                     this.context.canvas.height / 2, { pt: 30, color: 'white' }
                 )
@@ -192,7 +187,7 @@ class Game {
                 this.grid.drawMask(this.context)
                 this.door.draw(this.context)
 
-                this.levelIndicator.draw(this.context, this.level)
+                this.levelIndicator.draw(this.context, window.g.gameLv)
                 //this.fpsIndicator.draw(this.context, this.fps) 
                 this.controller.draw(this.context)
                 this.child.draw(this.context)

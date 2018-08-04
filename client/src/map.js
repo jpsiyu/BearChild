@@ -1,17 +1,43 @@
 import Milk from './milk'
 import Fence from './fence'
 import tool from './tool'
+import gameConfig from './gameConfig'
 
 class Map {
     constructor() {
         this.milks = []
         this.fences = []
         this.posList = []
-        this.milkNum = 14
-        this.fenceNum = 3
+        this.mapCfg = undefined
+        this.gridSize = undefined
+        this.resizeCallback = undefined
     }
 
-    reset(){
+    setResizeCallback(resizeCallback){
+        this.resizeCallback = resizeCallback
+    }
+
+    init(){
+        this.mapCfg = this.setMapCfg()
+        this.gridSize = window.g.context.canvas.width / this.mapCfg.gridInRow
+        this.resizeCallback()
+    }
+
+    setMapCfg() {
+        const lv = window.g.gameLv
+        let curCfg
+        let set = false
+        gameConfig.mapConfig.forEach(cfg => {
+            if (!set && lv <= cfg.lv) {
+                set = true
+                curCfg = cfg
+            }
+        })
+        return curCfg
+    }
+
+    reset() {
+        this.init()
         this.posList = []
         this.randomMilk()
         this.randomFence()
@@ -23,7 +49,7 @@ class Map {
             return col > 4 && col < tool.maxCol() - 4
         }
         const curLen = this.posList.length
-        while (this.posList.length < curLen + this.fenceNum) {
+        while (this.posList.length < curLen + this.mapCfg.fences) {
             const row = Math.round(Math.random() * tool.maxRow())
             const col = Math.round(Math.random() * tool.maxCol())
             const g = [row, col]
@@ -41,7 +67,7 @@ class Map {
             return col > 2 && col < tool.maxCol() - 2
         }
         const curLen = this.posList.length
-        while (this.posList.length < curLen + this.milkNum) {
+        while (this.posList.length < curLen + this.mapCfg.milks) {
             const row = Math.round(Math.random() * tool.maxRow())
             const col = Math.round(Math.random() * tool.maxCol())
             const g = [row, col]

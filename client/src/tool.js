@@ -1,4 +1,5 @@
 import macro from './macro'
+import gameConfig from './gameConfig'
 
 const grid2coord = (row, col) => {
     const x = gridSize() / 2 + col * gridSize()
@@ -31,8 +32,7 @@ const distancePos = (pos1, pos2) => {
 }
 
 const gridSize = () => {
-    const context = window.g.context
-    return context.canvas.width / macro.GridNumInRow
+    return window.g.map.gridSize
 }
 
 const gameWidth = () => {

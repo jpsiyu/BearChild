@@ -1,8 +1,6 @@
 export default {
     Visiable: 3,
     WidthHeightRatio : 2.2,
-    GridNumInRow : 18,
-    GridNumInCol: 8,
 
     StateLoad: 'StateLoad',
     StateReady: 'StateReady',

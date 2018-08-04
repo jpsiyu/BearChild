@@ -19756,8 +19756,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = {
     Visiable: 3,
     WidthHeightRatio: 2.2,
-    GridNumInRow: 18,
-    GridNumInCol: 8,
 
     StateLoad: 'StateLoad',
     StateReady: 'StateReady',
@@ -19773,6 +19771,17 @@ exports.default = {
     EventLoad: 'EventLoad',
     EventClick: 'EventClick'
 };
+},{}],"../src/gameConfig.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var mapConfig = [{ lv: 1, gridInRow: 8, milks: 1, fences: 0 }, { lv: 5, gridInRow: 12, milks: 3, fences: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3 }];
+
+exports.default = {
+    mapConfig: mapConfig
+};
 },{}],"../src/tool.js":[function(require,module,exports) {
 'use strict';
 
@@ -19783,6 +19792,10 @@ Object.defineProperty(exports, "__esModule", {
 var _macro = require('./macro');
 
 var _macro2 = _interopRequireDefault(_macro);
+
+var _gameConfig = require('./gameConfig');
+
+var _gameConfig2 = _interopRequireDefault(_gameConfig);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19813,8 +19826,7 @@ var distancePos = function distancePos(pos1, pos2) {
 };
 
 var gridSize = function gridSize() {
-    var context = window.g.context;
-    return context.canvas.width / _macro2.default.GridNumInRow;
+    return window.g.map.gridSize;
 };
 
 var gameWidth = function gameWidth() {
@@ -19842,7 +19854,7 @@ exports.default = {
     gameHeight: gameHeight,
     isSmartPhone: isSmartPhone
 };
-},{"./macro":"../src/macro.js"}],"../src/drawing.js":[function(require,module,exports) {
+},{"./macro":"../src/macro.js","./gameConfig":"../src/gameConfig.js"}],"../src/drawing.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20761,7 +20773,6 @@ var Game = function () {
         this.previous = undefined;
         this.frame = this.frame.bind(this);
         this.fps = 0;
-        this.level = 1;
         this.pause = false;
         this.child = undefined;
         this.controller = this.initController();
@@ -20815,37 +20826,33 @@ var Game = function () {
             window.g.pageMgr.hide('PageLoad');
             window.g.pageMgr.show('PageStart');
             window.g.gameState = _macro2.default.StateReady;
-            this.level = 1;
+            window.g.gameLv = 1;
         }
     }, {
         key: 'restartGame',
         value: function restartGame() {
             window.g.gameState = _macro2.default.StateGame;
-            this.level = 1;
-            this.level = 1;
+            window.g.gameLv = 1;
             this.resetGame();
         }
     }, {
         key: 'resetGame',
         value: function resetGame() {
             window.g.music.playBg();
-            this.grid = new _grid.Grid();
+            window.g.map.reset();
 
+            this.grid = new _grid.Grid();
             var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 2);
             this.child = new _child2.default(pos.x, pos.y);
-
             pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 0);
             this.mom = new _mom2.default(pos.x, pos.y);
-
             this.door = new _door2.default(this.context.canvas.width - _tool2.default.gridSize(), _tool2.default.gridSize());
-
-            window.g.map.reset();
         }
     }, {
         key: 'levelUp',
         value: function levelUp() {
             window.g.gameState = _macro2.default.StateLevelUp;
-            this.level += 1;
+            window.g.gameLv += 1;
             this.resetGame();
             setTimeout(function () {
                 window.g.gameState = _macro2.default.StateGame;
@@ -20950,7 +20957,7 @@ var Game = function () {
                     break;
                 case _macro2.default.StateLevelUp:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
-                    _drawing2.default.drawLabel(this.context, 'Level ' + this.level, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
+                    _drawing2.default.drawLabel(this.context, 'Level ' + window.g.gameLv, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
                     break;
                 default:
                     this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
@@ -20965,7 +20972,7 @@ var Game = function () {
                     this.grid.drawMask(this.context);
                     this.door.draw(this.context);
 
-                    this.levelIndicator.draw(this.context, this.level);
+                    this.levelIndicator.draw(this.context, window.g.gameLv);
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.controller.draw(this.context);
                     this.child.draw(this.context);
@@ -21284,6 +21291,10 @@ var _tool = require('./tool');
 
 var _tool2 = _interopRequireDefault(_tool);
 
+var _gameConfig = require('./gameConfig');
+
+var _gameConfig2 = _interopRequireDefault(_gameConfig);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21295,13 +21306,41 @@ var Map = function () {
         this.milks = [];
         this.fences = [];
         this.posList = [];
-        this.milkNum = 14;
-        this.fenceNum = 3;
+        this.mapCfg = undefined;
+        this.gridSize = undefined;
+        this.resizeCallback = undefined;
     }
 
     _createClass(Map, [{
+        key: 'setResizeCallback',
+        value: function setResizeCallback(resizeCallback) {
+            this.resizeCallback = resizeCallback;
+        }
+    }, {
+        key: 'init',
+        value: function init() {
+            this.mapCfg = this.setMapCfg();
+            this.gridSize = window.g.context.canvas.width / this.mapCfg.gridInRow;
+            this.resizeCallback();
+        }
+    }, {
+        key: 'setMapCfg',
+        value: function setMapCfg() {
+            var lv = window.g.gameLv;
+            var curCfg = void 0;
+            var set = false;
+            _gameConfig2.default.mapConfig.forEach(function (cfg) {
+                if (!set && lv <= cfg.lv) {
+                    set = true;
+                    curCfg = cfg;
+                }
+            });
+            return curCfg;
+        }
+    }, {
         key: 'reset',
         value: function reset() {
+            this.init();
             this.posList = [];
             this.randomMilk();
             this.randomFence();
@@ -21314,7 +21353,7 @@ var Map = function () {
                 return col > 4 && col < _tool2.default.maxCol() - 4;
             };
             var curLen = this.posList.length;
-            while (this.posList.length < curLen + this.fenceNum) {
+            while (this.posList.length < curLen + this.mapCfg.fences) {
                 var row = Math.round(Math.random() * _tool2.default.maxRow());
                 var col = Math.round(Math.random() * _tool2.default.maxCol());
                 var g = [row, col];
@@ -21333,7 +21372,7 @@ var Map = function () {
                 return col > 2 && col < _tool2.default.maxCol() - 2;
             };
             var curLen = this.posList.length;
-            while (this.posList.length < curLen + this.milkNum) {
+            while (this.posList.length < curLen + this.mapCfg.milks) {
                 var row = Math.round(Math.random() * _tool2.default.maxRow());
                 var col = Math.round(Math.random() * _tool2.default.maxCol());
                 var g = [row, col];
@@ -21350,7 +21389,7 @@ var Map = function () {
 }();
 
 exports.default = Map;
-},{"./milk":"../src/milk.js","./fence":"../src/fence.js","./tool":"../src/tool.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
+},{"./milk":"../src/milk.js","./fence":"../src/fence.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21912,6 +21951,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _resMgr = require('./resMgr');
 
 var _resMgr2 = _interopRequireDefault(_resMgr);
@@ -21940,17 +21981,29 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Global = function Global() {
-    _classCallCheck(this, Global);
+var Global = function () {
+    function Global() {
+        _classCallCheck(this, Global);
 
-    this.gameState = _macro2.default.StateLoad;
-    this.resMgr = new _resMgr2.default();
-    this.music = new _music2.default();
-    this.map = new _map2.default();
-    this.context = undefined;
-    this.gameEventListener = new _gameEventListener2.default();
-    this.pageMgr = new _pageMgr2.default();
-};
+        this.gameState = _macro2.default.StateLoad;
+        this.gameLv = 1;
+        this.resMgr = new _resMgr2.default();
+        this.music = new _music2.default();
+        this.map = new _map2.default();
+        this.context = undefined;
+        this.gameEventListener = new _gameEventListener2.default();
+        this.pageMgr = new _pageMgr2.default();
+    }
+
+    _createClass(Global, [{
+        key: 'init',
+        value: function init() {
+            this.map.init();
+        }
+    }]);
+
+    return Global;
+}();
 
 var g = new Global();
 window.g = g;
@@ -22015,16 +22068,13 @@ var MainScene = function (_React$Component) {
             var _this2 = this;
 
             this.div = this.refs.div;
-            this.div.addEventListener('touchstart', function (event) {
-                event.preventDefault();
-            });
             this.canvas = this.refs.canvasGame;
             this.canvas.focus();
             this.context = this.canvas.getContext('2d');
-            window.g.context = this.context;
 
-            this.resizeCanvas();
-
+            this.div.addEventListener('touchstart', function (event) {
+                event.preventDefault();
+            });
             document.addEventListener('visibilitychange', function () {
                 document.hidden ? window.g.music.pauseBg() : window.g.music.playBg();
                 _this2.game.setPause(document.hidden);
@@ -22037,12 +22087,19 @@ var MainScene = function (_React$Component) {
                     _this2.resizeCanvas();
                 }, 200);
             });
-
             this.startLoading();
         }
     }, {
         key: 'startLoading',
         value: function startLoading() {
+            var _this3 = this;
+
+            window.g.context = this.context;
+            window.g.map.setResizeCallback(function () {
+                _this3.resizeCanvas();
+            });
+            window.g.map.init();
+
             this.game = new _game2.default(this.context);
             window.g.pageMgr.addListener();
             window.g.pageMgr.show('PageLoad');
@@ -22062,7 +22119,7 @@ var MainScene = function (_React$Component) {
                 this.canvas.height = this.canvas.width / _macro2.default.WidthHeightRatio;
             }
 
-            var size = this.canvas.width / _macro2.default.GridNumInRow;
+            var size = window.g.map.gridSize;
             this.canvas.height -= this.canvas.height % size;
 
             updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2;

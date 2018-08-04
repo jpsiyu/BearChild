@@ -8,12 +8,17 @@ import PageMgr from './pageMgr'
 class Global {
     constructor() {
         this.gameState = macro.StateLoad
+        this.gameLv = 1
         this.resMgr = new ResMgr()
         this.music = new Music()
         this.map = new Map()
         this.context = undefined
         this.gameEventListener = new GameEventListener()
         this.pageMgr = new PageMgr()
+    }
+
+    init(){
+        this.map.init()
     }
 }
 
