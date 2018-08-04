@@ -20821,7 +20821,6 @@ var Game = function () {
         key: 'loadFinish',
         value: function loadFinish() {
             this.loadFlag++;
-            console.log('load finish', this.loadFlag);
             if (this.loadFlag >= 2) this.readyForGame();
         }
     }, {

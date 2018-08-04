@@ -37,7 +37,6 @@ class Game {
 
     loadFinish() {
         this.loadFlag++
-        console.log('load finish', this.loadFlag)
         if (this.loadFlag >= 2)
             this.readyForGame()
     }
