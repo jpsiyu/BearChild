@@ -35,8 +35,9 @@ class GameAudio {
     }
 
     loadMusic(name, success) {
+        /*
         axios.get(name, {responseType: 'arraybuffer'}).then( response => {
-            this.ac.decodeAudioData(req.response,
+            this.ac.decodeAudioData(response,
                 (buffer) => {
                     this.buffers[name] = buffer
                     if (success) success()
@@ -44,7 +45,7 @@ class GameAudio {
                 () => { console.log('Load Music Buff Error') }
             )
         })
-        /*
+        */
         const req = new XMLHttpRequest()
         req.open('GET', name, true)
         req.responseType = 'arraybuffer'
@@ -58,7 +59,6 @@ class GameAudio {
             )
         }
         req.send()
-        */
     }
 
     createSource(buffer) {
