@@ -22738,29 +22738,30 @@ var GameAudio = function () {
         value: function loadMusic(name, success) {
             var _this2 = this;
 
+            _axios2.default.get(name, { responseType: 'arraybuffer' }).then(function (response) {
+                _this2.ac.decodeAudioData(response.data, function (buffer) {
+                    _this2.buffers[name] = buffer;
+                    if (success) success();
+                }, function () {
+                    console.log('Load Music Buff Error');
+                });
+            });
             /*
-            axios.get(name, {responseType: 'arraybuffer'}).then( response => {
-                this.ac.decodeAudioData(response,
+            const req = new XMLHttpRequest()
+            req.open('GET', name, true)
+            req.responseType = 'arraybuffer'
+            req.onload = () => {
+                console.log(req.response)
+                this.ac.decodeAudioData(req.response,
                     (buffer) => {
                         this.buffers[name] = buffer
                         if (success) success()
                     },
                     () => { console.log('Load Music Buff Error') }
                 )
-            })
+            }
+            req.send()
             */
-            var req = new XMLHttpRequest();
-            req.open('GET', name, true);
-            req.responseType = 'arraybuffer';
-            req.onload = function () {
-                _this2.ac.decodeAudioData(req.response, function (buffer) {
-                    _this2.buffers[name] = buffer;
-                    if (success) success();
-                }, function () {
-                    console.log('Load Music Buff Error');
-                });
-            };
-            req.send();
         }
     }, {
         key: 'createSource',
