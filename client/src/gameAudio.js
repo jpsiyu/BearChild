@@ -1,4 +1,5 @@
 import axios from 'axios'
+import pjson from '../../package.json'
 
 const musicConfig = {
     'bg.mp3': { loop: true },
@@ -35,7 +36,8 @@ class GameAudio {
     }
 
     loadMusic(name, success) {
-        axios.get(name, { responseType: 'arraybuffer', cache: false }).then(response => {
+        const url = pjson.production ? pjson.ip : pjson.localHost
+        axios.get(url+name, { responseType: 'arraybuffer', cache: false }).then(response => {
             this.ac.decodeAudioData(response.data,
                 (buffer) => {
                     this.buffers[name] = buffer
@@ -43,6 +45,8 @@ class GameAudio {
                 },
                 () => { console.log('Load Music Buff Error') }
             )
+        }).catch( error => {
+            console.log('Error', error)
         })
     }
 

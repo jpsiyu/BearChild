@@ -6,6 +6,7 @@ const cors = require('cors')
 const app = express()
 app.use(cors())
 app.use('*', (req, res, next) => {
+    console.log(req.originalUrl)
     next()
 })
 
@@ -17,6 +18,7 @@ app.use(prefix(), express.static(path.resolve(__dirname, '../client/music')))
 app.use(prefix(), express.static(path.resolve(__dirname, '../client/images')))
 
 app.use('*', (req, res) => {
+    console.log('404', req.originalUrl)
     res.status(404).json('404, Hey, Page Not Found!')
 })
 

@@ -12,6 +12,8 @@
   "production": false,
   "port": 3001,
   "prefix": "/bearchild",
+  "ip": "http://34.209.241.122/bearchild/",
+  "localHost": "http://localhost/bearchild/",
   "author": "",
   "license": "ISC",
   "dependencies": {

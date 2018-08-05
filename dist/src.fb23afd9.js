@@ -22684,7 +22684,36 @@ module.exports.default = axios;
 
 },{"./utils":"../../node_modules/axios/lib/utils.js","./helpers/bind":"../../node_modules/axios/lib/helpers/bind.js","./core/Axios":"../../node_modules/axios/lib/core/Axios.js","./defaults":"../../node_modules/axios/lib/defaults.js","./cancel/Cancel":"../../node_modules/axios/lib/cancel/Cancel.js","./cancel/CancelToken":"../../node_modules/axios/lib/cancel/CancelToken.js","./cancel/isCancel":"../../node_modules/axios/lib/cancel/isCancel.js","./helpers/spread":"../../node_modules/axios/lib/helpers/spread.js"}],"../../node_modules/axios/index.js":[function(require,module,exports) {
 module.exports = require('./lib/axios');
-},{"./lib/axios":"../../node_modules/axios/lib/axios.js"}],"../src/gameAudio.js":[function(require,module,exports) {
+},{"./lib/axios":"../../node_modules/axios/lib/axios.js"}],"../../package.json":[function(require,module,exports) {
+module.exports = {
+  "name": "BearChild",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server/app.js --watch ./server -V",
+    "watch": "parcel watch client/public/index.html --public-url /bearchild"
+  },
+  "keywords": [],
+  "production": false,
+  "port": 3001,
+  "prefix": "/bearchild",
+  "ip": "http://34.209.241.122/bearchild/",
+  "localHost": "http://localhost/bearchild/",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "parcel": "^1.9.7",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "redux-devtools-extension": "^2.13.5"
+  }
+};
+},{}],"../src/gameAudio.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22696,6 +22725,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _axios = require('axios');
 
 var _axios2 = _interopRequireDefault(_axios);
+
+var _package = require('../../package.json');
+
+var _package2 = _interopRequireDefault(_package);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22745,13 +22778,16 @@ var GameAudio = function () {
         value: function loadMusic(name, success) {
             var _this2 = this;
 
-            _axios2.default.get(name, { responseType: 'arraybuffer', cache: false }).then(function (response) {
+            var url = _package2.default.production ? _package2.default.ip : _package2.default.localHost;
+            _axios2.default.get(url + name, { responseType: 'arraybuffer', cache: false }).then(function (response) {
                 _this2.ac.decodeAudioData(response.data, function (buffer) {
                     _this2.buffers[name] = buffer;
                     if (success) success();
                 }, function () {
                     console.log('Load Music Buff Error');
                 });
+            }).catch(function (error) {
+                console.log('Error', error);
             });
         }
     }, {
@@ -22810,7 +22846,7 @@ var GameAudio = function () {
 }();
 
 exports.default = GameAudio;
-},{"axios":"../../node_modules/axios/index.js"}],"../src/milk.js":[function(require,module,exports) {
+},{"axios":"../../node_modules/axios/index.js","../../package.json":"../../package.json"}],"../src/milk.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
