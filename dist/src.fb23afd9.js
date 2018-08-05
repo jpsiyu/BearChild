@@ -22738,7 +22738,7 @@ var GameAudio = function () {
         value: function loadMusic(name, success) {
             var _this2 = this;
 
-            _axios2.default.get(name, { responseType: 'arraybuffer' }).then(function (response) {
+            _axios2.default.get(name, { responseType: 'arraybuffer', cache: false }).then(function (response) {
                 _this2.ac.decodeAudioData(response.data, function (buffer) {
                     _this2.buffers[name] = buffer;
                     if (success) success();
@@ -23886,7 +23886,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '55497' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '54768' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

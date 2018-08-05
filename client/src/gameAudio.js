@@ -35,7 +35,7 @@ class GameAudio {
     }
 
     loadMusic(name, success) {
-        axios.get(name, {responseType: 'arraybuffer'}).then( response => {
+        axios.get(name, { responseType: 'arraybuffer', cache: false }).then(response => {
             this.ac.decodeAudioData(response.data,
                 (buffer) => {
                     this.buffers[name] = buffer
