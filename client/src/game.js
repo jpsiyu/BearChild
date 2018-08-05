@@ -159,14 +159,13 @@ class Game {
     }
 
     draw() {
+        this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
         switch (window.g.gameState) {
             case macro.StateLoad:
                 break
             case macro.StateReady:
-                this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 break
             case macro.StateLevelUp:
-                this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 drawing.drawLabel(
                     this.context,
                     `Level ${window.g.gameLv}`,
@@ -175,7 +174,6 @@ class Game {
                 )
                 break
             default:
-                this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
                 this.grid.draw(this.context)
                 window.g.map.milks.forEach(milk => {
                     milk.draw(this.context)

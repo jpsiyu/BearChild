@@ -20476,6 +20476,9 @@ var Indicator = function () {
         this.posCallback = posCallback;
         this.label = label;
         this.updatePos();
+        this.pass = 0;
+        this.dots = ['', '.', '..', '...'];
+        this.dot = '.';
     }
 
     _createClass(Indicator, [{
@@ -20495,6 +20498,10 @@ var Indicator = function () {
     }, {
         key: 'update',
         value: function update(elpased) {
+            this.pass += elpased;
+            var n = Math.round(this.pass / 0.2) % 4;
+            this.dot = this.dots[n];
+
             this.updatePos();
         }
     }, {
@@ -20504,13 +20511,15 @@ var Indicator = function () {
             ctx.strokeStyle = 'white';
             ctx.fillStyle = 'white';
             ctx.font = this.height + 'pt Arial';
-            var offset = ctx.measureText(this.label).width;
-            ctx.fillText(this.label, this.x, this.y + this.height - 1);
+            var t = this.label + this.dot;
+            var tl = ctx.measureText(this.label).width;
+            ctx.textAlign = 'left';
+            ctx.fillText(t, this.x - tl / 2, this.y - this.height * 0.5);
             ctx.beginPath();
-            ctx.rect(offset + this.x, this.y, this.width, this.height);
+            ctx.rect(-this.width / 2 + this.x, this.y, this.width, this.height);
             ctx.stroke();
             ctx.beginPath();
-            ctx.rect(offset + this.x, this.y, this.width * (cur / max), this.height);
+            ctx.rect(-this.width / 2 + this.x, this.y, this.width * (cur / max), this.height);
             ctx.fill();
             ctx.restore();
         }
@@ -20963,18 +20972,16 @@ var Game = function () {
         value: function draw() {
             var _this6 = this;
 
+            this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
             switch (window.g.gameState) {
                 case _macro2.default.StateLoad:
                     break;
                 case _macro2.default.StateReady:
-                    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     break;
                 case _macro2.default.StateLevelUp:
-                    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     _drawing2.default.drawLabel(this.context, 'Level ' + window.g.gameLv, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
                     break;
                 default:
-                    this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
                     this.grid.draw(this.context);
                     window.g.map.milks.forEach(function (milk) {
                         milk.draw(_this6.context);
@@ -23468,9 +23475,9 @@ var PageLoad = function (_Page) {
             var h = _tool2.default.gameHeight();
             var size = _tool2.default.viewUnit();
             return {
-                x: w / 3,
+                x: w / 2,
                 y: h / 2,
-                width: 4 * size,
+                width: 8 * size,
                 height: size / 3
             };
         }

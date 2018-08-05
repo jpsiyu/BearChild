@@ -3,13 +3,16 @@ class Indicator {
         this.posCallback = posCallback
         this.label = label
         this.updatePos()
+        this.pass = 0
+        this.dots = ['', '.', '..', '...']
+        this.dot = '.'
     }
 
-    setPosCallback(callback){
+    setPosCallback(callback) {
         this.posCallback = callback
     }
 
-    updatePos(){
+    updatePos() {
         const info = this.posCallback()
         this.x = info.x
         this.y = info.y
@@ -17,7 +20,11 @@ class Indicator {
         this.height = info.height
     }
 
-    update(elpased){
+    update(elpased) {
+        this.pass += elpased
+        const n = Math.round(this.pass / 0.2) % 4
+        this.dot = this.dots[n]
+
         this.updatePos()
     }
 
@@ -26,13 +33,15 @@ class Indicator {
         ctx.strokeStyle = 'white'
         ctx.fillStyle = 'white'
         ctx.font = `${this.height}pt Arial`
-        const offset = ctx.measureText(this.label).width
-        ctx.fillText(this.label, this.x, this.y + this.height - 1)
+        const t = this.label + this.dot
+        const tl = ctx.measureText(this.label).width
+        ctx.textAlign = 'left'
+        ctx.fillText(t, this.x - tl/2, this.y - this.height * 0.5)
         ctx.beginPath()
-        ctx.rect(offset + this.x, this.y, this.width, this.height)
+        ctx.rect(-this.width / 2 + this.x, this.y, this.width, this.height)
         ctx.stroke()
         ctx.beginPath()
-        ctx.rect(offset + this.x, this.y, this.width * (cur / max), this.height)
+        ctx.rect(-this.width / 2 + this.x, this.y, this.width * (cur / max), this.height)
         ctx.fill()
         ctx.restore()
     }
@@ -59,4 +68,4 @@ class NumberIndicator {
     }
 }
 
-export { Indicator, NumberIndicator}
+export { Indicator, NumberIndicator }

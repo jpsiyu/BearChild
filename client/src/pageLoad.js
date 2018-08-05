@@ -17,9 +17,9 @@ class PageLoad extends Page {
         const h = tool.gameHeight()
         const size = tool.viewUnit()
         return {
-            x: w / 3,
+            x: w / 2,
             y: h / 2,
-            width: 4 * size,
+            width: 8 * size,
             height: size / 3,
         }
     }
