@@ -22746,22 +22746,6 @@ var GameAudio = function () {
                     console.log('Load Music Buff Error');
                 });
             });
-            /*
-            const req = new XMLHttpRequest()
-            req.open('GET', name, true)
-            req.responseType = 'arraybuffer'
-            req.onload = () => {
-                console.log(req.response)
-                this.ac.decodeAudioData(req.response,
-                    (buffer) => {
-                        this.buffers[name] = buffer
-                        if (success) success()
-                    },
-                    () => { console.log('Load Music Buff Error') }
-                )
-            }
-            req.send()
-            */
         }
     }, {
         key: 'createSource',
