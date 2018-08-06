@@ -20115,7 +20115,7 @@ var Child = function (_Element) {
         _this.sprite = new _sprite2.default(2, 2, window.g.resMgr.getImg('child-roll'), { frameUpdateTime: 1 });
 
         _this.drinkMilk = false;
-        _this.drinkMilkTime = 2;
+        _this.drinkMilkTime = 1.5;
         _this.pass = 0;
         _this.angle = 0;
         _this.jumpPos = undefined;
@@ -20327,7 +20327,7 @@ var Mom = function (_Element) {
 
         var _this = _possibleConstructorReturn(this, (Mom.__proto__ || Object.getPrototypeOf(Mom)).call(this, x, y, radius));
 
-        _this.chaseSpeed = 80;
+        _this.chaseSpeed = radius * 3;
         _this.waitTime = 1;
         _this.waitPass = 0;
         _this.sprite = new _sprite2.default(2, 2, window.g.resMgr.getImg('mom-run'));
@@ -23929,7 +23929,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '54768' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49583' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

@@ -11,7 +11,7 @@ class Child extends Element {
         this.sprite = new Sprite(2, 2, window.g.resMgr.getImg('child-roll'), { frameUpdateTime: 1 })
 
         this.drinkMilk = false
-        this.drinkMilkTime = 2
+        this.drinkMilkTime = 1.5
         this.pass = 0
         this.angle = 0
         this.jumpPos = undefined
