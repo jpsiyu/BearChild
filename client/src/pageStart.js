@@ -27,8 +27,23 @@ class PageStart extends Page {
         }
     }
 
+    setMusicSymbolInfo(context) {
+        const viewUnit = tool.viewUnit()
+        const text = '♬'
+        const w = context.measureText(text).width
+        const radius = w * 3
+        this.musicInfo = {
+            text: text,
+            x: tool.gameWidth() - viewUnit * 2,
+            y: tool.gameHeight() / 2,
+            radius: radius,
+            pt: 30,
+        }
+    }
+
     draw(context) {
         this.drawStart(context)
+        this.drawMusicSymbol(context)
     }
 
     drawStart(context) {
@@ -45,15 +60,38 @@ class PageStart extends Page {
         context.restore()
     }
 
+    drawMusicSymbol(context) {
+        const color = window.g.gameAudio.active ? 'white' : 'gray'
+        this.setMusicSymbolInfo(context)
+
+        context.save()
+        context.beginPath()
+        context.fillStyle = color
+        context.strokeStyle = color
+        context.arc(this.musicInfo.x, this.musicInfo.y - this.musicInfo.pt / 2, this.musicInfo.radius, 0, 2 * Math.PI)
+        context.stroke()
+        context.restore()
+
+        drawing.drawLabel(context, this.musicInfo.text, this.musicInfo.x, this.musicInfo.y,
+            { pt: this.musicInfo.pt, color: color }
+        )
+    }
+
     handleClick(pos) {
         if (pos.x > this.rectInfo.x && pos.x < this.rectInfo.x + this.rectInfo.w &&
             pos.y > this.rectInfo.y && pos.y < this.rectInfo.y + this.rectInfo.h)
             this.startGameClick()
+
+        if (tool.distancePos(pos, { x: this.musicInfo.x, y: this.musicInfo.y }) < this.musicInfo.radius)
+            this.musicClick()
+    }
+
+    musicClick() {
+        window.g.gameAudio.active = !window.g.gameAudio.active
     }
 
     startGameClick() {
         this.hide()
-        window.g.gameAudio.active = true
         window.g.gameEventListener.dispatch(macro.EventRestart)
     }
 }

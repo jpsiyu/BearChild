@@ -10,7 +10,7 @@ const musicConfig = {
 
 class GameAudio {
     constructor() {
-        this.active = false
+        this.active = true
         this.buffers = {}
         this.musics = {}
         this.clips = {}

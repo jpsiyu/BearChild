@@ -19924,9 +19924,9 @@ var drawImg = function drawImg(context, x, y, radius, img) {
     var guide = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
 
     context.save();
+    context.beginPath();
     if (img && img.complete) context.drawImage(img, x, y, 2 * radius, 2 * radius);
     if (guide) {
-        context.beginPath();
         context.strokeStyle = 'red';
         context.arc(0, 0, radius, 0, 2 * Math.PI);
         context.stroke();
@@ -19937,6 +19937,7 @@ var drawImg = function drawImg(context, x, y, radius, img) {
 
 var drawReachable = function drawReachable(context) {
     context.save();
+    context.beginPath();
     context.fillStyle = 'rgba(240, 240, 240, 0.2)';
     context.rect(0, 0, context.canvas.width, context.canvas.height);
     context.fill();
@@ -19945,6 +19946,7 @@ var drawReachable = function drawReachable(context) {
 
 var drawLabel = function drawLabel(context, label, x, y, options) {
     context.save();
+    context.beginPath();
     options = options || {};
     var pt = options.pt || 10;
     var color = options.color || 'black';
@@ -22745,7 +22747,7 @@ var GameAudio = function () {
     function GameAudio() {
         _classCallCheck(this, GameAudio);
 
-        this.active = false;
+        this.active = true;
         this.buffers = {};
         this.musics = {};
         this.clips = {};
@@ -23249,9 +23251,25 @@ var PageStart = function (_Page) {
             };
         }
     }, {
+        key: 'setMusicSymbolInfo',
+        value: function setMusicSymbolInfo(context) {
+            var viewUnit = _tool2.default.viewUnit();
+            var text = '♬';
+            var w = context.measureText(text).width;
+            var radius = w * 3;
+            this.musicInfo = {
+                text: text,
+                x: _tool2.default.gameWidth() - viewUnit * 2,
+                y: _tool2.default.gameHeight() / 2,
+                radius: radius,
+                pt: 30
+            };
+        }
+    }, {
         key: 'draw',
         value: function draw(context) {
             this.drawStart(context);
+            this.drawMusicSymbol(context);
         }
     }, {
         key: 'drawStart',
@@ -23269,15 +23287,37 @@ var PageStart = function (_Page) {
             context.restore();
         }
     }, {
+        key: 'drawMusicSymbol',
+        value: function drawMusicSymbol(context) {
+            var color = window.g.gameAudio.active ? 'white' : 'gray';
+            this.setMusicSymbolInfo(context);
+
+            context.save();
+            context.beginPath();
+            context.fillStyle = color;
+            context.strokeStyle = color;
+            context.arc(this.musicInfo.x, this.musicInfo.y - this.musicInfo.pt / 2, this.musicInfo.radius, 0, 2 * Math.PI);
+            context.stroke();
+            context.restore();
+
+            _drawing2.default.drawLabel(context, this.musicInfo.text, this.musicInfo.x, this.musicInfo.y, { pt: this.musicInfo.pt, color: color });
+        }
+    }, {
         key: 'handleClick',
         value: function handleClick(pos) {
             if (pos.x > this.rectInfo.x && pos.x < this.rectInfo.x + this.rectInfo.w && pos.y > this.rectInfo.y && pos.y < this.rectInfo.y + this.rectInfo.h) this.startGameClick();
+
+            if (_tool2.default.distancePos(pos, { x: this.musicInfo.x, y: this.musicInfo.y }) < this.musicInfo.radius) this.musicClick();
+        }
+    }, {
+        key: 'musicClick',
+        value: function musicClick() {
+            window.g.gameAudio.active = !window.g.gameAudio.active;
         }
     }, {
         key: 'startGameClick',
         value: function startGameClick() {
             this.hide();
-            window.g.gameAudio.active = true;
             window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
         }
     }]);

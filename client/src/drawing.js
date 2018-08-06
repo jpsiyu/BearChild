@@ -47,10 +47,10 @@ const drawButton = (context, radius, text, options = {}) => {
 
 const drawImg = (context, x, y, radius, img, guide = false) => {
     context.save()
+    context.beginPath()
     if (img && img.complete)
         context.drawImage(img, x, y, 2 * radius, 2 * radius)
     if (guide) {
-        context.beginPath()
         context.strokeStyle = 'red'
         context.arc(0, 0, radius, 0, 2 * Math.PI)
         context.stroke()
@@ -61,6 +61,7 @@ const drawImg = (context, x, y, radius, img, guide = false) => {
 
 const drawReachable = (context) => {
     context.save()
+    context.beginPath()
     context.fillStyle = 'rgba(240, 240, 240, 0.2)'
     context.rect(0, 0, context.canvas.width, context.canvas.height)
     context.fill()
@@ -69,6 +70,7 @@ const drawReachable = (context) => {
 
 const drawLabel = (context, label, x, y, options) => {
     context.save()
+    context.beginPath()
     options = options || {}
     const pt = options.pt || 10
     const color = options.color || 'black'
