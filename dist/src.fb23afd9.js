@@ -20329,7 +20329,7 @@ var Mom = function (_Element) {
 
         var _this = _possibleConstructorReturn(this, (Mom.__proto__ || Object.getPrototypeOf(Mom)).call(this, x, y, radius));
 
-        _this.chaseSpeed = radius * 3;
+        _this.chaseSpeed = radius * 4;
         _this.waitTime = 1;
         _this.waitPass = 0;
         _this.sprite = new _sprite2.default(2, 2, window.g.resMgr.getImg('mom-run'));
