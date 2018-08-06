@@ -22745,6 +22745,7 @@ var GameAudio = function () {
     function GameAudio() {
         _classCallCheck(this, GameAudio);
 
+        this.active = false;
         this.buffers = {};
         this.musics = {};
         this.clips = {};
@@ -22803,6 +22804,7 @@ var GameAudio = function () {
     }, {
         key: 'play',
         value: function play(name) {
+            if (!this.active) return;
             var cfg = musicConfig[name];
             if (!cfg) return;
             if (cfg.loop) this.playMusic(name);else this.playClip(name);
@@ -23275,6 +23277,7 @@ var PageStart = function (_Page) {
         key: 'startGameClick',
         value: function startGameClick() {
             this.hide();
+            window.g.gameAudio.active = true;
             window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
         }
     }]);

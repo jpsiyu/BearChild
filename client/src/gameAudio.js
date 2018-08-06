@@ -10,6 +10,7 @@ const musicConfig = {
 
 class GameAudio {
     constructor() {
+        this.active = false
         this.buffers = {}
         this.musics = {}
         this.clips = {}
@@ -60,6 +61,7 @@ class GameAudio {
     }
 
     play(name) {
+        if(!this.active) return
         const cfg = musicConfig[name]
         if (!cfg) return
         if (cfg.loop)
