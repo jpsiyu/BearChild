@@ -23257,12 +23257,14 @@ var PageStart = function (_Page) {
             var text = '♬';
             var w = context.measureText(text).width;
             var radius = w * 3;
+            var pt = 30;
             this.musicInfo = {
                 text: text,
                 x: _tool2.default.gameWidth() - viewUnit * 2,
-                y: _tool2.default.gameHeight() / 2,
+                yCircle: _tool2.default.gameHeight() / 2 - pt / 2,
+                yLabel: _tool2.default.gameHeight() / 2,
                 radius: radius,
-                pt: 30
+                pt: pt
             };
         }
     }, {
@@ -23296,18 +23298,18 @@ var PageStart = function (_Page) {
             context.beginPath();
             context.fillStyle = color;
             context.strokeStyle = color;
-            context.arc(this.musicInfo.x, this.musicInfo.y - this.musicInfo.pt / 2, this.musicInfo.radius, 0, 2 * Math.PI);
+            context.arc(this.musicInfo.x, this.musicInfo.yCircle, this.musicInfo.radius, 0, 2 * Math.PI);
             context.stroke();
             context.restore();
 
-            _drawing2.default.drawLabel(context, this.musicInfo.text, this.musicInfo.x, this.musicInfo.y, { pt: this.musicInfo.pt, color: color });
+            _drawing2.default.drawLabel(context, this.musicInfo.text, this.musicInfo.x, this.musicInfo.yLabel, { pt: this.musicInfo.pt, color: color });
         }
     }, {
         key: 'handleClick',
         value: function handleClick(pos) {
             if (pos.x > this.rectInfo.x && pos.x < this.rectInfo.x + this.rectInfo.w && pos.y > this.rectInfo.y && pos.y < this.rectInfo.y + this.rectInfo.h) this.startGameClick();
 
-            if (_tool2.default.distancePos(pos, { x: this.musicInfo.x, y: this.musicInfo.y }) < this.musicInfo.radius) this.musicClick();
+            if (_tool2.default.distancePos(pos, { x: this.musicInfo.x, y: this.musicInfo.yCircle }) < this.musicInfo.radius) this.musicClick();
         }
     }, {
         key: 'musicClick',

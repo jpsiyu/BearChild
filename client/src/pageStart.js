@@ -32,12 +32,14 @@ class PageStart extends Page {
         const text = '♬'
         const w = context.measureText(text).width
         const radius = w * 3
+        const pt = 30
         this.musicInfo = {
             text: text,
             x: tool.gameWidth() - viewUnit * 2,
-            y: tool.gameHeight() / 2,
+            yCircle: tool.gameHeight() / 2 - pt/2,
+            yLabel: tool.gameHeight() / 2,
             radius: radius,
-            pt: 30,
+            pt: pt,
         }
     }
 
@@ -68,11 +70,11 @@ class PageStart extends Page {
         context.beginPath()
         context.fillStyle = color
         context.strokeStyle = color
-        context.arc(this.musicInfo.x, this.musicInfo.y - this.musicInfo.pt / 2, this.musicInfo.radius, 0, 2 * Math.PI)
+        context.arc(this.musicInfo.x, this.musicInfo.yCircle, this.musicInfo.radius, 0, 2 * Math.PI)
         context.stroke()
         context.restore()
 
-        drawing.drawLabel(context, this.musicInfo.text, this.musicInfo.x, this.musicInfo.y,
+        drawing.drawLabel(context, this.musicInfo.text, this.musicInfo.x, this.musicInfo.yLabel,
             { pt: this.musicInfo.pt, color: color }
         )
     }
@@ -82,7 +84,7 @@ class PageStart extends Page {
             pos.y > this.rectInfo.y && pos.y < this.rectInfo.y + this.rectInfo.h)
             this.startGameClick()
 
-        if (tool.distancePos(pos, { x: this.musicInfo.x, y: this.musicInfo.y }) < this.musicInfo.radius)
+        if (tool.distancePos(pos, { x: this.musicInfo.x, y: this.musicInfo.yCircle }) < this.musicInfo.radius)
             this.musicClick()
     }
 
