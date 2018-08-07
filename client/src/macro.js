@@ -1,6 +1,6 @@
 export default {
     Visiable: 3,
-    WidthHeightRatio : 2.2,
+    WidthHeightRatio: 2.2,
 
     StateLoad: 'StateLoad',
     StateReady: 'StateReady',
@@ -15,4 +15,8 @@ export default {
     EventReady: 'EventReady',
     EventLoadFinish: 'EventLoadFinish',
     EventClick: 'EventClick',
+
+    ChildModeNormal: 'ChildModeNormal ',
+    ChildModeDrink: 'ChildModeDrink',
+    ChildModeWarrior: 'ChildModeWarrior',
 }

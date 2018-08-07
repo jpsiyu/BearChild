@@ -11,6 +11,8 @@ class ResMgr {
             'child-roll',
             'sky',
             'grassland',
+            'warrior',
+            'ball',
         ]
         this.images = {}
     }

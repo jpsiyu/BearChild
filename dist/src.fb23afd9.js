@@ -19769,7 +19769,11 @@ exports.default = {
     EventRestart: 'EventRestart',
     EventReady: 'EventReady',
     EventLoadFinish: 'EventLoadFinish',
-    EventClick: 'EventClick'
+    EventClick: 'EventClick',
+
+    ChildModeNormal: 'ChildModeNormal ',
+    ChildModeDrink: 'ChildModeDrink',
+    ChildModeWarrior: 'ChildModeWarrior'
 };
 },{}],"../src/gameConfig.js":[function(require,module,exports) {
 "use strict";
@@ -19777,7 +19781,7 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3 }];
+var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 1 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 1 }];
 
 exports.default = {
     mapConfig: mapConfig
@@ -20114,31 +20118,46 @@ var Child = function (_Element) {
 
         var _this = _possibleConstructorReturn(this, (Child.__proto__ || Object.getPrototypeOf(Child)).call(this, x, y, radius));
 
-        _this.sprite = new _sprite2.default(2, 2, window.g.resMgr.getImg('child-roll'), { frameUpdateTime: 1 });
+        _this.spriteNormal = new _sprite2.default(2, 2, window.g.resMgr.getImg('child-roll'), { frameUpdateTime: 1 });
+        _this.spriteWarrior = new _sprite2.default(2, 2, window.g.resMgr.getImg('warrior'), { frameUpdateTime: 0.2 });
+        _this.sprite = _this.spriteNormal;
 
-        _this.drinkMilk = false;
         _this.drinkMilkTime = 1.5;
         _this.pass = 0;
         _this.angle = 0;
         _this.jumpPos = undefined;
+        _this.mode = _macro2.default.ChildModeNormal;
         return _this;
     }
 
     _createClass(Child, [{
+        key: 'changeMode',
+        value: function changeMode(mode) {
+            this.mode = mode;
+        }
+    }, {
         key: 'update',
         value: function update(elapsed) {
             switch (window.g.gameState) {
                 case _macro2.default.StateGame:
-                    if (this.drinkMilk) {
-                        if (this.pass < this.drinkMilkTime) {
-                            this.pass += elapsed;
-                            this.angle = -0.05 * Math.PI * Math.sin(this.pass * 8);
-                        } else {
-                            this.drinkMilk = false;
-                            this.pass = 0;
-                        }
-                    } else {
-                        this.angle = 0;
+                    switch (this.mode) {
+                        case _macro2.default.ChildModeDrink:
+                            if (this.pass < this.drinkMilkTime) {
+                                this.pass += elapsed;
+                                this.angle = -0.05 * Math.PI * Math.sin(this.pass * 8);
+                            } else {
+                                this.changeMode(_macro2.default.ChildModeNormal);
+                                this.pass = 0;
+                            }
+                            break;
+                        case _macro2.default.ChildModeNormal:
+                            this.sprite = this.spriteNormal;
+                            this.angle = 0;
+                            break;
+                        case _macro2.default.ChildModeWarrior:
+                            this.sprite = this.spriteWarrior;
+                            this.angle = 0;
+                            break;
                     }
                     this.sprite.update(elapsed);
                     break;
@@ -20147,24 +20166,27 @@ var Child = function (_Element) {
                     this.pass += elapsed;
                     this.y = this.jumpPos + 10 * Math.sin(this.pass * 20);
                     break;
+                default:
+                    break;
             }
         }
     }, {
         key: 'draw',
         value: function draw(context) {
             switch (window.g.gameState) {
-                case _macro2.default.StateGameOver:
-                    break;
                 case _macro2.default.StateGame:
                 case _macro2.default.StateReachDoor:
                     context.save();
                     context.translate(this.x, this.y);
-                    if (this.drinkMilk) {
-                        context.rotate(this.angle);
-                        this.img = window.g.resMgr.getImg('drink');
-                        _drawing2.default.drawImg(context, -_tool2.default.gridSize() / 2, -_tool2.default.gridSize() / 2, this.radius, this.img);
-                    } else {
-                        this.sprite.draw(context);
+                    switch (this.mode) {
+                        case _macro2.default.ChildModeDrink:
+                            context.rotate(this.angle);
+                            this.img = window.g.resMgr.getImg('drink');
+                            _drawing2.default.drawImg(context, -_tool2.default.gridSize() / 2, -_tool2.default.gridSize() / 2, this.radius, this.img);
+                            break;
+                        default:
+                            this.sprite.draw(context);
+                            break;
                     }
                     context.restore();
                     break;
@@ -20185,14 +20207,14 @@ var Child = function (_Element) {
     }, {
         key: 'moveRight',
         value: function moveRight(context) {
-            if (this.drinkMilk) return;
+            if (this.mode == _macro2.default.ChildModeDrink) return;
             if (!this.checkPosInFense({ x: this.x + _tool2.default.gridSize(), y: this.y })) this.x += _tool2.default.gridSize();
             this.moveLimit(context);
         }
     }, {
         key: 'moveUp',
         value: function moveUp() {
-            if (this.drinkMilk) return;
+            if (this.mode == _macro2.default.ChildModeDrink) return;
             if (!this.checkPosInFense({ x: this.x, y: this.y - _tool2.default.gridSize() })) this.y -= _tool2.default.gridSize();
             this.moveLimit();
         }
@@ -20200,9 +20222,16 @@ var Child = function (_Element) {
         key: 'checkPosInFense',
         value: function checkPosInFense(pos) {
             var inFense = false;
-            window.g.map.fences.forEach(function (fence) {
-                if (_tool2.default.distancePos(pos, fence.pos()) < fence.radius) inFense = true;
-            });
+            switch (this.mode) {
+                case _macro2.default.ChildModeNormal:
+                    window.g.map.fences.forEach(function (fence) {
+                        if (_tool2.default.distancePos(pos, fence.pos()) < fence.radius) inFense = true;
+                    });
+                    break;
+                case _macro2.default.ChildModeWarrior:
+                    inFense = false;
+                    break;
+            }
             return inFense;
         }
     }, {
@@ -20900,6 +20929,7 @@ var Game = function () {
         value: function childCatchMilk() {
             var _this4 = this;
 
+            if (this.child.mode === _macro2.default.ChildModeWarrior) return false;
             var drink = false;
             window.g.map.milks.forEach(function (milk, i) {
                 var dis = _tool2.default.distance(_this4.child, milk);
@@ -20909,6 +20939,21 @@ var Game = function () {
                 }
             });
             return drink;
+        }
+    }, {
+        key: 'childCatchBall',
+        value: function childCatchBall() {
+            var _this5 = this;
+
+            var catchBall = false;
+            window.g.map.balls.forEach(function (ball, i) {
+                var dis = _tool2.default.distance(_this5.child, ball);
+                if (dis < _this5.child.radius + ball.radius) {
+                    catchBall = true;
+                    window.g.map.balls.splice(i, 1);
+                }
+            });
+            return catchBall;
         }
     }, {
         key: 'setPause',
@@ -20930,7 +20975,7 @@ var Game = function () {
     }, {
         key: 'update',
         value: function update(elapsed) {
-            var _this5 = this;
+            var _this6 = this;
 
             this.fps = 1 / elapsed;
             switch (window.g.gameState) {
@@ -20941,7 +20986,7 @@ var Game = function () {
                         window.g.gameAudio.pause('bg.mp3');
                         window.g.gameState = _macro2.default.StateReachDoor;
                         setTimeout(function () {
-                            _this5.levelUp();
+                            _this6.levelUp();
                         }, 2 * 1000);
                         window.g.gameAudio.play('win.mp3');
                         return;
@@ -20954,8 +20999,12 @@ var Game = function () {
                         return;
                     }
                     if (this.childCatchMilk()) {
-                        this.child.drinkMilk = true;
+                        this.child.changeMode(_macro2.default.ChildModeDrink);
                     }
+                    if (this.childCatchBall()) {
+                        this.child.changeMode(_macro2.default.ChildModeWarrior);
+                    }
+
                     this.child.update(elapsed);
                     this.mom.update(this.child, elapsed);
                     this.controller.update(elapsed);
@@ -20972,8 +21021,6 @@ var Game = function () {
     }, {
         key: 'draw',
         value: function draw() {
-            var _this6 = this;
-
             this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
             switch (window.g.gameState) {
                 case _macro2.default.StateLoad:
@@ -20985,12 +21032,7 @@ var Game = function () {
                     break;
                 default:
                     this.grid.draw(this.context);
-                    window.g.map.milks.forEach(function (milk) {
-                        milk.draw(_this6.context);
-                    });
-                    window.g.map.fences.forEach(function (fence) {
-                        fence.draw(_this6.context);
-                    });
+                    window.g.map.draw(this.context);
                     this.mom.draw(this.context);
                     this.grid.drawMask(this.context);
                     this.door.draw(this.context);
@@ -21024,7 +21066,7 @@ var ResMgr = function () {
     function ResMgr() {
         _classCallCheck(this, ResMgr);
 
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland'];
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball'];
         this.images = {};
     }
 
@@ -22910,6 +22952,66 @@ var Milk = function (_Element) {
 }(_element2.default);
 
 exports.default = Milk;
+},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/ball.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Ball = function (_Element) {
+    _inherits(Ball, _Element);
+
+    function Ball(x, y) {
+        _classCallCheck(this, Ball);
+
+        var radius = _tool2.default.gridSize() / 3;
+
+        var _this = _possibleConstructorReturn(this, (Ball.__proto__ || Object.getPrototypeOf(Ball)).call(this, x, y, radius));
+
+        _this.img = window.g.resMgr.getImg('ball');
+        return _this;
+    }
+
+    _createClass(Ball, [{
+        key: 'update',
+        value: function update() {}
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            context.save();
+            context.translate(this.x, this.y);
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+            context.restore();
+        }
+    }]);
+
+    return Ball;
+}(_element2.default);
+
+exports.default = Ball;
 },{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/fence.js":[function(require,module,exports) {
 'use strict';
 
@@ -22983,6 +23085,10 @@ var _milk = require('./milk');
 
 var _milk2 = _interopRequireDefault(_milk);
 
+var _ball = require('./ball');
+
+var _ball2 = _interopRequireDefault(_ball);
+
 var _fence = require('./fence');
 
 var _fence2 = _interopRequireDefault(_fence);
@@ -23005,6 +23111,7 @@ var Map = function () {
 
         this.milks = [];
         this.fences = [];
+        this.balls = [];
         this.posList = [];
         this.mapCfg = undefined;
         this.gridSize = undefined;
@@ -23046,6 +23153,7 @@ var Map = function () {
             this.posList = [];
             this.randomMilk();
             this.randomFence();
+            this.randomBall();
         }
     }, {
         key: 'posExit',
@@ -23055,6 +23163,20 @@ var Map = function () {
                 if (gPos[0] === gridPos[0] && gPos[1] === gridPos[1]) exit = true;
             });
             return exit;
+        }
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+
+            this.milks.forEach(function (milk) {
+                milk.draw(context);
+            });
+            this.fences.forEach(function (fence) {
+                fence.draw(context);
+            });
+            this.balls.forEach(function (ball) {
+                ball.draw(context);
+            });
         }
     }, {
         key: 'randomFence',
@@ -23072,6 +23194,25 @@ var Map = function () {
                     this.posList.push(g);
                     var pos = _tool2.default.grid2coord(row, col);
                     this.fences.push(new _fence2.default(pos.x, pos.y));
+                }
+            }
+        }
+    }, {
+        key: 'randomBall',
+        value: function randomBall() {
+            this.balls = [];
+            var inLimit = function inLimit(row, col) {
+                return col > 2 && col < _tool2.default.maxCol() - 2;
+            };
+            var curLen = this.posList.length;
+            while (this.posList.length < curLen + this.mapCfg.balls) {
+                var row = Math.round(Math.random() * _tool2.default.maxRow());
+                var col = Math.round(Math.random() * _tool2.default.maxCol());
+                var g = [row, col];
+                if (!this.posExit(g) && inLimit(row, col)) {
+                    this.posList.push(g);
+                    var pos = _tool2.default.grid2coord(row, col);
+                    this.balls.push(new _ball2.default(pos.x, pos.y));
                 }
             }
         }
@@ -23100,7 +23241,7 @@ var Map = function () {
 }();
 
 exports.default = Map;
-},{"./milk":"../src/milk.js","./fence":"../src/fence.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
+},{"./milk":"../src/milk.js","./ball":"../src/ball.js","./fence":"../src/fence.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23974,7 +24115,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49583' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '61014' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

@@ -8,30 +8,43 @@ class Child extends Element {
     constructor(x, y) {
         const radius = tool.gridSize() / 2
         super(x, y, radius)
-        this.sprite = new Sprite(2, 2, window.g.resMgr.getImg('child-roll'), { frameUpdateTime: 1 })
+        this.spriteNormal = new Sprite(2, 2, window.g.resMgr.getImg('child-roll'), { frameUpdateTime: 1 })
+        this.spriteWarrior = new Sprite(2, 2, window.g.resMgr.getImg('warrior'), { frameUpdateTime: 0.2 })
+        this.sprite = this.spriteNormal
 
-        this.drinkMilk = false
         this.drinkMilkTime = 1.5
         this.pass = 0
         this.angle = 0
         this.jumpPos = undefined
+        this.mode = macro.ChildModeNormal
+    }
+
+    changeMode(mode) {
+        this.mode = mode
     }
 
 
     update(elapsed) {
         switch (window.g.gameState) {
             case macro.StateGame:
-                if (this.drinkMilk) {
-                    if (this.pass < this.drinkMilkTime) {
-                        this.pass += elapsed
-                        this.angle = -0.05 * Math.PI * Math.sin(this.pass * 8)
-                    }
-                    else {
-                        this.drinkMilk = false
-                        this.pass = 0
-                    }
-                } else {
-                    this.angle = 0
+                switch (this.mode) {
+                    case macro.ChildModeDrink:
+                        if (this.pass < this.drinkMilkTime) {
+                            this.pass += elapsed
+                            this.angle = -0.05 * Math.PI * Math.sin(this.pass * 8)
+                        } else {
+                            this.changeMode(macro.ChildModeNormal)
+                            this.pass = 0
+                        }
+                        break
+                    case macro.ChildModeNormal:
+                        this.sprite = this.spriteNormal
+                        this.angle = 0
+                        break
+                    case macro.ChildModeWarrior:
+                        this.sprite = this.spriteWarrior
+                        this.angle = 0
+                        break
                 }
                 this.sprite.update(elapsed)
                 break
@@ -40,24 +53,26 @@ class Child extends Element {
                 this.pass += elapsed
                 this.y = this.jumpPos + 10 * Math.sin(this.pass * 20)
                 break
+            default:
+                break
         }
     }
 
     draw(context) {
         switch (window.g.gameState) {
-            case macro.StateGameOver:
-                break
             case macro.StateGame:
             case macro.StateReachDoor:
                 context.save()
                 context.translate(this.x, this.y)
-                if (this.drinkMilk) {
-                    context.rotate(this.angle)
-                    this.img = window.g.resMgr.getImg('drink')
-                    drawing.drawImg(context, -tool.gridSize()/ 2, -tool.gridSize()/ 2, this.radius, this.img)
-
-                } else {
-                    this.sprite.draw(context)
+                switch (this.mode) {
+                    case macro.ChildModeDrink:
+                        context.rotate(this.angle)
+                        this.img = window.g.resMgr.getImg('drink')
+                        drawing.drawImg(context, -tool.gridSize() / 2, -tool.gridSize() / 2, this.radius, this.img)
+                        break
+                    default:
+                        this.sprite.draw(context)
+                        break
                 }
                 context.restore()
                 break
@@ -76,25 +91,32 @@ class Child extends Element {
     }
 
     moveRight(context) {
-        if (this.drinkMilk) return
+        if (this.mode == macro.ChildModeDrink) return
         if (!this.checkPosInFense({ x: this.x + tool.gridSize(), y: this.y }))
             this.x += tool.gridSize()
         this.moveLimit(context)
     }
 
     moveUp() {
-        if (this.drinkMilk) return
-        if (!this.checkPosInFense({ x: this.x, y: this.y - tool.gridSize()}))
+        if (this.mode == macro.ChildModeDrink) return
+        if (!this.checkPosInFense({ x: this.x, y: this.y - tool.gridSize() }))
             this.y -= tool.gridSize()
         this.moveLimit()
     }
 
     checkPosInFense(pos) {
         let inFense = false
-        window.g.map.fences.forEach(fence => {
-            if (tool.distancePos(pos, fence.pos()) < fence.radius)
-                inFense = true
-        })
+        switch (this.mode) {
+            case macro.ChildModeNormal:
+                window.g.map.fences.forEach(fence => {
+                    if (tool.distancePos(pos, fence.pos()) < fence.radius)
+                        inFense = true
+                })
+                break
+            case macro.ChildModeWarrior:
+                inFense = false
+                break
+        }
         return inFense
     }
 

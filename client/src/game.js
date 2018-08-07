@@ -95,6 +95,7 @@ class Game {
     }
 
     childCatchMilk() {
+        if(this.child.mode === macro.ChildModeWarrior) return false
         let drink = false
         window.g.map.milks.forEach((milk, i) => {
             const dis = tool.distance(this.child, milk)
@@ -104,6 +105,19 @@ class Game {
             }
         })
         return drink
+    }
+
+    childCatchBall(){
+        let catchBall = false
+        window.g.map.balls.forEach((ball , i) => {
+            const dis = tool.distance(this.child, ball)
+            if (dis < (this.child.radius + ball.radius)) {
+                catchBall = true
+                window.g.map.balls.splice(i, 1)
+            }
+        })
+        return catchBall
+
     }
 
     setPause(bool) {
@@ -142,8 +156,12 @@ class Game {
                     return
                 }
                 if (this.childCatchMilk()) {
-                    this.child.drinkMilk = true
+                    this.child.changeMode(macro.ChildModeDrink)
                 }
+                if (this.childCatchBall()){
+                    this.child.changeMode(macro.ChildModeWarrior)
+                }
+
                 this.child.update(elapsed)
                 this.mom.update(this.child, elapsed)
                 this.controller.update(elapsed)
@@ -175,12 +193,7 @@ class Game {
                 break
             default:
                 this.grid.draw(this.context)
-                window.g.map.milks.forEach(milk => {
-                    milk.draw(this.context)
-                })
-                window.g.map.fences.forEach(fence => {
-                    fence.draw(this.context)
-                })
+                window.g.map.draw(this.context)
                 this.mom.draw(this.context)
                 this.grid.drawMask(this.context)
                 this.door.draw(this.context)
