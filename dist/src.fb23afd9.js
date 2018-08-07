@@ -19781,7 +19781,7 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 0 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 0 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 1 }];
+var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 0 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 0 }, { lv: 5, gridInRow: 14, milks: 8, fences: 2, balls: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 2 }];
 
 exports.default = {
     mapConfig: mapConfig
@@ -22840,6 +22840,7 @@ var GameAudio = function () {
                 _this.loadMusic(name, function () {
                     _this.loadedNum++;
                     if (_this.loadedNum === keys.length) {
+                        console.log('load audio finish');
                         callback();
                     }
                 });
@@ -23371,6 +23372,7 @@ var Map = function () {
             var curLen = this.posList.length;
             while (this.posList.length < curLen + this.mapCfg.milks) {
                 var row = Math.round(Math.random() * _tool2.default.maxRow());
+                row = Math.random() < 0.3 ? _tool2.default.maxRow() : row;
                 var col = Math.round(Math.random() * _tool2.default.maxCol());
                 var g = [row, col];
                 if (!this.posExit(g) && inLimit(row, col)) {
@@ -24260,7 +24262,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49202' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '50047' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

@@ -133,7 +133,8 @@ class Map {
         }
         const curLen = this.posList.length
         while (this.posList.length < curLen + this.mapCfg.milks) {
-            const row = Math.round(Math.random() * tool.maxRow())
+            let row = Math.round(Math.random() * tool.maxRow())
+            row = Math.random() < 0.3 ? tool.maxRow() : row
             const col = Math.round(Math.random() * tool.maxCol())
             const g = [row, col]
             if (!this.posExit(g) && inLimit(row, col)) {

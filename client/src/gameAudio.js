@@ -30,6 +30,7 @@ class GameAudio {
             this.loadMusic(name, () => {
                 this.loadedNum++
                 if (this.loadedNum === keys.length) {
+                    console.log('load audio finish')
                     callback()
                 }
             })
