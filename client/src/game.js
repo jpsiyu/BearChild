@@ -95,21 +95,43 @@ class Game {
     }
 
     childCatchMilk() {
-        if(this.child.mode === macro.ChildModeWarrior) return false
         let drink = false
         window.g.map.milks.forEach((milk, i) => {
             const dis = tool.distance(this.child, milk)
             if (dis < (this.child.radius + milk.radius)) {
-                drink = true
-                window.g.map.milks.splice(i, 1)
+                switch (this.child.mode) {
+                    case macro.ChildModeNormal:
+                        drink = true
+                        window.g.map.milks.splice(i, 1)
+                        break
+                    case macro.ChildModeWarrior:
+                        drink = false
+                        window.g.map.milks.splice(i, 1)
+                        window.g.map.createExplosion(milk.img, milk.x, milk.y)
+                        break
+                }
             }
         })
         return drink
     }
 
-    childCatchBall(){
+    childCatchFence(){
+        switch(this.child.mode){
+            case macro.ChildModeWarrior:
+                window.g.map.fences.forEach((fence, i) => {
+                    const dis = tool.distance(this.child, fence)
+                    if(dis < (this.child.radius + fence.radius)){
+                        window.g.map.fences.splice(i, 1)
+                        window.g.map.createExplosion(fence.img, fence.x, fence.y)
+                    }
+                })
+                break
+        }
+    }
+
+    childCatchBall() {
         let catchBall = false
-        window.g.map.balls.forEach((ball , i) => {
+        window.g.map.balls.forEach((ball, i) => {
             const dis = tool.distance(this.child, ball)
             if (dis < (this.child.radius + ball.radius)) {
                 catchBall = true
@@ -158,9 +180,11 @@ class Game {
                 if (this.childCatchMilk()) {
                     this.child.changeMode(macro.ChildModeDrink)
                 }
-                if (this.childCatchBall()){
+                if (this.childCatchBall()) {
                     this.child.changeMode(macro.ChildModeWarrior)
                 }
+                this.childCatchFence()
+                window.g.map.update(elapsed)
 
                 this.child.update(elapsed)
                 this.mom.update(this.child, elapsed)

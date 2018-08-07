@@ -1,6 +1,7 @@
 import Milk from './milk'
 import Ball from './ball'
 import Fence from './fence'
+import Explosion from './explosion'
 import tool from './tool'
 import gameConfig from './gameConfig'
 
@@ -10,6 +11,7 @@ class Map {
         this.fences = []
         this.balls = []
         this.posList = []
+        this.explosions = []
         this.mapCfg = undefined
         this.gridSize = undefined
         this.resizeCallback = undefined
@@ -57,6 +59,20 @@ class Map {
         return exit
     }
 
+    createExplosion(img, x, y){
+        const explosion = new Explosion(img, x, y)
+        this.explosions.push(explosion)
+    }
+
+    update(elapsed){
+        this.explosions.forEach((explosion,i) => {
+            if(explosion.finish )
+                this.explosions.splice(i, 1)
+            else
+                explosion.update(elapsed)
+        })
+    }
+
     draw(context) {
 
         this.milks.forEach(milk => {
@@ -67,6 +83,10 @@ class Map {
         })
         this.balls.forEach(ball => {
             ball.draw(context)
+        })
+
+        this.explosions.forEach(explosion => {
+            explosion.draw(context)
         })
     }
 

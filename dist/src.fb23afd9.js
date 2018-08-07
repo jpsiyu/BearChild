@@ -20929,26 +20929,51 @@ var Game = function () {
         value: function childCatchMilk() {
             var _this4 = this;
 
-            if (this.child.mode === _macro2.default.ChildModeWarrior) return false;
             var drink = false;
             window.g.map.milks.forEach(function (milk, i) {
                 var dis = _tool2.default.distance(_this4.child, milk);
                 if (dis < _this4.child.radius + milk.radius) {
-                    drink = true;
-                    window.g.map.milks.splice(i, 1);
+                    switch (_this4.child.mode) {
+                        case _macro2.default.ChildModeNormal:
+                            drink = true;
+                            window.g.map.milks.splice(i, 1);
+                            break;
+                        case _macro2.default.ChildModeWarrior:
+                            drink = false;
+                            window.g.map.milks.splice(i, 1);
+                            window.g.map.createExplosion(milk.img, milk.x, milk.y);
+                            break;
+                    }
                 }
             });
             return drink;
         }
     }, {
+        key: 'childCatchFence',
+        value: function childCatchFence() {
+            var _this5 = this;
+
+            switch (this.child.mode) {
+                case _macro2.default.ChildModeWarrior:
+                    window.g.map.fences.forEach(function (fence, i) {
+                        var dis = _tool2.default.distance(_this5.child, fence);
+                        if (dis < _this5.child.radius + fence.radius) {
+                            window.g.map.fences.splice(i, 1);
+                            window.g.map.createExplosion(fence.img, fence.x, fence.y);
+                        }
+                    });
+                    break;
+            }
+        }
+    }, {
         key: 'childCatchBall',
         value: function childCatchBall() {
-            var _this5 = this;
+            var _this6 = this;
 
             var catchBall = false;
             window.g.map.balls.forEach(function (ball, i) {
-                var dis = _tool2.default.distance(_this5.child, ball);
-                if (dis < _this5.child.radius + ball.radius) {
+                var dis = _tool2.default.distance(_this6.child, ball);
+                if (dis < _this6.child.radius + ball.radius) {
                     catchBall = true;
                     window.g.map.balls.splice(i, 1);
                 }
@@ -20975,7 +21000,7 @@ var Game = function () {
     }, {
         key: 'update',
         value: function update(elapsed) {
-            var _this6 = this;
+            var _this7 = this;
 
             this.fps = 1 / elapsed;
             switch (window.g.gameState) {
@@ -20986,7 +21011,7 @@ var Game = function () {
                         window.g.gameAudio.pause('bg.mp3');
                         window.g.gameState = _macro2.default.StateReachDoor;
                         setTimeout(function () {
-                            _this6.levelUp();
+                            _this7.levelUp();
                         }, 2 * 1000);
                         window.g.gameAudio.play('win.mp3');
                         return;
@@ -21004,6 +21029,8 @@ var Game = function () {
                     if (this.childCatchBall()) {
                         this.child.changeMode(_macro2.default.ChildModeWarrior);
                     }
+                    this.childCatchFence();
+                    window.g.map.update(elapsed);
 
                     this.child.update(elapsed);
                     this.mom.update(this.child, elapsed);
@@ -23072,7 +23099,101 @@ var Fence = function (_Element) {
 }(_element2.default);
 
 exports.default = Fence;
-},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/map.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/explosion.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Explosion = function () {
+    function Explosion(img, x, y) {
+        _classCallCheck(this, Explosion);
+
+        this.radius = _tool2.default.gridSize() / 2;
+        this.x = x - this.radius;
+        this.y = y - this.radius;
+        this.img = img;
+        this.num = 4;
+        this.pass = 0;
+        this.speed = 1000;
+        this.a = this.speed * 6;
+        this.setPlaces();
+        this.finish = false;
+    }
+
+    _createClass(Explosion, [{
+        key: 'draw',
+        value: function draw(context) {
+            context.save();
+            context.translate(this.x, this.y);
+            for (var i = 0; i < this.num; i++) {
+                var place = this.places[i];
+                context.save();
+                context.drawImage(this.img, place.sx, place.sy, place.sw, place.sh, place.dx + place.mx, place.dy + place.my, place.dw, place.dh);
+                context.restore();
+            }
+            context.restore();
+        }
+    }, {
+        key: 'setPlaces',
+        value: function setPlaces() {
+            this.places = [];
+            for (var i = 0; i < this.num; i++) {
+                var imgW = this.img.width;
+                var imgH = this.img.height;
+                var r = i % 2;
+                var c = Math.floor(i / 2);
+                var place = {
+                    sx: imgW / 2 * r,
+                    sy: imgH / 2 * c,
+                    sw: imgW / 2,
+                    sh: imgH / 2,
+                    dx: this.radius * r,
+                    dy: this.radius * c,
+                    dw: this.radius,
+                    dh: this.radius,
+                    angle: Math.PI / this.num * i - 0.25 * Math.PI,
+                    mx: 0,
+                    my: 0
+                };
+                this.places.push(place);
+            }
+        }
+    }, {
+        key: 'update',
+        value: function update(elpased) {
+            var _this = this;
+
+            this.pass += elpased;
+            this.speed -= elpased * this.a;
+
+            if (this.speed > 0) {
+                this.places.forEach(function (place) {
+                    place.mx += _this.speed * Math.cos(place.angle) * elpased;
+                    place.my += _this.speed * Math.sin(place.angle) * elpased;
+                });
+            } else {
+                this.finish = true;
+            }
+        }
+    }]);
+
+    return Explosion;
+}();
+
+exports.default = Explosion;
+},{"./tool":"../src/tool.js"}],"../src/map.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -23092,6 +23213,10 @@ var _ball2 = _interopRequireDefault(_ball);
 var _fence = require('./fence');
 
 var _fence2 = _interopRequireDefault(_fence);
+
+var _explosion = require('./explosion');
+
+var _explosion2 = _interopRequireDefault(_explosion);
 
 var _tool = require('./tool');
 
@@ -23113,6 +23238,7 @@ var Map = function () {
         this.fences = [];
         this.balls = [];
         this.posList = [];
+        this.explosions = [];
         this.mapCfg = undefined;
         this.gridSize = undefined;
         this.resizeCallback = undefined;
@@ -23165,6 +23291,21 @@ var Map = function () {
             return exit;
         }
     }, {
+        key: 'createExplosion',
+        value: function createExplosion(img, x, y) {
+            var explosion = new _explosion2.default(img, x, y);
+            this.explosions.push(explosion);
+        }
+    }, {
+        key: 'update',
+        value: function update(elapsed) {
+            var _this = this;
+
+            this.explosions.forEach(function (explosion, i) {
+                if (explosion.finish) _this.explosions.splice(i, 1);else explosion.update(elapsed);
+            });
+        }
+    }, {
         key: 'draw',
         value: function draw(context) {
 
@@ -23176,6 +23317,10 @@ var Map = function () {
             });
             this.balls.forEach(function (ball) {
                 ball.draw(context);
+            });
+
+            this.explosions.forEach(function (explosion) {
+                explosion.draw(context);
             });
         }
     }, {
@@ -23241,7 +23386,7 @@ var Map = function () {
 }();
 
 exports.default = Map;
-},{"./milk":"../src/milk.js","./ball":"../src/ball.js","./fence":"../src/fence.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
+},{"./milk":"../src/milk.js","./ball":"../src/ball.js","./fence":"../src/fence.js","./explosion":"../src/explosion.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24115,7 +24260,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '61014' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49202' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
