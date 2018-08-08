@@ -22965,7 +22965,7 @@ module.exports = {
     "watch": "parcel watch client/public/index.html --public-url /bearchild"
   },
   "keywords": [],
-  "production": false,
+  "production": true,
   "port": 3001,
   "prefix": "/bearchild",
   "ip": "http://34.209.241.122/bearchild/",
