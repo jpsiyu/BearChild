@@ -13,6 +13,7 @@ class ResMgr {
             'grassland',
             'warrior',
             'ball',
+            'hole',
         ]
         this.images = {}
     }

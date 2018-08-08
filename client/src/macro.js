@@ -7,6 +7,7 @@ export default {
     StateGame: 'StateGame',
     StateReachDoor: 'StateReachDoor',
     StateLevelUp: 'StateLevelUp',
+    StateRebuild: 'StateRebuild',
     StateGameOver: 'StateGameOver',
 
     BgColor: 'rgb(238, 217, 255)',

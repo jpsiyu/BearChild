@@ -1,6 +1,7 @@
 import Milk from './milk'
 import Ball from './ball'
 import Fence from './fence'
+import Hole from './hole'
 import Explosion from './explosion'
 import tool from './tool'
 import gameConfig from './gameConfig'
@@ -12,6 +13,7 @@ class Map {
         this.balls = []
         this.posList = []
         this.explosions = []
+        this.holes = []
         this.mapCfg = undefined
         this.gridSize = undefined
         this.resizeCallback = undefined
@@ -42,12 +44,14 @@ class Map {
         this.mapCfg = curCfg
     }
 
-    reset() {
+    reset(rebuild = false) {
         this.init()
         this.posList = []
         this.randomMilk()
         this.randomFence()
         this.randomBall()
+        if(!rebuild)
+            this.randomHole()
     }
 
     posExit(gridPos) {
@@ -71,6 +75,9 @@ class Map {
             else
                 explosion.update(elapsed)
         })
+        this.holes.forEach(hole => {
+            hole.update(elapsed)
+        })
     }
 
     draw(context) {
@@ -88,6 +95,10 @@ class Map {
         this.explosions.forEach(explosion => {
             explosion.draw(context)
         })
+
+        this.holes.forEach(hole => {
+            hole.draw(context)
+        })
     }
 
     randomFence() {
@@ -104,6 +115,24 @@ class Map {
                 this.posList.push(g)
                 const pos = tool.grid2coord(row, col)
                 this.fences.push(new Fence(pos.x, pos.y))
+            }
+        }
+    }
+
+    randomHole() {
+        this.holes = []
+        const inLimit = (row, col) => {
+            return col > 2 && col < tool.maxCol() - 2
+        }
+        const curLen = this.posList.length
+        while (this.posList.length < curLen + this.mapCfg.holes) {
+            const row = Math.round(Math.random() * tool.maxRow())
+            const col = Math.round(Math.random() * tool.maxCol())
+            const g = [row, col]
+            if (!this.posExit(g) && inLimit(row, col)) {
+                this.posList.push(g)
+                const pos = tool.grid2coord(row, col)
+                this.holes.push(new Hole(pos.x, pos.y))
             }
         }
     }

@@ -2,6 +2,7 @@ import drawing from './drawing'
 import Child from './child'
 import Door from './door'
 import Mom from './mom'
+import Rebuild from './rebuild'
 import macro from './macro'
 import { Grid } from './grid'
 import { NumberIndicator } from './indicator'
@@ -16,6 +17,7 @@ class Game {
         this.fps = 0
         this.pause = false
         this.child = undefined
+        this.rebuild = new Rebuild()
         this.controller = this.initController()
         this.levelIndicator = new NumberIndicator('Level ', 70, 10, { pt: 12 })
         this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
@@ -98,7 +100,7 @@ class Game {
         let drink = false
         window.g.map.milks.forEach((milk, i) => {
             const dis = tool.distance(this.child, milk)
-            if (dis < (this.child.radius + milk.radius)) {
+            if (dis < 1) {
                 switch (this.child.mode) {
                     case macro.ChildModeNormal:
                         drink = true
@@ -115,18 +117,28 @@ class Game {
         return drink
     }
 
-    childCatchFence(){
-        switch(this.child.mode){
+    childCatchFence() {
+        switch (this.child.mode) {
             case macro.ChildModeWarrior:
                 window.g.map.fences.forEach((fence, i) => {
                     const dis = tool.distance(this.child, fence)
-                    if(dis < (this.child.radius + fence.radius)){
+                    if (dis < 1) {
                         window.g.map.fences.splice(i, 1)
                         window.g.map.createExplosion(fence.img, fence.x, fence.y)
                     }
                 })
                 break
         }
+    }
+
+    childCatchHole(callback) {
+        window.g.map.holes.forEach((hole, i) => {
+            const dis = tool.distance(this.child, hole)
+            if (dis < 1) {
+                callback(hole)
+                window.g.map.holes.splice(i, 1)
+            }
+        })
     }
 
     childCatchBall() {
@@ -160,7 +172,8 @@ class Game {
     update(elapsed) {
         this.fps = 1 / elapsed
         switch (window.g.gameState) {
-            case macro.StateLoad:
+            case macro.StateRebuild:
+                this.rebuild.update(elapsed)
                 break
             case macro.StateGame:
                 if (this.reachDoor()) {
@@ -183,6 +196,10 @@ class Game {
                 if (this.childCatchBall()) {
                     this.child.changeMode(macro.ChildModeWarrior)
                 }
+                this.childCatchHole( (hole) => {
+                    this.rebuild.reset(hole)
+                    window.g.gameState = macro.StateRebuild
+                })
                 this.childCatchFence()
                 window.g.map.update(elapsed)
 
@@ -204,7 +221,6 @@ class Game {
         this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
         switch (window.g.gameState) {
             case macro.StateLoad:
-                break
             case macro.StateReady:
                 break
             case macro.StateLevelUp:
@@ -214,6 +230,12 @@ class Game {
                     this.context.canvas.width / 2,
                     this.context.canvas.height / 2, { pt: 30, color: 'white' }
                 )
+                break
+            case macro.StateRebuild:
+                this.grid.draw(this.context)
+                window.g.map.draw(this.context)
+                this.rebuild.draw(this.context)
+                this.door.draw(this.context)
                 break
             default:
                 this.grid.draw(this.context)

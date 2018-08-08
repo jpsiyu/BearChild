@@ -19762,6 +19762,7 @@ exports.default = {
     StateGame: 'StateGame',
     StateReachDoor: 'StateReachDoor',
     StateLevelUp: 'StateLevelUp',
+    StateRebuild: 'StateRebuild',
     StateGameOver: 'StateGameOver',
 
     BgColor: 'rgb(238, 217, 255)',
@@ -19781,7 +19782,7 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 0 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 0 }, { lv: 5, gridInRow: 14, milks: 8, fences: 2, balls: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 1 }];
+var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 0, holes: 1 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 0, holes: 1 }, { lv: 5, gridInRow: 14, milks: 8, fences: 2, balls: 1, holes: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 1, holes: 1 }];
 
 exports.default = {
     mapConfig: mapConfig
@@ -20410,7 +20411,176 @@ var Mom = function (_Element) {
 }(_element2.default);
 
 exports.default = Mom;
-},{"./element":"../src/element.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js","./sprite":"../src/sprite.js","./tool":"../src/tool.js"}],"../src/grid.js":[function(require,module,exports) {
+},{"./element":"../src/element.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js","./sprite":"../src/sprite.js","./tool":"../src/tool.js"}],"../src/hole.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Hole = function (_Element) {
+    _inherits(Hole, _Element);
+
+    function Hole(x, y) {
+        _classCallCheck(this, Hole);
+
+        var radius = Math.floor(_tool2.default.gridSize() / 2);
+
+        var _this = _possibleConstructorReturn(this, (Hole.__proto__ || Object.getPrototypeOf(Hole)).call(this, x, y, radius));
+
+        _this.img = window.g.resMgr.getImg('hole');
+        _this.rotation = 0;
+        return _this;
+    }
+
+    _createClass(Hole, [{
+        key: 'update',
+        value: function update(elapsed) {
+            this.rotation += 2 * Math.PI * elapsed;
+        }
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            context.save();
+            context.beginPath();
+            context.translate(this.x, this.y);
+            context.rotate(this.rotation);
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+            context.restore();
+        }
+    }]);
+
+    return Hole;
+}(_element2.default);
+
+exports.default = Hole;
+},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/rebuild.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _hole = require('./hole');
+
+var _hole2 = _interopRequireDefault(_hole);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ZoomIn = 0;
+var ZoomOut = 1;
+var ZoomEnd = 2;
+
+var Rebuild = function () {
+    function Rebuild() {
+        _classCallCheck(this, Rebuild);
+
+        this.angle = 0;
+        this.img = new Image();
+        this.dw = 0;
+        this.dh = 0;
+        this.pass = 0;
+        this.totalTime = 1;
+        this.zoom = ZoomIn;
+        this.hole = undefined;
+    }
+
+    _createClass(Rebuild, [{
+        key: 'reset',
+        value: function reset(hole) {
+            this.hole = hole;
+            this.zoom = ZoomIn;
+            this.pass = 0;
+        }
+    }, {
+        key: 'update',
+        value: function update(elapsed) {
+            this.pass += elapsed;
+            var factor = void 0;
+            this.angle += 2 * Math.PI * elapsed;
+            switch (this.zoom) {
+                case ZoomIn:
+                    factor = (this.totalTime - this.pass) / this.totalTime;
+                    if (factor < 0) {
+                        this.pass = 0;
+                        this.zoom = ZoomOut;
+                        window.g.map.reset(true);
+                    } else {
+                        this.dw = _tool2.default.gameWidth() * factor;
+                        this.dh = _tool2.default.gameHeight() * factor;
+                    }
+                    break;
+                case ZoomOut:
+                    factor = this.pass / this.totalTime;
+                    if (factor > 1) {
+                        this.zoom = ZoomEnd;
+                        window.g.gameState = _macro2.default.StateGame;
+                    } else {
+                        this.dw = _tool2.default.gameWidth() * factor;
+                        this.dh = _tool2.default.gameHeight() * factor;
+                    }
+                    break;
+                case ZoomEnd:
+                    break;
+            }
+        }
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            var w = _tool2.default.gameWidth();
+            var h = _tool2.default.gameHeight();
+            context.save();
+            this.img.src = context.canvas.toDataURL();
+            context.clearRect(0, 0, w, h);
+            context.translate(this.hole.x, this.hole.y);
+            context.rotate(this.angle);
+            context.drawImage(this.img, 0, 0, this.img.width, this.img.height, -this.dw / 2, -this.dh / 2, this.dw, this.dh);
+
+            context.translate(-this.hole.x, -this.hole.y);
+            this.hole.draw(context);
+            context.restore();
+        }
+    }]);
+
+    return Rebuild;
+}();
+
+exports.default = Rebuild;
+},{"./tool":"../src/tool.js","./macro":"../src/macro.js","./hole":"../src/hole.js"}],"../src/grid.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20797,6 +20967,10 @@ var _mom = require('./mom');
 
 var _mom2 = _interopRequireDefault(_mom);
 
+var _rebuild = require('./rebuild');
+
+var _rebuild2 = _interopRequireDefault(_rebuild);
+
 var _macro = require('./macro');
 
 var _macro2 = _interopRequireDefault(_macro);
@@ -20829,6 +21003,7 @@ var Game = function () {
         this.fps = 0;
         this.pause = false;
         this.child = undefined;
+        this.rebuild = new _rebuild2.default();
         this.controller = this.initController();
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
@@ -20932,7 +21107,7 @@ var Game = function () {
             var drink = false;
             window.g.map.milks.forEach(function (milk, i) {
                 var dis = _tool2.default.distance(_this4.child, milk);
-                if (dis < _this4.child.radius + milk.radius) {
+                if (dis < 1) {
                     switch (_this4.child.mode) {
                         case _macro2.default.ChildModeNormal:
                             drink = true;
@@ -20957,7 +21132,7 @@ var Game = function () {
                 case _macro2.default.ChildModeWarrior:
                     window.g.map.fences.forEach(function (fence, i) {
                         var dis = _tool2.default.distance(_this5.child, fence);
-                        if (dis < _this5.child.radius + fence.radius) {
+                        if (dis < 1) {
                             window.g.map.fences.splice(i, 1);
                             window.g.map.createExplosion(fence.img, fence.x, fence.y);
                         }
@@ -20966,14 +21141,27 @@ var Game = function () {
             }
         }
     }, {
+        key: 'childCatchHole',
+        value: function childCatchHole(callback) {
+            var _this6 = this;
+
+            window.g.map.holes.forEach(function (hole, i) {
+                var dis = _tool2.default.distance(_this6.child, hole);
+                if (dis < 1) {
+                    callback(hole);
+                    window.g.map.holes.splice(i, 1);
+                }
+            });
+        }
+    }, {
         key: 'childCatchBall',
         value: function childCatchBall() {
-            var _this6 = this;
+            var _this7 = this;
 
             var catchBall = false;
             window.g.map.balls.forEach(function (ball, i) {
-                var dis = _tool2.default.distance(_this6.child, ball);
-                if (dis < _this6.child.radius + ball.radius) {
+                var dis = _tool2.default.distance(_this7.child, ball);
+                if (dis < _this7.child.radius + ball.radius) {
                     catchBall = true;
                     window.g.map.balls.splice(i, 1);
                 }
@@ -21000,18 +21188,19 @@ var Game = function () {
     }, {
         key: 'update',
         value: function update(elapsed) {
-            var _this7 = this;
+            var _this8 = this;
 
             this.fps = 1 / elapsed;
             switch (window.g.gameState) {
-                case _macro2.default.StateLoad:
+                case _macro2.default.StateRebuild:
+                    this.rebuild.update(elapsed);
                     break;
                 case _macro2.default.StateGame:
                     if (this.reachDoor()) {
                         window.g.gameAudio.pause('bg.mp3');
                         window.g.gameState = _macro2.default.StateReachDoor;
                         setTimeout(function () {
-                            _this7.levelUp();
+                            _this8.levelUp();
                         }, 2 * 1000);
                         window.g.gameAudio.play('win.mp3');
                         return;
@@ -21029,6 +21218,10 @@ var Game = function () {
                     if (this.childCatchBall()) {
                         this.child.changeMode(_macro2.default.ChildModeWarrior);
                     }
+                    this.childCatchHole(function (hole) {
+                        _this8.rebuild.reset(hole);
+                        window.g.gameState = _macro2.default.StateRebuild;
+                    });
                     this.childCatchFence();
                     window.g.map.update(elapsed);
 
@@ -21051,11 +21244,16 @@ var Game = function () {
             this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
             switch (window.g.gameState) {
                 case _macro2.default.StateLoad:
-                    break;
                 case _macro2.default.StateReady:
                     break;
                 case _macro2.default.StateLevelUp:
                     _drawing2.default.drawLabel(this.context, 'Level ' + window.g.gameLv, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
+                    break;
+                case _macro2.default.StateRebuild:
+                    this.grid.draw(this.context);
+                    window.g.map.draw(this.context);
+                    this.rebuild.draw(this.context);
+                    this.door.draw(this.context);
                     break;
                 default:
                     this.grid.draw(this.context);
@@ -21078,7 +21276,7 @@ var Game = function () {
 }();
 
 exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js"}],"../src/resMgr.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./rebuild":"../src/rebuild.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js"}],"../src/resMgr.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21093,7 +21291,7 @@ var ResMgr = function () {
     function ResMgr() {
         _classCallCheck(this, ResMgr);
 
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball'];
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole'];
         this.images = {};
     }
 
@@ -22767,7 +22965,7 @@ module.exports = {
     "watch": "parcel watch client/public/index.html --public-url /bearchild"
   },
   "keywords": [],
-  "production": true,
+  "production": false,
   "port": 3001,
   "prefix": "/bearchild",
   "ip": "http://34.209.241.122/bearchild/",
@@ -23215,6 +23413,10 @@ var _fence = require('./fence');
 
 var _fence2 = _interopRequireDefault(_fence);
 
+var _hole = require('./hole');
+
+var _hole2 = _interopRequireDefault(_hole);
+
 var _explosion = require('./explosion');
 
 var _explosion2 = _interopRequireDefault(_explosion);
@@ -23240,6 +23442,7 @@ var Map = function () {
         this.balls = [];
         this.posList = [];
         this.explosions = [];
+        this.holes = [];
         this.mapCfg = undefined;
         this.gridSize = undefined;
         this.resizeCallback = undefined;
@@ -23276,11 +23479,14 @@ var Map = function () {
     }, {
         key: 'reset',
         value: function reset() {
+            var rebuild = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
             this.init();
             this.posList = [];
             this.randomMilk();
             this.randomFence();
             this.randomBall();
+            if (!rebuild) this.randomHole();
         }
     }, {
         key: 'posExit',
@@ -23305,6 +23511,9 @@ var Map = function () {
             this.explosions.forEach(function (explosion, i) {
                 if (explosion.finish) _this.explosions.splice(i, 1);else explosion.update(elapsed);
             });
+            this.holes.forEach(function (hole) {
+                hole.update(elapsed);
+            });
         }
     }, {
         key: 'draw',
@@ -23323,6 +23532,10 @@ var Map = function () {
             this.explosions.forEach(function (explosion) {
                 explosion.draw(context);
             });
+
+            this.holes.forEach(function (hole) {
+                hole.draw(context);
+            });
         }
     }, {
         key: 'randomFence',
@@ -23340,6 +23553,25 @@ var Map = function () {
                     this.posList.push(g);
                     var pos = _tool2.default.grid2coord(row, col);
                     this.fences.push(new _fence2.default(pos.x, pos.y));
+                }
+            }
+        }
+    }, {
+        key: 'randomHole',
+        value: function randomHole() {
+            this.holes = [];
+            var inLimit = function inLimit(row, col) {
+                return col > 2 && col < _tool2.default.maxCol() - 2;
+            };
+            var curLen = this.posList.length;
+            while (this.posList.length < curLen + this.mapCfg.holes) {
+                var row = Math.round(Math.random() * _tool2.default.maxRow());
+                var col = Math.round(Math.random() * _tool2.default.maxCol());
+                var g = [row, col];
+                if (!this.posExit(g) && inLimit(row, col)) {
+                    this.posList.push(g);
+                    var pos = _tool2.default.grid2coord(row, col);
+                    this.holes.push(new _hole2.default(pos.x, pos.y));
                 }
             }
         }
@@ -23388,7 +23620,7 @@ var Map = function () {
 }();
 
 exports.default = Map;
-},{"./milk":"../src/milk.js","./ball":"../src/ball.js","./fence":"../src/fence.js","./explosion":"../src/explosion.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
+},{"./milk":"../src/milk.js","./ball":"../src/ball.js","./fence":"../src/fence.js","./hole":"../src/hole.js","./explosion":"../src/explosion.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24262,7 +24494,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '50047' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '64519' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
