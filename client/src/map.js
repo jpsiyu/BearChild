@@ -2,6 +2,7 @@ import Milk from './milk'
 import Ball from './ball'
 import Fence from './fence'
 import Hole from './hole'
+import Eye from './eye'
 import Explosion from './explosion'
 import tool from './tool'
 import gameConfig from './gameConfig'
@@ -14,6 +15,7 @@ class Map {
         this.posList = []
         this.explosions = []
         this.holes = []
+        this.eyes = []
         this.mapCfg = undefined
         this.gridSize = undefined
         this.resizeCallback = undefined
@@ -47,11 +49,12 @@ class Map {
     reset(rebuild = false) {
         this.init()
         this.posList = []
-        this.randomMilk()
-        this.randomFence()
-        this.randomBall()
-        if(!rebuild)
-            this.randomHole()
+        this.milks = this.randomObj(this.mapCfg.milks, Milk)
+        this.fences = this.randomObj(this.mapCfg.fences, Fence)
+        this.balls = this.randomObj(this.mapCfg.balls, Ball)
+        this.eyes = this.randomObj(this.mapCfg.eyes, Eye)
+        if (!rebuild)
+            this.holes = this.randomObj(this.mapCfg.holdes, Hole)
     }
 
     posExit(gridPos) {
@@ -63,14 +66,14 @@ class Map {
         return exit
     }
 
-    createExplosion(img, x, y){
+    createExplosion(img, x, y) {
         const explosion = new Explosion(img, x, y)
         this.explosions.push(explosion)
     }
 
-    update(elapsed){
-        this.explosions.forEach((explosion,i) => {
-            if(explosion.finish )
+    update(elapsed) {
+        this.explosions.forEach((explosion, i) => {
+            if (explosion.finish)
                 this.explosions.splice(i, 1)
             else
                 explosion.update(elapsed)
@@ -80,98 +83,44 @@ class Map {
         })
     }
 
+    allDraws(){
+        return [
+            this.milks,
+            this.fences,
+            this.balls,
+            this.explosions,
+            this.holes,
+            this.eyes,
+        ]
+    }
+
     draw(context) {
-
-        this.milks.forEach(milk => {
-            milk.draw(context)
-        })
-        this.fences.forEach(fence => {
-            fence.draw(context)
-        })
-        this.balls.forEach(ball => {
-            ball.draw(context)
-        })
-
-        this.explosions.forEach(explosion => {
-            explosion.draw(context)
-        })
-
-        this.holes.forEach(hole => {
-            hole.draw(context)
+        this.allDraws().forEach(objList => {
+            objList.forEach(obj => {
+                obj.draw(context)
+            })
         })
     }
 
-    randomFence() {
-        this.fences = []
-        const inLimit = (row, col) => {
-            return col > 4 && col < tool.maxCol() - 4
-        }
-        const curLen = this.posList.length
-        while (this.posList.length < curLen + this.mapCfg.fences) {
-            const row = Math.round(Math.random() * tool.maxRow())
-            const col = Math.round(Math.random() * tool.maxCol())
-            const g = [row, col]
-            if (!this.posExit(g) && inLimit(row, col)) {
-                this.posList.push(g)
-                const pos = tool.grid2coord(row, col)
-                this.fences.push(new Fence(pos.x, pos.y))
-            }
-        }
-    }
-
-    randomHole() {
-        this.holes = []
+    randomObj(objNum, objClass) {
+        const objList = []
         const inLimit = (row, col) => {
             return col > 2 && col < tool.maxCol() - 2
         }
         const curLen = this.posList.length
-        while (this.posList.length < curLen + this.mapCfg.holes) {
-            const row = Math.round(Math.random() * tool.maxRow())
-            const col = Math.round(Math.random() * tool.maxCol())
-            const g = [row, col]
-            if (!this.posExit(g) && inLimit(row, col)) {
-                this.posList.push(g)
-                const pos = tool.grid2coord(row, col)
-                this.holes.push(new Hole(pos.x, pos.y))
-            }
-        }
-    }
-
-    randomBall() {
-        this.balls = []
-        const inLimit = (row, col) => {
-            return col > 2 && col < tool.maxCol() - 2
-        }
-        const curLen = this.posList.length
-        while (this.posList.length < curLen + this.mapCfg.balls) {
-            const row = Math.round(Math.random() * tool.maxRow())
-            const col = Math.round(Math.random() * tool.maxCol())
-            const g = [row, col]
-            if (!this.posExit(g) && inLimit(row, col)) {
-                this.posList.push(g)
-                const pos = tool.grid2coord(row, col)
-                this.balls.push(new Ball(pos.x, pos.y))
-            }
-        }
-    }
-
-    randomMilk() {
-        this.milks = []
-        const inLimit = (row, col) => {
-            return col > 2 && col < tool.maxCol() - 2
-        }
-        const curLen = this.posList.length
-        while (this.posList.length < curLen + this.mapCfg.milks) {
+        while (this.posList.length < curLen + objNum) {
             let row = Math.round(Math.random() * tool.maxRow())
-            row = Math.random() < 0.3 ? tool.maxRow() : row
+            if (objClass == Milk)
+                row = Math.random() < 0.3 ? tool.maxRow() : row
             const col = Math.round(Math.random() * tool.maxCol())
             const g = [row, col]
             if (!this.posExit(g) && inLimit(row, col)) {
                 this.posList.push(g)
                 const pos = tool.grid2coord(row, col)
-                this.milks.push(new Milk(pos.x, pos.y))
+                objList.push(new objClass(pos.x, pos.y))
             }
         }
+        return objList
     }
 }
 

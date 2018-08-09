@@ -8,6 +8,11 @@ import { Grid } from './grid'
 import { NumberIndicator } from './indicator'
 import tool from './tool'
 import Controller from './controller'
+import Fence from './fence'
+import Milk from './milk'
+import Hole from './hole'
+import Eye from './eye'
+import Ball from './ball'
 
 class Game {
     constructor(context) {
@@ -96,62 +101,49 @@ class Game {
         return dis < (this.mom.radius)
     }
 
-    childCatchMilk() {
-        let drink = false
-        window.g.map.milks.forEach((milk, i) => {
-            const dis = tool.distance(this.child, milk)
-            if (dis < 1) {
-                switch (this.child.mode) {
-                    case macro.ChildModeNormal:
-                        drink = true
-                        window.g.map.milks.splice(i, 1)
-                        break
-                    case macro.ChildModeWarrior:
-                        drink = false
-                        window.g.map.milks.splice(i, 1)
-                        window.g.map.createExplosion(milk.img, milk.x, milk.y)
-                        break
-                }
+    handleCollision(obj, index) {
+        if (obj instanceof Milk) {
+            window.g.map.milks.splice(index, 1)
+            switch (this.child.mode) {
+                case macro.ChildModeNormal:
+                    this.child.changeMode(macro.ChildModeDrink)
+                    break
+                case macro.ChildModeWarrior:
+                    window.g.map.createExplosion(obj.img, obj.x, obj.y)
+                    break
             }
-        })
-        return drink
-    }
+        } else if (obj instanceof Fence) {
+            window.g.map.fences.splice(index, 1)
+            window.g.map.createExplosion(obj.img, obj.x, obj.y)
+        } else if (obj instanceof Hole) {
+            this.rebuild.reset(obj)
+            window.g.gameState = macro.StateRebuild
+            window.g.map.holes.splice(index, 1)
+        } else if (obj instanceof Ball) {
+            this.child.changeMode(macro.ChildModeWarrior)
+            window.g.map.balls.splice(index, 1)
+        }else if (obj instanceof Eye){
 
-    childCatchFence() {
-        switch (this.child.mode) {
-            case macro.ChildModeWarrior:
-                window.g.map.fences.forEach((fence, i) => {
-                    const dis = tool.distance(this.child, fence)
-                    if (dis < 1) {
-                        window.g.map.fences.splice(i, 1)
-                        window.g.map.createExplosion(fence.img, fence.x, fence.y)
-                    }
-                })
-                break
         }
     }
 
-    childCatchHole(callback) {
-        window.g.map.holes.forEach((hole, i) => {
-            const dis = tool.distance(this.child, hole)
-            if (dis < 1) {
-                callback(hole)
-                window.g.map.holes.splice(i, 1)
+    childCollistionMapObj() {
+        const all = window.g.map.allDraws()
+        let objList, obj
+        let targetObj, targetIndex
+        for (let i = 0; i < all.length; i++) {
+            objList = all[i]
+            for (let j = 0; j < objList.length; j++) {
+                obj = objList[j]
+                const dis = tool.distance(this.child, obj)
+                if (dis < 1) {
+                    targetObj = obj
+                    targetIndex = j
+                    break
+                }
             }
-        })
-    }
-
-    childCatchBall() {
-        let catchBall = false
-        window.g.map.balls.forEach((ball, i) => {
-            const dis = tool.distance(this.child, ball)
-            if (dis < (this.child.radius + ball.radius)) {
-                catchBall = true
-                window.g.map.balls.splice(i, 1)
-            }
-        })
-        return catchBall
-
+        }
+        if (targetObj) this.handleCollision(targetObj, targetIndex)
     }
 
     setPause(bool) {
@@ -190,17 +182,8 @@ class Game {
                     window.g.pageMgr.show('PageEnd')
                     return
                 }
-                if (this.childCatchMilk()) {
-                    this.child.changeMode(macro.ChildModeDrink)
-                }
-                if (this.childCatchBall()) {
-                    this.child.changeMode(macro.ChildModeWarrior)
-                }
-                this.childCatchHole( (hole) => {
-                    this.rebuild.reset(hole)
-                    window.g.gameState = macro.StateRebuild
-                })
-                this.childCatchFence()
+                this.childCollistionMapObj()
+
                 window.g.map.update(elapsed)
 
                 this.child.update(elapsed)
@@ -240,7 +223,6 @@ class Game {
             default:
                 this.grid.draw(this.context)
                 window.g.map.draw(this.context)
-                this.mom.draw(this.context)
                 this.grid.drawMask(this.context)
                 this.door.draw(this.context)
 
@@ -248,6 +230,7 @@ class Game {
                 //this.fpsIndicator.draw(this.context, this.fps) 
                 this.controller.draw(this.context)
                 this.child.draw(this.context)
+                this.mom.draw(this.context)
                 break
         }
         window.g.pageMgr.draw(this.context)

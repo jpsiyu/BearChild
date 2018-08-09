@@ -19782,7 +19782,7 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 0, holes: 0 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 0, holes: 0 }, { lv: 5, gridInRow: 14, milks: 8, fences: 2, balls: 1, holes: 0 }, { lv: 8, gridInRow: 16, milks: 8, fences: 2, balls: 1, holes: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 1, holes: 1 }];
+var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 0, holes: 0, eyes: 1 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 0, holes: 0, eyes: 1 }, { lv: 5, gridInRow: 14, milks: 8, fences: 2, balls: 1, holes: 0, eyes: 1 }, { lv: 8, gridInRow: 16, milks: 8, fences: 2, balls: 1, holes: 1, eyes: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 1, holes: 1, eyes: 1 }];
 
 exports.default = {
     mapConfig: mapConfig
@@ -20942,7 +20942,247 @@ var Controller = function (_Element) {
 }(_element2.default);
 
 exports.default = Controller;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js"}],"../src/game.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js"}],"../src/fence.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Fence = function (_Element) {
+    _inherits(Fence, _Element);
+
+    function Fence(x, y) {
+        _classCallCheck(this, Fence);
+
+        var radius = _tool2.default.gridSize() / 2;
+
+        var _this = _possibleConstructorReturn(this, (Fence.__proto__ || Object.getPrototypeOf(Fence)).call(this, x, y, radius));
+
+        _this.img = window.g.resMgr.getImg('fence');
+        return _this;
+    }
+
+    _createClass(Fence, [{
+        key: 'update',
+        value: function update() {}
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            context.save();
+            context.translate(this.x, this.y);
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+            context.restore();
+        }
+    }]);
+
+    return Fence;
+}(_element2.default);
+
+exports.default = Fence;
+},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/milk.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Milk = function (_Element) {
+    _inherits(Milk, _Element);
+
+    function Milk(x, y) {
+        _classCallCheck(this, Milk);
+
+        var radius = _tool2.default.gridSize() / 3;
+
+        var _this = _possibleConstructorReturn(this, (Milk.__proto__ || Object.getPrototypeOf(Milk)).call(this, x, y, radius));
+
+        _this.img = window.g.resMgr.getImg('milk');
+        return _this;
+    }
+
+    _createClass(Milk, [{
+        key: 'update',
+        value: function update() {}
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            context.save();
+            context.translate(this.x, this.y);
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+            context.restore();
+        }
+    }]);
+
+    return Milk;
+}(_element2.default);
+
+exports.default = Milk;
+},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/eye.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Eye = function (_Element) {
+    _inherits(Eye, _Element);
+
+    function Eye(x, y) {
+        _classCallCheck(this, Eye);
+
+        var radius = _tool2.default.gridSize() / 2;
+
+        var _this = _possibleConstructorReturn(this, (Eye.__proto__ || Object.getPrototypeOf(Eye)).call(this, x, y, radius));
+
+        _this.img = window.g.resMgr.getImg('eye');
+        return _this;
+    }
+
+    _createClass(Eye, [{
+        key: 'update',
+        value: function update() {}
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            context.save();
+            context.translate(this.x, this.y);
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+            context.restore();
+        }
+    }]);
+
+    return Eye;
+}(_element2.default);
+
+exports.default = Eye;
+},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/ball.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Ball = function (_Element) {
+    _inherits(Ball, _Element);
+
+    function Ball(x, y) {
+        _classCallCheck(this, Ball);
+
+        var radius = _tool2.default.gridSize() / 3;
+
+        var _this = _possibleConstructorReturn(this, (Ball.__proto__ || Object.getPrototypeOf(Ball)).call(this, x, y, radius));
+
+        _this.img = window.g.resMgr.getImg('ball');
+        return _this;
+    }
+
+    _createClass(Ball, [{
+        key: 'update',
+        value: function update() {}
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            context.save();
+            context.translate(this.x, this.y);
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+            context.restore();
+        }
+    }]);
+
+    return Ball;
+}(_element2.default);
+
+exports.default = Ball;
+},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/game.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20986,6 +21226,26 @@ var _tool2 = _interopRequireDefault(_tool);
 var _controller = require('./controller');
 
 var _controller2 = _interopRequireDefault(_controller);
+
+var _fence = require('./fence');
+
+var _fence2 = _interopRequireDefault(_fence);
+
+var _milk = require('./milk');
+
+var _milk2 = _interopRequireDefault(_milk);
+
+var _hole = require('./hole');
+
+var _hole2 = _interopRequireDefault(_hole);
+
+var _eye = require('./eye');
+
+var _eye2 = _interopRequireDefault(_eye);
+
+var _ball = require('./ball');
+
+var _ball2 = _interopRequireDefault(_ball);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21100,73 +21360,51 @@ var Game = function () {
             return dis < this.mom.radius;
         }
     }, {
-        key: 'childCatchMilk',
-        value: function childCatchMilk() {
-            var _this4 = this;
-
-            var drink = false;
-            window.g.map.milks.forEach(function (milk, i) {
-                var dis = _tool2.default.distance(_this4.child, milk);
-                if (dis < 1) {
-                    switch (_this4.child.mode) {
-                        case _macro2.default.ChildModeNormal:
-                            drink = true;
-                            window.g.map.milks.splice(i, 1);
-                            break;
-                        case _macro2.default.ChildModeWarrior:
-                            drink = false;
-                            window.g.map.milks.splice(i, 1);
-                            window.g.map.createExplosion(milk.img, milk.x, milk.y);
-                            break;
+        key: 'handleCollision',
+        value: function handleCollision(obj, index) {
+            if (obj instanceof _milk2.default) {
+                window.g.map.milks.splice(index, 1);
+                switch (this.child.mode) {
+                    case _macro2.default.ChildModeNormal:
+                        this.child.changeMode(_macro2.default.ChildModeDrink);
+                        break;
+                    case _macro2.default.ChildModeWarrior:
+                        window.g.map.createExplosion(obj.img, obj.x, obj.y);
+                        break;
+                }
+            } else if (obj instanceof _fence2.default) {
+                window.g.map.fences.splice(index, 1);
+                window.g.map.createExplosion(obj.img, obj.x, obj.y);
+            } else if (obj instanceof _hole2.default) {
+                this.rebuild.reset(obj);
+                window.g.gameState = _macro2.default.StateRebuild;
+                window.g.map.holes.splice(index, 1);
+            } else if (obj instanceof _ball2.default) {
+                this.child.changeMode(_macro2.default.ChildModeWarrior);
+                window.g.map.balls.splice(index, 1);
+            } else if (obj instanceof _eye2.default) {}
+        }
+    }, {
+        key: 'childCollistionMapObj',
+        value: function childCollistionMapObj() {
+            var all = window.g.map.allDraws();
+            var objList = void 0,
+                obj = void 0;
+            var targetObj = void 0,
+                targetIndex = void 0;
+            for (var i = 0; i < all.length; i++) {
+                objList = all[i];
+                for (var j = 0; j < objList.length; j++) {
+                    obj = objList[j];
+                    var dis = _tool2.default.distance(this.child, obj);
+                    if (dis < 1) {
+                        targetObj = obj;
+                        targetIndex = j;
+                        break;
                     }
                 }
-            });
-            return drink;
-        }
-    }, {
-        key: 'childCatchFence',
-        value: function childCatchFence() {
-            var _this5 = this;
-
-            switch (this.child.mode) {
-                case _macro2.default.ChildModeWarrior:
-                    window.g.map.fences.forEach(function (fence, i) {
-                        var dis = _tool2.default.distance(_this5.child, fence);
-                        if (dis < 1) {
-                            window.g.map.fences.splice(i, 1);
-                            window.g.map.createExplosion(fence.img, fence.x, fence.y);
-                        }
-                    });
-                    break;
             }
-        }
-    }, {
-        key: 'childCatchHole',
-        value: function childCatchHole(callback) {
-            var _this6 = this;
-
-            window.g.map.holes.forEach(function (hole, i) {
-                var dis = _tool2.default.distance(_this6.child, hole);
-                if (dis < 1) {
-                    callback(hole);
-                    window.g.map.holes.splice(i, 1);
-                }
-            });
-        }
-    }, {
-        key: 'childCatchBall',
-        value: function childCatchBall() {
-            var _this7 = this;
-
-            var catchBall = false;
-            window.g.map.balls.forEach(function (ball, i) {
-                var dis = _tool2.default.distance(_this7.child, ball);
-                if (dis < _this7.child.radius + ball.radius) {
-                    catchBall = true;
-                    window.g.map.balls.splice(i, 1);
-                }
-            });
-            return catchBall;
+            if (targetObj) this.handleCollision(targetObj, targetIndex);
         }
     }, {
         key: 'setPause',
@@ -21188,7 +21426,7 @@ var Game = function () {
     }, {
         key: 'update',
         value: function update(elapsed) {
-            var _this8 = this;
+            var _this4 = this;
 
             this.fps = 1 / elapsed;
             switch (window.g.gameState) {
@@ -21200,7 +21438,7 @@ var Game = function () {
                         window.g.gameAudio.pause('bg.mp3');
                         window.g.gameState = _macro2.default.StateReachDoor;
                         setTimeout(function () {
-                            _this8.levelUp();
+                            _this4.levelUp();
                         }, 2 * 1000);
                         window.g.gameAudio.play('win.mp3');
                         return;
@@ -21212,17 +21450,8 @@ var Game = function () {
                         window.g.pageMgr.show('PageEnd');
                         return;
                     }
-                    if (this.childCatchMilk()) {
-                        this.child.changeMode(_macro2.default.ChildModeDrink);
-                    }
-                    if (this.childCatchBall()) {
-                        this.child.changeMode(_macro2.default.ChildModeWarrior);
-                    }
-                    this.childCatchHole(function (hole) {
-                        _this8.rebuild.reset(hole);
-                        window.g.gameState = _macro2.default.StateRebuild;
-                    });
-                    this.childCatchFence();
+                    this.childCollistionMapObj();
+
                     window.g.map.update(elapsed);
 
                     this.child.update(elapsed);
@@ -21258,7 +21487,6 @@ var Game = function () {
                 default:
                     this.grid.draw(this.context);
                     window.g.map.draw(this.context);
-                    this.mom.draw(this.context);
                     this.grid.drawMask(this.context);
                     this.door.draw(this.context);
 
@@ -21266,6 +21494,7 @@ var Game = function () {
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.controller.draw(this.context);
                     this.child.draw(this.context);
+                    this.mom.draw(this.context);
                     break;
             }
             window.g.pageMgr.draw(this.context);
@@ -21276,7 +21505,7 @@ var Game = function () {
 }();
 
 exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./rebuild":"../src/rebuild.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js"}],"../src/resMgr.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./rebuild":"../src/rebuild.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js","./fence":"../src/fence.js","./milk":"../src/milk.js","./hole":"../src/hole.js","./eye":"../src/eye.js","./ball":"../src/ball.js"}],"../src/resMgr.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21291,7 +21520,7 @@ var ResMgr = function () {
     function ResMgr() {
         _classCallCheck(this, ResMgr);
 
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole'];
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole', 'eye'];
         this.images = {};
     }
 
@@ -22965,7 +23194,7 @@ module.exports = {
     "watch": "parcel watch client/public/index.html --public-url /bearchild"
   },
   "keywords": [],
-  "production": true,
+  "production": false,
   "port": 3001,
   "prefix": "/bearchild",
   "ip": "http://34.209.241.122/bearchild/",
@@ -23118,187 +23347,7 @@ var GameAudio = function () {
 }();
 
 exports.default = GameAudio;
-},{"axios":"../../node_modules/axios/index.js","../../package.json":"../../package.json"}],"../src/milk.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _drawing = require('./drawing');
-
-var _drawing2 = _interopRequireDefault(_drawing);
-
-var _tool = require('./tool');
-
-var _tool2 = _interopRequireDefault(_tool);
-
-var _element = require('./element');
-
-var _element2 = _interopRequireDefault(_element);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Milk = function (_Element) {
-    _inherits(Milk, _Element);
-
-    function Milk(x, y) {
-        _classCallCheck(this, Milk);
-
-        var radius = _tool2.default.gridSize() / 3;
-
-        var _this = _possibleConstructorReturn(this, (Milk.__proto__ || Object.getPrototypeOf(Milk)).call(this, x, y, radius));
-
-        _this.img = window.g.resMgr.getImg('milk');
-        return _this;
-    }
-
-    _createClass(Milk, [{
-        key: 'update',
-        value: function update() {}
-    }, {
-        key: 'draw',
-        value: function draw(context) {
-            context.save();
-            context.translate(this.x, this.y);
-            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
-            context.restore();
-        }
-    }]);
-
-    return Milk;
-}(_element2.default);
-
-exports.default = Milk;
-},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/ball.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _drawing = require('./drawing');
-
-var _drawing2 = _interopRequireDefault(_drawing);
-
-var _tool = require('./tool');
-
-var _tool2 = _interopRequireDefault(_tool);
-
-var _element = require('./element');
-
-var _element2 = _interopRequireDefault(_element);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Ball = function (_Element) {
-    _inherits(Ball, _Element);
-
-    function Ball(x, y) {
-        _classCallCheck(this, Ball);
-
-        var radius = _tool2.default.gridSize() / 3;
-
-        var _this = _possibleConstructorReturn(this, (Ball.__proto__ || Object.getPrototypeOf(Ball)).call(this, x, y, radius));
-
-        _this.img = window.g.resMgr.getImg('ball');
-        return _this;
-    }
-
-    _createClass(Ball, [{
-        key: 'update',
-        value: function update() {}
-    }, {
-        key: 'draw',
-        value: function draw(context) {
-            context.save();
-            context.translate(this.x, this.y);
-            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
-            context.restore();
-        }
-    }]);
-
-    return Ball;
-}(_element2.default);
-
-exports.default = Ball;
-},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/fence.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _drawing = require('./drawing');
-
-var _drawing2 = _interopRequireDefault(_drawing);
-
-var _tool = require('./tool');
-
-var _tool2 = _interopRequireDefault(_tool);
-
-var _element = require('./element');
-
-var _element2 = _interopRequireDefault(_element);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Fence = function (_Element) {
-    _inherits(Fence, _Element);
-
-    function Fence(x, y) {
-        _classCallCheck(this, Fence);
-
-        var radius = _tool2.default.gridSize() / 2;
-
-        var _this = _possibleConstructorReturn(this, (Fence.__proto__ || Object.getPrototypeOf(Fence)).call(this, x, y, radius));
-
-        _this.img = window.g.resMgr.getImg('fence');
-        return _this;
-    }
-
-    _createClass(Fence, [{
-        key: 'update',
-        value: function update() {}
-    }, {
-        key: 'draw',
-        value: function draw(context) {
-            context.save();
-            context.translate(this.x, this.y);
-            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
-            context.restore();
-        }
-    }]);
-
-    return Fence;
-}(_element2.default);
-
-exports.default = Fence;
-},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/explosion.js":[function(require,module,exports) {
+},{"axios":"../../node_modules/axios/index.js","../../package.json":"../../package.json"}],"../src/explosion.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -23417,6 +23466,10 @@ var _hole = require('./hole');
 
 var _hole2 = _interopRequireDefault(_hole);
 
+var _eye = require('./eye');
+
+var _eye2 = _interopRequireDefault(_eye);
+
 var _explosion = require('./explosion');
 
 var _explosion2 = _interopRequireDefault(_explosion);
@@ -23443,6 +23496,7 @@ var Map = function () {
         this.posList = [];
         this.explosions = [];
         this.holes = [];
+        this.eyes = [];
         this.mapCfg = undefined;
         this.gridSize = undefined;
         this.resizeCallback = undefined;
@@ -23483,10 +23537,11 @@ var Map = function () {
 
             this.init();
             this.posList = [];
-            this.randomMilk();
-            this.randomFence();
-            this.randomBall();
-            if (!rebuild) this.randomHole();
+            this.milks = this.randomObj(this.mapCfg.milks, _milk2.default);
+            this.fences = this.randomObj(this.mapCfg.fences, _fence2.default);
+            this.balls = this.randomObj(this.mapCfg.balls, _ball2.default);
+            this.eyes = this.randomObj(this.mapCfg.eyes, _eye2.default);
+            if (!rebuild) this.holes = this.randomObj(this.mapCfg.holdes, _hole2.default);
         }
     }, {
         key: 'posExit',
@@ -23516,103 +23571,39 @@ var Map = function () {
             });
         }
     }, {
+        key: 'allDraws',
+        value: function allDraws() {
+            return [this.milks, this.fences, this.balls, this.explosions, this.holes, this.eyes];
+        }
+    }, {
         key: 'draw',
         value: function draw(context) {
-
-            this.milks.forEach(function (milk) {
-                milk.draw(context);
-            });
-            this.fences.forEach(function (fence) {
-                fence.draw(context);
-            });
-            this.balls.forEach(function (ball) {
-                ball.draw(context);
-            });
-
-            this.explosions.forEach(function (explosion) {
-                explosion.draw(context);
-            });
-
-            this.holes.forEach(function (hole) {
-                hole.draw(context);
+            this.allDraws().forEach(function (objList) {
+                objList.forEach(function (obj) {
+                    obj.draw(context);
+                });
             });
         }
     }, {
-        key: 'randomFence',
-        value: function randomFence() {
-            this.fences = [];
-            var inLimit = function inLimit(row, col) {
-                return col > 4 && col < _tool2.default.maxCol() - 4;
-            };
-            var curLen = this.posList.length;
-            while (this.posList.length < curLen + this.mapCfg.fences) {
-                var row = Math.round(Math.random() * _tool2.default.maxRow());
-                var col = Math.round(Math.random() * _tool2.default.maxCol());
-                var g = [row, col];
-                if (!this.posExit(g) && inLimit(row, col)) {
-                    this.posList.push(g);
-                    var pos = _tool2.default.grid2coord(row, col);
-                    this.fences.push(new _fence2.default(pos.x, pos.y));
-                }
-            }
-        }
-    }, {
-        key: 'randomHole',
-        value: function randomHole() {
-            this.holes = [];
+        key: 'randomObj',
+        value: function randomObj(objNum, objClass) {
+            var objList = [];
             var inLimit = function inLimit(row, col) {
                 return col > 2 && col < _tool2.default.maxCol() - 2;
             };
             var curLen = this.posList.length;
-            while (this.posList.length < curLen + this.mapCfg.holes) {
+            while (this.posList.length < curLen + objNum) {
                 var row = Math.round(Math.random() * _tool2.default.maxRow());
+                if (objClass == _milk2.default) row = Math.random() < 0.3 ? _tool2.default.maxRow() : row;
                 var col = Math.round(Math.random() * _tool2.default.maxCol());
                 var g = [row, col];
                 if (!this.posExit(g) && inLimit(row, col)) {
                     this.posList.push(g);
                     var pos = _tool2.default.grid2coord(row, col);
-                    this.holes.push(new _hole2.default(pos.x, pos.y));
+                    objList.push(new objClass(pos.x, pos.y));
                 }
             }
-        }
-    }, {
-        key: 'randomBall',
-        value: function randomBall() {
-            this.balls = [];
-            var inLimit = function inLimit(row, col) {
-                return col > 2 && col < _tool2.default.maxCol() - 2;
-            };
-            var curLen = this.posList.length;
-            while (this.posList.length < curLen + this.mapCfg.balls) {
-                var row = Math.round(Math.random() * _tool2.default.maxRow());
-                var col = Math.round(Math.random() * _tool2.default.maxCol());
-                var g = [row, col];
-                if (!this.posExit(g) && inLimit(row, col)) {
-                    this.posList.push(g);
-                    var pos = _tool2.default.grid2coord(row, col);
-                    this.balls.push(new _ball2.default(pos.x, pos.y));
-                }
-            }
-        }
-    }, {
-        key: 'randomMilk',
-        value: function randomMilk() {
-            this.milks = [];
-            var inLimit = function inLimit(row, col) {
-                return col > 2 && col < _tool2.default.maxCol() - 2;
-            };
-            var curLen = this.posList.length;
-            while (this.posList.length < curLen + this.mapCfg.milks) {
-                var row = Math.round(Math.random() * _tool2.default.maxRow());
-                row = Math.random() < 0.3 ? _tool2.default.maxRow() : row;
-                var col = Math.round(Math.random() * _tool2.default.maxCol());
-                var g = [row, col];
-                if (!this.posExit(g) && inLimit(row, col)) {
-                    this.posList.push(g);
-                    var pos = _tool2.default.grid2coord(row, col);
-                    this.milks.push(new _milk2.default(pos.x, pos.y));
-                }
-            }
+            return objList;
         }
     }]);
 
@@ -23620,7 +23611,7 @@ var Map = function () {
 }();
 
 exports.default = Map;
-},{"./milk":"../src/milk.js","./ball":"../src/ball.js","./fence":"../src/fence.js","./hole":"../src/hole.js","./explosion":"../src/explosion.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
+},{"./milk":"../src/milk.js","./ball":"../src/ball.js","./fence":"../src/fence.js","./hole":"../src/hole.js","./eye":"../src/eye.js","./explosion":"../src/explosion.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24494,7 +24485,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '64519' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49244' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
