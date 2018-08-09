@@ -19782,7 +19782,7 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 0, holes: 0, eyes: 1 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 0, holes: 0, eyes: 1 }, { lv: 5, gridInRow: 14, milks: 8, fences: 2, balls: 1, holes: 0, eyes: 1 }, { lv: 8, gridInRow: 16, milks: 8, fences: 2, balls: 1, holes: 1, eyes: 1 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 1, holes: 1, eyes: 1 }];
+var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 0, holes: 0, eyes: 0 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 0, holes: 0, eyes: 0 }, { lv: 5, gridInRow: 14, milks: 8, fences: 2, balls: 1, holes: 0, eyes: 0 }, { lv: 8, gridInRow: 16, milks: 8, fences: 2, balls: 1, holes: 1, eyes: 0 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 1, holes: 1, eyes: 1 }];
 
 exports.default = {
     mapConfig: mapConfig
@@ -21268,6 +21268,7 @@ var Game = function () {
         this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
         this.loadFlag = 0;
+        this.drawMask = true;
 
         window.g.gameEventListener.register(_macro2.default.EventRestart, this, function () {
             _this.restartGame();
@@ -21382,11 +21383,13 @@ var Game = function () {
             } else if (obj instanceof _ball2.default) {
                 this.child.changeMode(_macro2.default.ChildModeWarrior);
                 window.g.map.balls.splice(index, 1);
-            } else if (obj instanceof _eye2.default) {}
+            } else if (obj instanceof _eye2.default) {
+                this.drawMask = false;
+            }
         }
     }, {
-        key: 'childCollistionMapObj',
-        value: function childCollistionMapObj() {
+        key: 'childCollisionMapObj',
+        value: function childCollisionMapObj() {
             var all = window.g.map.allDraws();
             var objList = void 0,
                 obj = void 0;
@@ -21429,6 +21432,7 @@ var Game = function () {
             var _this4 = this;
 
             this.fps = 1 / elapsed;
+            this.drawMask = true;
             switch (window.g.gameState) {
                 case _macro2.default.StateRebuild:
                     this.rebuild.update(elapsed);
@@ -21450,7 +21454,7 @@ var Game = function () {
                         window.g.pageMgr.show('PageEnd');
                         return;
                     }
-                    this.childCollistionMapObj();
+                    this.childCollisionMapObj();
 
                     window.g.map.update(elapsed);
 
@@ -21487,7 +21491,7 @@ var Game = function () {
                 default:
                     this.grid.draw(this.context);
                     window.g.map.draw(this.context);
-                    this.grid.drawMask(this.context);
+                    if (this.drawMask) this.grid.drawMask(this.context);
                     this.door.draw(this.context);
 
                     this.levelIndicator.draw(this.context, window.g.gameLv);
@@ -23194,7 +23198,7 @@ module.exports = {
     "watch": "parcel watch client/public/index.html --public-url /bearchild"
   },
   "keywords": [],
-  "production": false,
+  "production": true,
   "port": 3001,
   "prefix": "/bearchild",
   "ip": "http://34.209.241.122/bearchild/",
@@ -23541,15 +23545,20 @@ var Map = function () {
             this.fences = this.randomObj(this.mapCfg.fences, _fence2.default);
             this.balls = this.randomObj(this.mapCfg.balls, _ball2.default);
             this.eyes = this.randomObj(this.mapCfg.eyes, _eye2.default);
-            if (!rebuild) this.holes = this.randomObj(this.mapCfg.holdes, _hole2.default);
+            if (!rebuild) this.holes = this.randomObj(this.mapCfg.holes, _hole2.default);
         }
     }, {
         key: 'posExit',
-        value: function posExit(gridPos) {
+        value: function posExit(newPos) {
             var exit = false;
-            this.posList.forEach(function (gPos) {
-                if (gPos[0] === gridPos[0] && gPos[1] === gridPos[1]) exit = true;
-            });
+            var pos = void 0;
+            for (var i = 0; i < this.posList.length; i++) {
+                pos = this.posList[i];
+                if (pos[0] === newPos[0] && pos[1] === newPos[1]) {
+                    exit = true;
+                    break;
+                }
+            }
             return exit;
         }
     }, {

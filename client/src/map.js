@@ -54,15 +54,19 @@ class Map {
         this.balls = this.randomObj(this.mapCfg.balls, Ball)
         this.eyes = this.randomObj(this.mapCfg.eyes, Eye)
         if (!rebuild)
-            this.holes = this.randomObj(this.mapCfg.holdes, Hole)
+            this.holes = this.randomObj(this.mapCfg.holes, Hole)
     }
 
-    posExit(gridPos) {
+    posExit(newPos) {
         let exit = false
-        this.posList.forEach(gPos => {
-            if (gPos[0] === gridPos[0] && gPos[1] === gridPos[1])
+        let pos 
+        for (let i = 0; i < this.posList.length; i++) {
+            pos = this.posList[i]
+            if (pos[0] === newPos[0] && pos[1] === newPos[1]) {
                 exit = true
-        })
+                break
+            }
+        }
         return exit
     }
 
@@ -83,7 +87,7 @@ class Map {
         })
     }
 
-    allDraws(){
+    allDraws() {
         return [
             this.milks,
             this.fences,

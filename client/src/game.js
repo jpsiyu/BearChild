@@ -27,6 +27,7 @@ class Game {
         this.levelIndicator = new NumberIndicator('Level ', 70, 10, { pt: 12 })
         this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
         this.loadFlag = 0
+        this.drawMask = true
 
         window.g.gameEventListener.register(macro.EventRestart, this, () => { this.restartGame() })
         window.g.gameEventListener.register(macro.EventReady, this, () => { this.readyForGame() })
@@ -123,11 +124,11 @@ class Game {
             this.child.changeMode(macro.ChildModeWarrior)
             window.g.map.balls.splice(index, 1)
         }else if (obj instanceof Eye){
-
+            this.drawMask = false
         }
     }
 
-    childCollistionMapObj() {
+    childCollisionMapObj() {
         const all = window.g.map.allDraws()
         let objList, obj
         let targetObj, targetIndex
@@ -163,6 +164,7 @@ class Game {
 
     update(elapsed) {
         this.fps = 1 / elapsed
+        this.drawMask = true
         switch (window.g.gameState) {
             case macro.StateRebuild:
                 this.rebuild.update(elapsed)
@@ -182,7 +184,7 @@ class Game {
                     window.g.pageMgr.show('PageEnd')
                     return
                 }
-                this.childCollistionMapObj()
+                this.childCollisionMapObj()
 
                 window.g.map.update(elapsed)
 
@@ -223,7 +225,7 @@ class Game {
             default:
                 this.grid.draw(this.context)
                 window.g.map.draw(this.context)
-                this.grid.drawMask(this.context)
+                if(this.drawMask) this.grid.drawMask(this.context)
                 this.door.draw(this.context)
 
                 this.levelIndicator.draw(this.context, window.g.gameLv)
