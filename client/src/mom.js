@@ -26,6 +26,14 @@ class Mom extends Element {
     }
 
     chase(child, elapsed) {
+        let stop = false
+        window.g.map.shields.forEach( shield => {
+            if(shield.isHolding()){
+                if(tool.distance(shield, this) < this.radius + shield.radius)
+                    stop = true
+            }
+        })
+        if(stop) return
         const dy = child.y - this.y
         const dx = child.x - this.x
         const theta = Math.atan2(dy, dx)

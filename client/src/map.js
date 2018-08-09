@@ -6,6 +6,7 @@ import Eye from './eye'
 import Explosion from './explosion'
 import tool from './tool'
 import gameConfig from './gameConfig'
+import Shield from './shield'
 
 class Map {
     constructor() {
@@ -16,6 +17,7 @@ class Map {
         this.explosions = []
         this.holes = []
         this.eyes = []
+        this.shields = []
         this.mapCfg = undefined
         this.gridSize = undefined
         this.resizeCallback = undefined
@@ -53,13 +55,14 @@ class Map {
         this.fences = this.randomObj(this.mapCfg.fences, Fence)
         this.balls = this.randomObj(this.mapCfg.balls, Ball)
         this.eyes = this.randomObj(this.mapCfg.eyes, Eye)
+        this.shields = this.randomObj(this.mapCfg.shields, Shield)
         if (!rebuild)
             this.holes = this.randomObj(this.mapCfg.holes, Hole)
     }
 
     posExit(newPos) {
         let exit = false
-        let pos 
+        let pos
         for (let i = 0; i < this.posList.length; i++) {
             pos = this.posList[i]
             if (pos[0] === newPos[0] && pos[1] === newPos[1]) {
@@ -85,6 +88,9 @@ class Map {
         this.holes.forEach(hole => {
             hole.update(elapsed)
         })
+        this.shields.forEach(shield => {
+            shield.update(elapsed)
+        })
     }
 
     allDraws() {
@@ -95,6 +101,7 @@ class Map {
             this.explosions,
             this.holes,
             this.eyes,
+            this.shields,
         ]
     }
 

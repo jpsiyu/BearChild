@@ -15,6 +15,7 @@ class ResMgr {
             'ball',
             'hole',
             'eye',
+            'shield',
         ]
         this.images = {}
     }

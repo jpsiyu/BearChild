@@ -19782,7 +19782,7 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 0, holes: 0, eyes: 0 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 0, holes: 0, eyes: 0 }, { lv: 5, gridInRow: 14, milks: 8, fences: 2, balls: 1, holes: 0, eyes: 0 }, { lv: 8, gridInRow: 16, milks: 8, fences: 2, balls: 1, holes: 1, eyes: 0 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 1, holes: 1, eyes: 1 }];
+var mapConfig = [{ lv: 1, gridInRow: 12, milks: 1, fences: 0, balls: 0, holes: 0, eyes: 0, shields: 0 }, { lv: 3, gridInRow: 12, milks: 3, fences: 1, balls: 0, holes: 0, eyes: 0, shields: 0 }, { lv: 5, gridInRow: 14, milks: 8, fences: 2, balls: 1, holes: 0, eyes: 0, shields: 0 }, { lv: 7, gridInRow: 16, milks: 8, fences: 2, balls: 1, holes: 1, eyes: 0, shields: 0 }, { lv: 9, gridInRow: 16, milks: 8, fences: 2, balls: 1, holes: 1, eyes: 1, shields: 0 }, { lv: 999, gridInRow: 18, milks: 14, fences: 3, balls: 1, holes: 1, eyes: 1, shields: 1 }];
 
 exports.default = {
     mapConfig: mapConfig
@@ -20381,6 +20381,15 @@ var Mom = function (_Element) {
     }, {
         key: 'chase',
         value: function chase(child, elapsed) {
+            var _this2 = this;
+
+            var stop = false;
+            window.g.map.shields.forEach(function (shield) {
+                if (shield.isHolding()) {
+                    if (_tool2.default.distance(shield, _this2) < _this2.radius + shield.radius) stop = true;
+                }
+            });
+            if (stop) return;
             var dy = child.y - this.y;
             var dx = child.x - this.x;
             var theta = Math.atan2(dy, dx);
@@ -21182,7 +21191,109 @@ var Ball = function (_Element) {
 }(_element2.default);
 
 exports.default = Ball;
-},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/game.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js"}],"../src/shield.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ShieldUnactive = 0;
+var ShieldActive = 1;
+var ShieldFinish = 2;
+
+var Shield = function (_Element) {
+    _inherits(Shield, _Element);
+
+    function Shield(x, y) {
+        _classCallCheck(this, Shield);
+
+        var radius = _tool2.default.gridSize() / 2;
+
+        var _this = _possibleConstructorReturn(this, (Shield.__proto__ || Object.getPrototypeOf(Shield)).call(this, x, y, radius));
+
+        _this.img = window.g.resMgr.getImg('shield');
+        _this.state = ShieldUnactive;
+        _this.activeTime = 3;
+        _this.pass = 0;
+        _this.child = undefined;
+        _this.alpha = 0;
+        return _this;
+    }
+
+    _createClass(Shield, [{
+        key: 'isHolding',
+        value: function isHolding() {
+            return this.state === ShieldActive;
+        }
+    }, {
+        key: 'holdShield',
+        value: function holdShield(child) {
+            this.child = child;
+            this.state = ShieldActive;
+            this.radius = _tool2.default.gridSize();
+        }
+    }, {
+        key: 'update',
+        value: function update(elapsed) {
+            if (this.state === ShieldActive) {
+                this.alpha = this.pass - Math.floor(this.pass);
+                this.x = this.child.x;
+                this.y = this.child.y;
+                this.pass += elapsed;
+                if (this.pass > this.activeTime) {
+                    this.state = ShieldFinish;
+                }
+            }
+        }
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            if (this.state === ShieldFinish || window.g.gameState === _macro2.default.StateReachDoor) return;
+            context.save();
+            context.translate(this.x, this.y);
+            context.beginPath();
+            if (this.state === ShieldActive) {
+                context.fillStyle = 'rgba(255, 200, 0, ' + this.alpha + ')';
+                context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+                context.fill();
+            }
+            _drawing2.default.drawImg(context, -this.radius, -this.radius, this.radius, this.img);
+            context.restore();
+        }
+    }]);
+
+    return Shield;
+}(_element2.default);
+
+exports.default = Shield;
+},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js","./macro":"../src/macro.js"}],"../src/game.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21246,6 +21357,10 @@ var _eye2 = _interopRequireDefault(_eye);
 var _ball = require('./ball');
 
 var _ball2 = _interopRequireDefault(_ball);
+
+var _shield = require('./shield');
+
+var _shield2 = _interopRequireDefault(_shield);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21385,6 +21500,8 @@ var Game = function () {
                 window.g.map.balls.splice(index, 1);
             } else if (obj instanceof _eye2.default) {
                 this.drawMask = false;
+            } else if (obj instanceof _shield2.default) {
+                obj.holdShield(this.child);
             }
         }
     }, {
@@ -21455,9 +21572,7 @@ var Game = function () {
                         return;
                     }
                     this.childCollisionMapObj();
-
                     window.g.map.update(elapsed);
-
                     this.child.update(elapsed);
                     this.mom.update(this.child, elapsed);
                     this.controller.update(elapsed);
@@ -21509,7 +21624,7 @@ var Game = function () {
 }();
 
 exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./rebuild":"../src/rebuild.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js","./fence":"../src/fence.js","./milk":"../src/milk.js","./hole":"../src/hole.js","./eye":"../src/eye.js","./ball":"../src/ball.js"}],"../src/resMgr.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./rebuild":"../src/rebuild.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js","./fence":"../src/fence.js","./milk":"../src/milk.js","./hole":"../src/hole.js","./eye":"../src/eye.js","./ball":"../src/ball.js","./shield":"../src/shield.js"}],"../src/resMgr.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21524,7 +21639,7 @@ var ResMgr = function () {
     function ResMgr() {
         _classCallCheck(this, ResMgr);
 
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole', 'eye'];
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole', 'eye', 'shield'];
         this.images = {};
     }
 
@@ -23486,6 +23601,10 @@ var _gameConfig = require('./gameConfig');
 
 var _gameConfig2 = _interopRequireDefault(_gameConfig);
 
+var _shield = require('./shield');
+
+var _shield2 = _interopRequireDefault(_shield);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23501,6 +23620,7 @@ var Map = function () {
         this.explosions = [];
         this.holes = [];
         this.eyes = [];
+        this.shields = [];
         this.mapCfg = undefined;
         this.gridSize = undefined;
         this.resizeCallback = undefined;
@@ -23545,6 +23665,7 @@ var Map = function () {
             this.fences = this.randomObj(this.mapCfg.fences, _fence2.default);
             this.balls = this.randomObj(this.mapCfg.balls, _ball2.default);
             this.eyes = this.randomObj(this.mapCfg.eyes, _eye2.default);
+            this.shields = this.randomObj(this.mapCfg.shields, _shield2.default);
             if (!rebuild) this.holes = this.randomObj(this.mapCfg.holes, _hole2.default);
         }
     }, {
@@ -23578,11 +23699,14 @@ var Map = function () {
             this.holes.forEach(function (hole) {
                 hole.update(elapsed);
             });
+            this.shields.forEach(function (shield) {
+                shield.update(elapsed);
+            });
         }
     }, {
         key: 'allDraws',
         value: function allDraws() {
-            return [this.milks, this.fences, this.balls, this.explosions, this.holes, this.eyes];
+            return [this.milks, this.fences, this.balls, this.explosions, this.holes, this.eyes, this.shields];
         }
     }, {
         key: 'draw',
@@ -23620,7 +23744,7 @@ var Map = function () {
 }();
 
 exports.default = Map;
-},{"./milk":"../src/milk.js","./ball":"../src/ball.js","./fence":"../src/fence.js","./hole":"../src/hole.js","./eye":"../src/eye.js","./explosion":"../src/explosion.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
+},{"./milk":"../src/milk.js","./ball":"../src/ball.js","./fence":"../src/fence.js","./hole":"../src/hole.js","./eye":"../src/eye.js","./explosion":"../src/explosion.js","./tool":"../src/tool.js","./gameConfig":"../src/gameConfig.js","./shield":"../src/shield.js"}],"../src/gameEventListener.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24494,7 +24618,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49244' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49771' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

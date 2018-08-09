@@ -13,6 +13,7 @@ import Milk from './milk'
 import Hole from './hole'
 import Eye from './eye'
 import Ball from './ball'
+import Shield from './shield'
 
 class Game {
     constructor(context) {
@@ -123,8 +124,10 @@ class Game {
         } else if (obj instanceof Ball) {
             this.child.changeMode(macro.ChildModeWarrior)
             window.g.map.balls.splice(index, 1)
-        }else if (obj instanceof Eye){
+        } else if (obj instanceof Eye) {
             this.drawMask = false
+        } else if (obj instanceof Shield) {
+            obj.holdShield(this.child)
         }
     }
 
@@ -185,9 +188,7 @@ class Game {
                     return
                 }
                 this.childCollisionMapObj()
-
                 window.g.map.update(elapsed)
-
                 this.child.update(elapsed)
                 this.mom.update(this.child, elapsed)
                 this.controller.update(elapsed)
@@ -225,7 +226,7 @@ class Game {
             default:
                 this.grid.draw(this.context)
                 window.g.map.draw(this.context)
-                if(this.drawMask) this.grid.drawMask(this.context)
+                if (this.drawMask) this.grid.drawMask(this.context)
                 this.door.draw(this.context)
 
                 this.levelIndicator.draw(this.context, window.g.gameLv)
