@@ -1,30 +1,34 @@
 import React from 'react'
 import macro from './macro'
-import Game from './game';
+import Game from './game'
 import global from './global'
 
 class MainScene extends React.Component {
     constructor() {
         super()
         this.canvas = undefined
+        this.ui = undefined
         this.state = {
             marginLeft: 0,
             marginTop: 0,
             innerWidth: 0,
             innerHeight: 0,
+            canvasWidth: 0,
+            canvasHeight: 0,
         }
         this.game = undefined
     }
 
     componentDidMount() {
         this.div = this.refs.div
+        this.ui = this.refs.ui
         this.canvas = this.refs.canvasGame
         this.canvas.focus()
         this.context = this.canvas.getContext('2d')
 
         this.div.addEventListener('touchstart', event => { event.preventDefault() })
         document.addEventListener('visibilitychange', () => {
-            document.hidden ? window.g.gameAudio.pause('bg.mp3'): window.g.gameAudio.play('bg.mp3')
+            document.hidden ? window.g.gameAudio.pause('bg.mp3') : window.g.gameAudio.play('bg.mp3')
             this.game.setPause(document.hidden)
         })
         window.addEventListener('resize', ev => { this.resizeCanvas() })
@@ -59,6 +63,8 @@ class MainScene extends React.Component {
         const size = this.canvas.width / window.g.map.mapCfg.gridInRow
         this.canvas.height -= this.canvas.height % size
 
+        updateState.canvasWidth = this.canvas.width
+        updateState.canvasHeight = this.canvas.height
         updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2
         updateState.marginTop = (window.innerHeight - this.canvas.height) / 2
         updateState.innerWidth = window.innerWidth
@@ -71,6 +77,11 @@ class MainScene extends React.Component {
 
     render() {
         return <div ref='div' style={{ backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight }}>
+        {/*
+            <div ref='ui'
+                style={{ backgroundColor: 'green', position: 'absolute', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft, width: this.state.canvasWidth, height: this.state.canvasHeight }}>
+            </div>
+        */}
             <canvas ref='canvasGame'
                 style={{ backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft }}>
             </canvas>

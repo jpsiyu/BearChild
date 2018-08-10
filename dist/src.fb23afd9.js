@@ -23313,7 +23313,7 @@ module.exports = {
     "watch": "parcel watch client/public/index.html --public-url /bearchild"
   },
   "keywords": [],
-  "production": true,
+  "production": false,
   "port": 3001,
   "prefix": "/bearchild",
   "ip": "http://34.209.241.122/bearchild/",
@@ -24450,11 +24450,14 @@ var MainScene = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (MainScene.__proto__ || Object.getPrototypeOf(MainScene)).call(this));
 
         _this.canvas = undefined;
+        _this.ui = undefined;
         _this.state = {
             marginLeft: 0,
             marginTop: 0,
             innerWidth: 0,
-            innerHeight: 0
+            innerHeight: 0,
+            canvasWidth: 0,
+            canvasHeight: 0
         };
         _this.game = undefined;
         return _this;
@@ -24466,6 +24469,7 @@ var MainScene = function (_React$Component) {
             var _this2 = this;
 
             this.div = this.refs.div;
+            this.ui = this.refs.ui;
             this.canvas = this.refs.canvasGame;
             this.canvas.focus();
             this.context = this.canvas.getContext('2d');
@@ -24519,6 +24523,8 @@ var MainScene = function (_React$Component) {
             var size = this.canvas.width / window.g.map.mapCfg.gridInRow;
             this.canvas.height -= this.canvas.height % size;
 
+            updateState.canvasWidth = this.canvas.width;
+            updateState.canvasHeight = this.canvas.height;
             updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2;
             updateState.marginTop = (window.innerHeight - this.canvas.height) / 2;
             updateState.innerWidth = window.innerWidth;
@@ -24618,7 +24624,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49771' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '51208' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
