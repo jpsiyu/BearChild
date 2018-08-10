@@ -76,12 +76,14 @@ class MainScene extends React.Component {
     }
 
     render() {
-        return <div ref='div' style={{ backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight }}>
-        {/*
+        const uiComponent = !window.g.uiMgr.active ? null :
             <div ref='ui'
-                style={{ backgroundColor: 'green', position: 'absolute', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft, width: this.state.canvasWidth, height: this.state.canvasHeight }}>
+                style={{ backgroundColor: 'rgba(0,0,0,0)', position: 'absolute', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft, width: this.state.canvasWidth, height: this.state.canvasHeight }}>
+                {window.g.uiMgr.getPage()}
             </div>
-        */}
+
+        return <div ref='div' style={{ backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight }}>
+            {uiComponent}
             <canvas ref='canvasGame'
                 style={{ backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft }}>
             </canvas>
