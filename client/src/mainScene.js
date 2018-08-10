@@ -13,8 +13,6 @@ class MainScene extends React.Component {
             marginTop: 0,
             innerWidth: 0,
             innerHeight: 0,
-            canvasWidth: 0,
-            canvasHeight: 0,
         }
         this.game = undefined
     }
@@ -63,8 +61,6 @@ class MainScene extends React.Component {
         const size = this.canvas.width / window.g.map.mapCfg.gridInRow
         this.canvas.height -= this.canvas.height % size
 
-        updateState.canvasWidth = this.canvas.width
-        updateState.canvasHeight = this.canvas.height
         updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2
         updateState.marginTop = (window.innerHeight - this.canvas.height) / 2
         updateState.innerWidth = window.innerWidth
@@ -76,14 +72,7 @@ class MainScene extends React.Component {
     }
 
     render() {
-        const uiComponent = !window.g.uiMgr.active ? null :
-            <div ref='ui'
-                style={{ backgroundColor: 'rgba(0,0,0,0)', position: 'absolute', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft, width: this.state.canvasWidth, height: this.state.canvasHeight }}>
-                {window.g.uiMgr.getPage()}
-            </div>
-
         return <div ref='div' style={{ backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight }}>
-            {uiComponent}
             <canvas ref='canvasGame'
                 style={{ backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft }}>
             </canvas>

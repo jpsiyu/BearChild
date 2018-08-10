@@ -16,8 +16,11 @@ export default {
     EventReady: 'EventReady',
     EventLoadFinish: 'EventLoadFinish',
     EventClick: 'EventClick',
+    EventUIRefresh: 'EventUIRefresh',
 
     ChildModeNormal: 'ChildModeNormal ',
     ChildModeDrink: 'ChildModeDrink',
     ChildModeWarrior: 'ChildModeWarrior',
+
+    UIStart: 'UIStart',
 }

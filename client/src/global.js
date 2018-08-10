@@ -4,7 +4,6 @@ import Map from './map'
 import macro from './macro'
 import GameEventListener from './gameEventListener'
 import PageMgr from './pageMgr'
-import UIMgr from './ui/uiMgr'
 
 class Global {
     constructor() {
@@ -16,7 +15,6 @@ class Global {
         this.context = undefined
         this.gameEventListener = new GameEventListener()
         this.pageMgr = new PageMgr()
-        this.uiMgr = new UIMgr()
     }
 
     init(){

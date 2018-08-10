@@ -19771,10 +19771,13 @@ exports.default = {
     EventReady: 'EventReady',
     EventLoadFinish: 'EventLoadFinish',
     EventClick: 'EventClick',
+    EventUIRefresh: 'EventUIRefresh',
 
     ChildModeNormal: 'ChildModeNormal ',
     ChildModeDrink: 'ChildModeDrink',
-    ChildModeWarrior: 'ChildModeWarrior'
+    ChildModeWarrior: 'ChildModeWarrior',
+
+    UIStart: 'UIStart'
 };
 },{}],"../src/gameConfig.js":[function(require,module,exports) {
 "use strict";
@@ -24342,46 +24345,7 @@ var PageMgr = function () {
 }();
 
 exports.default = PageMgr;
-},{"./pageStart":"../src/pageStart.js","./pageEnd":"../src/pageEnd.js","./pageLoad":"../src/pageLoad.js","./macro":"../src/macro.js"}],"../src/ui/uiMgr.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var UIMgr = function () {
-    function UIMgr() {
-        _classCallCheck(this, UIMgr);
-
-        this.active = false;
-    }
-
-    _createClass(UIMgr, [{
-        key: 'getPage',
-        value: function getPage() {
-            return _react2.default.createElement(
-                'button',
-                null,
-                'HaHa'
-            );
-        }
-    }]);
-
-    return UIMgr;
-}();
-
-exports.default = UIMgr;
-},{"react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
+},{"./pageStart":"../src/pageStart.js","./pageEnd":"../src/pageEnd.js","./pageLoad":"../src/pageLoad.js","./macro":"../src/macro.js"}],"../src/global.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24414,10 +24378,6 @@ var _pageMgr = require('./pageMgr');
 
 var _pageMgr2 = _interopRequireDefault(_pageMgr);
 
-var _uiMgr = require('./ui/uiMgr');
-
-var _uiMgr2 = _interopRequireDefault(_uiMgr);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24434,7 +24394,6 @@ var Global = function () {
         this.context = undefined;
         this.gameEventListener = new _gameEventListener2.default();
         this.pageMgr = new _pageMgr2.default();
-        this.uiMgr = new _uiMgr2.default();
     }
 
     _createClass(Global, [{
@@ -24451,7 +24410,7 @@ var g = new Global();
 window.g = g;
 
 exports.default = { g: g };
-},{"./resMgr":"../src/resMgr.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js","./ui/uiMgr":"../src/ui/uiMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
+},{"./resMgr":"../src/resMgr.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
 
 'use strict';
 
@@ -24499,9 +24458,7 @@ var MainScene = function (_React$Component) {
             marginLeft: 0,
             marginTop: 0,
             innerWidth: 0,
-            innerHeight: 0,
-            canvasWidth: 0,
-            canvasHeight: 0
+            innerHeight: 0
         };
         _this.game = undefined;
         return _this;
@@ -24567,8 +24524,6 @@ var MainScene = function (_React$Component) {
             var size = this.canvas.width / window.g.map.mapCfg.gridInRow;
             this.canvas.height -= this.canvas.height % size;
 
-            updateState.canvasWidth = this.canvas.width;
-            updateState.canvasHeight = this.canvas.height;
             updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2;
             updateState.marginTop = (window.innerHeight - this.canvas.height) / 2;
             updateState.innerWidth = window.innerWidth;
@@ -24581,17 +24536,9 @@ var MainScene = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var uiComponent = !window.g.uiMgr.active ? null : _react2.default.createElement(
-                'div',
-                { ref: 'ui',
-                    style: { backgroundColor: 'rgba(0,0,0,0)', position: 'absolute', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft, width: this.state.canvasWidth, height: this.state.canvasHeight } },
-                window.g.uiMgr.getPage()
-            );
-
             return _react2.default.createElement(
                 'div',
                 { ref: 'div', style: { backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight } },
-                uiComponent,
                 _react2.default.createElement('canvas', { ref: 'canvasGame',
                     style: { backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft } })
             );
@@ -24676,7 +24623,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '52825' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '55187' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
