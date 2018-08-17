@@ -2,6 +2,7 @@ import React from 'react'
 import macro from './macro'
 import Game from './game'
 import global from './global'
+import '../public/style.css'
 
 class MainScene extends React.Component {
     constructor() {
@@ -9,17 +10,15 @@ class MainScene extends React.Component {
         this.canvas = undefined
         this.ui = undefined
         this.state = {
-            marginLeft: 0,
-            marginTop: 0,
-            innerWidth: 0,
-            innerHeight: 0,
+            gl: 0,
+            gt: 0,
         }
         this.game = undefined
     }
 
     componentDidMount() {
         this.div = this.refs.div
-        this.ui = this.refs.ui
+        this.divUI = this.refs.divUI
         this.canvas = this.refs.canvasGame
         this.canvas.focus()
         this.context = this.canvas.getContext('2d')
@@ -48,34 +47,43 @@ class MainScene extends React.Component {
 
     resizeCanvas() {
         const updateState = {}
+        let gw, gh
 
         const curruntRatio = (window.innerWidth / window.innerHeight)
         if (curruntRatio > macro.WidthHeightRatio) {
-            this.canvas.height = window.innerHeight
-            this.canvas.width = this.canvas.height * macro.WidthHeightRatio
+            gh = window.innerHeight
+            gw = gh * macro.WidthHeightRatio
         } else {
-            this.canvas.width = window.innerWidth
-            this.canvas.height = this.canvas.width / macro.WidthHeightRatio
+            gw = window.innerWidth
+            gh = gw / macro.WidthHeightRatio
         }
 
-        const size = this.canvas.width / window.g.map.mapCfg.gridInRow
-        this.canvas.height -= this.canvas.height % size
+        const size = window.g.map.calGridSize(gw, window.g.map.mapCfg.gridInRow)
+        gh -= gh % size
 
-        updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2
-        updateState.marginTop = (window.innerHeight - this.canvas.height) / 2
-        updateState.innerWidth = window.innerWidth
-        updateState.innerHeight = window.innerHeight
+        this.canvas.width = gw
+        this.canvas.height = gh
+        this.divUI.width = gw
+        this.divUI.height = gh
+
+        updateState.gl = (window.innerWidth - gw) / 2
+        updateState.gt = (window.innerHeight - gh) / 2
         this.setState(updateState)
+
         setTimeout(() => {
             window.scrollTo(0, 0)
         }, 200);
     }
 
     render() {
-        return <div ref='div' style={{ backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight }}>
-            <canvas ref='canvasGame'
-                style={{ backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft }}>
+        return <div ref='div' className='divRoot' >
+            <canvas ref='canvasGame' className='canvasGame'
+                style={{ marginTop: this.state.gt, marginLeft: this.state.gl }}>
             </canvas>
+            <div ref='divUI' className='divUI'
+                style={{ marginTop: this.state.gt, marginLeft: this.state.gl }}>
+                <button>HaHa</button>
+            </div>
         </div>
     }
 }

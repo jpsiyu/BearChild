@@ -2,3 +2,15 @@
     margin: 0;
     padding: 0;
 }
+
+.divRoot{
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+
+}
+
+.divUI, .canvasGame{
+    position: absolute;
+    background-color: black;
+}

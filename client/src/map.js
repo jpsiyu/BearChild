@@ -28,7 +28,11 @@ class Map {
 
         this.setMapCfg()
         this.resizeCallback()
-        this.gridSize = window.g.context.canvas.width / this.mapCfg.gridInRow
+        this.gridSize = this.calGridSize(window.g.context.canvas.width, this.mapCfg.gridInRow)
+    }
+
+    calGridSize(canvasWidth, gridInRow){
+        return (canvasWidth / gridInRow)
     }
 
     setResizeCallback(resizeCallback) {

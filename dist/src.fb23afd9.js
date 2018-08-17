@@ -23636,7 +23636,12 @@ var Map = function () {
 
             this.setMapCfg();
             this.resizeCallback();
-            this.gridSize = window.g.context.canvas.width / this.mapCfg.gridInRow;
+            this.gridSize = this.calGridSize(window.g.context.canvas.width, this.mapCfg.gridInRow);
+        }
+    }, {
+        key: 'calGridSize',
+        value: function calGridSize(canvasWidth, gridInRow) {
+            return canvasWidth / gridInRow;
         }
     }, {
         key: 'setResizeCallback',
@@ -24410,7 +24415,73 @@ var g = new Global();
 window.g = g;
 
 exports.default = { g: g };
-},{"./resMgr":"../src/resMgr.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
+},{"./resMgr":"../src/resMgr.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js"}],"../../node_modules/parcel/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
+  }
+
+  return bundleURL;
+}
+
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp):\/\/[^)\n]+/g);
+    if (matches) {
+      return getBaseURL(matches[0]);
+    }
+  }
+
+  return '/';
+}
+
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp):\/\/.+)\/[^/]+$/, '$1') + '/';
+}
+
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"../../node_modules/parcel/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+  newLink.onload = function () {
+    link.remove();
+  };
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+
+    cssTimeout = null;
+  }, 50);
+}
+
+module.exports = reloadCSS;
+},{"./bundle-url":"../../node_modules/parcel/src/builtins/bundle-url.js"}],"style.css":[function(require,module,exports) {
+
+var reloadCSS = require('_css_loader');
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../../node_modules/parcel/src/builtins/css-loader.js"}],"../src/mainScene.js":[function(require,module,exports) {
 
 'use strict';
 
@@ -24436,6 +24507,8 @@ var _global = require('./global');
 
 var _global2 = _interopRequireDefault(_global);
 
+require('../public/style.css');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24455,10 +24528,8 @@ var MainScene = function (_React$Component) {
         _this.canvas = undefined;
         _this.ui = undefined;
         _this.state = {
-            marginLeft: 0,
-            marginTop: 0,
-            innerWidth: 0,
-            innerHeight: 0
+            gl: 0,
+            gt: 0
         };
         _this.game = undefined;
         return _this;
@@ -24470,7 +24541,7 @@ var MainScene = function (_React$Component) {
             var _this2 = this;
 
             this.div = this.refs.div;
-            this.ui = this.refs.ui;
+            this.divUI = this.refs.divUI;
             this.canvas = this.refs.canvasGame;
             this.canvas.focus();
             this.context = this.canvas.getContext('2d');
@@ -24511,24 +24582,30 @@ var MainScene = function (_React$Component) {
         key: 'resizeCanvas',
         value: function resizeCanvas() {
             var updateState = {};
+            var gw = void 0,
+                gh = void 0;
 
             var curruntRatio = window.innerWidth / window.innerHeight;
             if (curruntRatio > _macro2.default.WidthHeightRatio) {
-                this.canvas.height = window.innerHeight;
-                this.canvas.width = this.canvas.height * _macro2.default.WidthHeightRatio;
+                gh = window.innerHeight;
+                gw = gh * _macro2.default.WidthHeightRatio;
             } else {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = this.canvas.width / _macro2.default.WidthHeightRatio;
+                gw = window.innerWidth;
+                gh = gw / _macro2.default.WidthHeightRatio;
             }
 
-            var size = this.canvas.width / window.g.map.mapCfg.gridInRow;
-            this.canvas.height -= this.canvas.height % size;
+            var size = window.g.map.calGridSize(gw, window.g.map.mapCfg.gridInRow);
+            gh -= gh % size;
 
-            updateState.marginLeft = (window.innerWidth - this.canvas.width) / 2;
-            updateState.marginTop = (window.innerHeight - this.canvas.height) / 2;
-            updateState.innerWidth = window.innerWidth;
-            updateState.innerHeight = window.innerHeight;
+            this.canvas.width = gw;
+            this.canvas.height = gh;
+            this.divUI.width = gw;
+            this.divUI.height = gh;
+
+            updateState.gl = (window.innerWidth - gw) / 2;
+            updateState.gt = (window.innerHeight - gh) / 2;
             this.setState(updateState);
+
             setTimeout(function () {
                 window.scrollTo(0, 0);
             }, 200);
@@ -24538,9 +24615,19 @@ var MainScene = function (_React$Component) {
         value: function render() {
             return _react2.default.createElement(
                 'div',
-                { ref: 'div', style: { backgroundColor: 'black', width: this.state.innerWidth, height: this.state.innerHeight } },
-                _react2.default.createElement('canvas', { ref: 'canvasGame',
-                    style: { backgroundColor: 'black', marginTop: this.state.marginTop, marginLeft: this.state.marginLeft } })
+                { ref: 'div', className: 'divRoot' },
+                _react2.default.createElement('canvas', { ref: 'canvasGame', className: 'canvasGame',
+                    style: { marginTop: this.state.gt, marginLeft: this.state.gl } }),
+                _react2.default.createElement(
+                    'div',
+                    { ref: 'divUI', className: 'divUI',
+                        style: { marginTop: this.state.gt, marginLeft: this.state.gl } },
+                    _react2.default.createElement(
+                        'button',
+                        null,
+                        'HaHa'
+                    )
+                )
             );
         }
     }]);
@@ -24549,7 +24636,7 @@ var MainScene = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = MainScene;
-},{"react":"../../node_modules/react/index.js","./macro":"../src/macro.js","./game":"../src/game.js","./global":"../src/global.js"}],"../src/index.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","./macro":"../src/macro.js","./game":"../src/game.js","./global":"../src/global.js","../public/style.css":"style.css"}],"../src/index.js":[function(require,module,exports) {
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
