@@ -1,7 +1,7 @@
 import React from 'react'
 import macro from '../macro'
 
-class UIStart extends React.Component {
+class UIStart extends React.Component{
     constructor(){
         super()
         this.onBtnStartClick = this.onBtnStartClick.bind(this)

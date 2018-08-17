@@ -1,11 +1,13 @@
 import UILoading from './uiLoading'
 import UIStart from './uiStart'
+import UIEnd from './uiEnd'
 import macro from '../macro'
 import React from 'react'
 
 const uiConfig = {}
-uiConfig[macro.UILoading] = {cls: UILoading}
-uiConfig[macro.UIStart] = {cls: UIStart}
+uiConfig[macro.UILoading] = {cls: UILoading, full:true}
+uiConfig[macro.UIStart] = {cls: UIStart, full:true}
+uiConfig[macro.UIEnd] = {cls: UIEnd, full:false}
 
 
 class UIMgr{
@@ -13,11 +15,15 @@ class UIMgr{
         this.showing = {}
     }
 
-    getUI(){
-        if(this.isShowing())
-            return this.showing[Object.keys(this.showing)[0]]
-        else
-            return null
+    getComponent(){
+        const uiInfo = this.getUIInfo()
+        return uiInfo ?  uiInfo.component: null
+    }
+
+    getUIInfo(){
+        const firstPageName = Object.keys(this.showing)[0]
+        const uiInfo = this.showing[firstPageName]
+        return uiInfo
     }
 
     isShowing(){
@@ -25,10 +31,19 @@ class UIMgr{
         return res
     }
 
+    isPopUI(){
+        const uiInfo = this.getUIInfo()
+        const res = uiInfo ? !uiInfo.cfg.full: false
+        return res
+    }
+
     show(uiName){
         const cfg = uiConfig[uiName]
         if(!cfg) return
-        this.showing[uiName] = <cfg.cls />
+        this.showing[uiName] = {
+            component: <cfg.cls />,
+            cfg: cfg
+        }
         window.g.gameEventListener.dispatch(macro.UIRefresh)
     }
 

@@ -86,3 +86,42 @@
 .UIStart button:active{
     background-color: yellow;
 }
+
+/* UI End */
+.UIEnd{
+    display: grid;
+    grid-template-rows: 1fr 1fr
+}
+
+.UIEnd h2{
+    align-self: center;
+    text-align: center;
+    font-size: 2.5rem;
+}
+
+.UIEnd .btnContainer{
+    justify-self: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 30%;
+}
+
+.UIEnd .btnGroup{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.UIEnd .btn{
+    width: 80%;
+    height: 40%;
+    min-width: 50px;
+    min-height: 50px;
+    font-size: 2rem;
+    margin-bottom: 10%;
+    border-radius: 50%;
+    outline: none;
+    color: white;
+    background-color: black;
+}

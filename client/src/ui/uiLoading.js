@@ -1,7 +1,7 @@
 import React from 'react'
 import macro from '../macro'
 
-class UILoading extends React.Component {
+class UILoading extends React.Component{
     constructor() {
         super()
         this.time = 3

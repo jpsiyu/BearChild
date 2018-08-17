@@ -25,4 +25,5 @@ export default {
     UIRefresh: 'UIRefresh',
     UIStart: 'UIStart',
     UILoading: 'UILoading',
+    UIEnd: 'UIEnd',
 }

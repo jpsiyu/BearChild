@@ -170,7 +170,7 @@ class Game {
                     window.g.gameAudio.pause('bg.mp3')
                     window.g.gameAudio.play('lose.mp3')
                     window.g.gameState = macro.StateGameOver
-                    window.g.pageMgr.show('PageEnd')
+                    window.g.uiMgr.show(macro.UIEnd)
                     return
                 }
                 this.childCollisionMapObj()

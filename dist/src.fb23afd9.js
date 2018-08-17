@@ -19779,7 +19779,8 @@ exports.default = {
 
     UIRefresh: 'UIRefresh',
     UIStart: 'UIStart',
-    UILoading: 'UILoading'
+    UILoading: 'UILoading',
+    UIEnd: 'UIEnd'
 };
 },{}],"../src/gameConfig.js":[function(require,module,exports) {
 "use strict";
@@ -21556,7 +21557,7 @@ var Game = function () {
                         window.g.gameAudio.pause('bg.mp3');
                         window.g.gameAudio.play('lose.mp3');
                         window.g.gameState = _macro2.default.StateGameOver;
-                        window.g.pageMgr.show('PageEnd');
+                        window.g.uiMgr.show(_macro2.default.UIEnd);
                         return;
                     }
                     this.childCollisionMapObj();
@@ -24447,6 +24448,109 @@ var UIStart = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = UIStart;
+},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js"}],"../src/ui/uiEnd.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _macro = require('../macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var UIEnd = function (_React$Component) {
+    _inherits(UIEnd, _React$Component);
+
+    function UIEnd() {
+        _classCallCheck(this, UIEnd);
+
+        var _this = _possibleConstructorReturn(this, (UIEnd.__proto__ || Object.getPrototypeOf(UIEnd)).call(this));
+
+        _this.quitSymbol = '<';
+        _this.restartSymbol = '↺';
+        _this.onBtnQuitClick = _this.onBtnQuitClick.bind(_this);
+        _this.onBtnRestartClick = _this.onBtnRestartClick.bind(_this);
+        return _this;
+    }
+
+    _createClass(UIEnd, [{
+        key: 'onBtnQuitClick',
+        value: function onBtnQuitClick() {
+            window.g.gameEventListener.dispatch(_macro2.default.EventReady);
+            window.g.uiMgr.hide(_macro2.default.UIEnd);
+        }
+    }, {
+        key: 'onBtnRestartClick',
+        value: function onBtnRestartClick() {
+            window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
+            window.g.uiMgr.hide(_macro2.default.UIEnd);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                { className: 'uiPop UIEnd' },
+                _react2.default.createElement(
+                    'h2',
+                    null,
+                    'Game Over'
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'btnContainer' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'btnGroup' },
+                        _react2.default.createElement(
+                            'button',
+                            { className: 'btn', onClick: this.onBtnQuitClick },
+                            this.quitSymbol
+                        ),
+                        _react2.default.createElement(
+                            'label',
+                            null,
+                            'Quit'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'btnGroup' },
+                        _react2.default.createElement(
+                            'button',
+                            { className: 'btn', onClick: this.onBtnRestartClick },
+                            this.restartSymbol
+                        ),
+                        _react2.default.createElement(
+                            'label',
+                            null,
+                            'Restart'
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return UIEnd;
+}(_react2.default.Component);
+
+exports.default = UIEnd;
 },{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js"}],"../src/ui/uiMgr.js":[function(require,module,exports) {
 'use strict';
 
@@ -24464,6 +24568,10 @@ var _uiStart = require('./uiStart');
 
 var _uiStart2 = _interopRequireDefault(_uiStart);
 
+var _uiEnd = require('./uiEnd');
+
+var _uiEnd2 = _interopRequireDefault(_uiEnd);
+
 var _macro = require('../macro');
 
 var _macro2 = _interopRequireDefault(_macro);
@@ -24477,8 +24585,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var uiConfig = {};
-uiConfig[_macro2.default.UILoading] = { cls: _uiLoading2.default };
-uiConfig[_macro2.default.UIStart] = { cls: _uiStart2.default };
+uiConfig[_macro2.default.UILoading] = { cls: _uiLoading2.default, full: true };
+uiConfig[_macro2.default.UIStart] = { cls: _uiStart2.default, full: true };
+uiConfig[_macro2.default.UIEnd] = { cls: _uiEnd2.default, full: false };
 
 var UIMgr = function () {
     function UIMgr() {
@@ -24488,9 +24597,17 @@ var UIMgr = function () {
     }
 
     _createClass(UIMgr, [{
-        key: 'getUI',
-        value: function getUI() {
-            if (this.isShowing()) return this.showing[Object.keys(this.showing)[0]];else return null;
+        key: 'getComponent',
+        value: function getComponent() {
+            var uiInfo = this.getUIInfo();
+            return uiInfo ? uiInfo.component : null;
+        }
+    }, {
+        key: 'getUIInfo',
+        value: function getUIInfo() {
+            var firstPageName = Object.keys(this.showing)[0];
+            var uiInfo = this.showing[firstPageName];
+            return uiInfo;
         }
     }, {
         key: 'isShowing',
@@ -24499,11 +24616,21 @@ var UIMgr = function () {
             return res;
         }
     }, {
+        key: 'isPopUI',
+        value: function isPopUI() {
+            var uiInfo = this.getUIInfo();
+            var res = uiInfo ? !uiInfo.cfg.full : false;
+            return res;
+        }
+    }, {
         key: 'show',
         value: function show(uiName) {
             var cfg = uiConfig[uiName];
             if (!cfg) return;
-            this.showing[uiName] = _react2.default.createElement(cfg.cls, null);
+            this.showing[uiName] = {
+                component: _react2.default.createElement(cfg.cls, null),
+                cfg: cfg
+            };
             window.g.gameEventListener.dispatch(_macro2.default.UIRefresh);
         }
     }, {
@@ -24520,7 +24647,7 @@ var UIMgr = function () {
 }();
 
 exports.default = UIMgr;
-},{"./uiLoading":"../src/ui/uiLoading.js","./uiStart":"../src/ui/uiStart.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
+},{"./uiLoading":"../src/ui/uiLoading.js","./uiStart":"../src/ui/uiStart.js","./uiEnd":"../src/ui/uiEnd.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24731,6 +24858,7 @@ var MainScene = function (_React$Component) {
         key: 'render',
         value: function render() {
             var uiDepth = window.g.uiMgr.isShowing() ? 1 : -1;
+            var uiClass = window.g.uiMgr.isPopUI() ? 'divPopUI' : 'divUI';
             return _react2.default.createElement(
                 'div',
                 { ref: 'div', className: 'divRoot' },
@@ -24738,7 +24866,7 @@ var MainScene = function (_React$Component) {
                     style: { marginTop: this.state.gt, marginLeft: this.state.gl } }),
                 _react2.default.createElement(
                     'div',
-                    { ref: 'divUI', className: 'divUI',
+                    { ref: 'divUI', className: uiClass,
                         style: {
                             marginTop: this.state.gt,
                             marginLeft: this.state.gl,
@@ -24746,7 +24874,7 @@ var MainScene = function (_React$Component) {
                             height: this.state.gh,
                             zIndex: uiDepth
                         } },
-                    window.g.uiMgr.getUI()
+                    window.g.uiMgr.getComponent()
                 )
             );
         }
