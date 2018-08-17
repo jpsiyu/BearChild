@@ -1,9 +1,11 @@
 import UILoading from './uiLoading'
+import UIStart from './uiStart'
 import macro from '../macro'
 import React from 'react'
 
 const uiConfig = {}
 uiConfig[macro.UILoading] = {cls: UILoading}
+uiConfig[macro.UIStart] = {cls: UIStart}
 
 
 class UIMgr{

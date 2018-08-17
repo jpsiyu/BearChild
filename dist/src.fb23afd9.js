@@ -21417,7 +21417,7 @@ var Game = function () {
     }, {
         key: 'readyForGame',
         value: function readyForGame() {
-            window.g.pageMgr.show('PageStart');
+            window.g.uiMgr.show(_macro2.default.UIStart);
             window.g.gameState = _macro2.default.StateReady;
             window.g.gameLv = 1;
         }
@@ -24355,6 +24355,98 @@ var UILoading = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = UILoading;
+},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js"}],"../src/ui/uiStart.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _macro = require('../macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var UIStart = function (_React$Component) {
+    _inherits(UIStart, _React$Component);
+
+    function UIStart() {
+        _classCallCheck(this, UIStart);
+
+        var _this = _possibleConstructorReturn(this, (UIStart.__proto__ || Object.getPrototypeOf(UIStart)).call(this));
+
+        _this.onBtnStartClick = _this.onBtnStartClick.bind(_this);
+        _this.onBtnMusicClick = _this.onBtnMusicClick.bind(_this);
+        return _this;
+    }
+
+    _createClass(UIStart, [{
+        key: 'onBtnStartClick',
+        value: function onBtnStartClick() {
+            window.g.uiMgr.hide(_macro2.default.UIStart);
+            window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
+        }
+    }, {
+        key: 'onBtnMusicClick',
+        value: function onBtnMusicClick() {
+            window.g.gameAudio.active = !window.g.gameAudio.active;
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                { className: 'UIStart uiFull' },
+                _react2.default.createElement('div', { className: 'left' }),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'mid' },
+                    _react2.default.createElement(
+                        'button',
+                        { onClick: this.onBtnStartClick },
+                        'Start Game'
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'right' },
+                    _react2.default.createElement('div', null),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'right-bottom' },
+                        _react2.default.createElement(
+                            'button',
+                            { onClick: this.onBtnMusicClick },
+                            'Music'
+                        ),
+                        _react2.default.createElement(
+                            'button',
+                            null,
+                            'Setting'
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return UIStart;
+}(_react2.default.Component);
+
+exports.default = UIStart;
 },{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js"}],"../src/ui/uiMgr.js":[function(require,module,exports) {
 'use strict';
 
@@ -24367,6 +24459,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _uiLoading = require('./uiLoading');
 
 var _uiLoading2 = _interopRequireDefault(_uiLoading);
+
+var _uiStart = require('./uiStart');
+
+var _uiStart2 = _interopRequireDefault(_uiStart);
 
 var _macro = require('../macro');
 
@@ -24382,6 +24478,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var uiConfig = {};
 uiConfig[_macro2.default.UILoading] = { cls: _uiLoading2.default };
+uiConfig[_macro2.default.UIStart] = { cls: _uiStart2.default };
 
 var UIMgr = function () {
     function UIMgr() {
@@ -24423,7 +24520,7 @@ var UIMgr = function () {
 }();
 
 exports.default = UIMgr;
-},{"./uiLoading":"../src/ui/uiLoading.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
+},{"./uiLoading":"../src/ui/uiLoading.js","./uiStart":"../src/ui/uiStart.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

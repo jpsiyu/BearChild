@@ -44,7 +44,7 @@ class Game {
     }
 
     readyForGame() {
-        window.g.pageMgr.show('PageStart')
+        window.g.uiMgr.show(macro.UIStart)
         window.g.gameState = macro.StateReady
         window.g.gameLv = 1
     }
