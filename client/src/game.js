@@ -186,7 +186,6 @@ class Game {
             default:
                 break
         }
-        window.g.pageMgr.update(elapsed)
     }
 
     draw() {
@@ -222,7 +221,6 @@ class Game {
                 this.mom.draw(this.context)
                 break
         }
-        window.g.pageMgr.draw(this.context)
     }
 }
 

@@ -48,7 +48,6 @@ class MainScene extends React.Component {
     startLoading() {
         window.g.uiMgr.show(macro.UILoading)
         this.game = new Game(this.context)
-        window.g.pageMgr.addListener()
     }
 
     resizeCanvas() {
