@@ -31,7 +31,7 @@ class ResMgr {
         let loadNum = 0
         this.names.forEach(name => {
             const img = new Image()
-            const path = `${name}.png`
+            const path = `images/${name}.png`
             img.src = path
             img.onload = () => {
                 this.images[name] = img

@@ -13,8 +13,6 @@ const prefix = (url='') => { return `${pjson.prefix}${url}` }
 
 app.use(prefix(), express.static(path.resolve(__dirname, '../dist')))
 app.use(prefix(), express.static(path.resolve(__dirname, '../client/public')))
-app.use(prefix(), express.static(path.resolve(__dirname, '../client/music')))
-app.use(prefix(), express.static(path.resolve(__dirname, '../client/images')))
 
 app.use('*', (req, res) => {
     console.log('404', req.originalUrl)

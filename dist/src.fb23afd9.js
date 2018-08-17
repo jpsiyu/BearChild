@@ -21662,7 +21662,7 @@ var ResMgr = function () {
             var loadNum = 0;
             this.names.forEach(function (name) {
                 var img = new Image();
-                var path = name + '.png';
+                var path = 'images/' + name + '.png';
                 img.src = path;
                 img.onload = function () {
                     _this.images[name] = img;
@@ -23401,7 +23401,7 @@ var GameAudio = function () {
             var _this2 = this;
 
             var url = _package2.default.production ? _package2.default.ip : _package2.default.localHost;
-            _axios2.default.get(url + name, { responseType: 'arraybuffer', cache: false }).then(function (response) {
+            _axios2.default.get('music/' + name, { responseType: 'arraybuffer', cache: false }).then(function (response) {
                 _this2.ac.decodeAudioData(response.data, function (buffer) {
                     _this2.buffers[name] = buffer;
                     if (success) success();
@@ -24623,7 +24623,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '55187' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '52818' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
