@@ -10,7 +10,19 @@
 
 }
 
-.divUI, .canvasGame{
+.canvasGame{
     position: absolute;
     background-color: black;
 }
+
+.divUI{
+    position: absolute;
+    background-color: black;
+}
+
+.uiFull{
+    background-color: black;
+    width: 100%;
+    height: 100%;
+}
+

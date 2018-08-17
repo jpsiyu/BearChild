@@ -1,6 +1,5 @@
 import PageStart from './pageStart'
 import PageEnd from './pageEnd'
-import PageLoad from './pageLoad'
 import macro from './macro'
 
 class PageMgr {
@@ -38,9 +37,6 @@ class PageMgr {
                 break
             case 'PageEnd':
                 p = new PageEnd()
-                break
-            case 'PageLoad':
-                p = new PageLoad()
                 break
         }
         this.pages[pageName] = p

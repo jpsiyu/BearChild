@@ -2,16 +2,18 @@ import React from 'react'
 import macro from './macro'
 import Game from './game'
 import global from './global'
-import '../public/style.css'
 
 class MainScene extends React.Component {
     constructor() {
         super()
         this.canvas = undefined
-        this.ui = undefined
+        this.divUI = undefined
         this.state = {
-            gl: 0,
             gt: 0,
+            gl: 0,
+            gw: 0,
+            gh: 0,
+            uiRefresh: 0,
         }
         this.game = undefined
     }
@@ -30,19 +32,23 @@ class MainScene extends React.Component {
         })
         window.addEventListener('resize', ev => { this.resizeCanvas() })
         window.addEventListener('orientationchange', ev => { setTimeout(() => { this.resizeCanvas() }, 200); })
+        window.g.gameEventListener.register(macro.UIRefresh, this, () => { 
+            this.setState({ uiRefresh: this.state.uiRefresh + 1}) 
+        })
+
+        this.initGlobal()
+    }
+
+    initGlobal() {
+        window.g.context = this.context
+        window.g.map.init(() => { this.resizeCanvas() })
         this.startLoading()
     }
 
-
-
     startLoading() {
-        window.g.context = this.context
-        window.g.map.init(() => { this.resizeCanvas() })
-
+        window.g.uiMgr.show(macro.UILoading)
         this.game = new Game(this.context)
         window.g.pageMgr.addListener()
-        window.g.pageMgr.show('PageLoad')
-        this.game.startLoad()
     }
 
     resizeCanvas() {
@@ -63,11 +69,11 @@ class MainScene extends React.Component {
 
         this.canvas.width = gw
         this.canvas.height = gh
-        this.divUI.width = gw
-        this.divUI.height = gh
 
         updateState.gl = (window.innerWidth - gw) / 2
         updateState.gt = (window.innerHeight - gh) / 2
+        updateState.gw = gw
+        updateState.gh = gh
         this.setState(updateState)
 
         setTimeout(() => {
@@ -76,13 +82,20 @@ class MainScene extends React.Component {
     }
 
     render() {
+        const uiDepth = window.g.uiMgr.isShowing() ? 1 : -1
         return <div ref='div' className='divRoot' >
             <canvas ref='canvasGame' className='canvasGame'
                 style={{ marginTop: this.state.gt, marginLeft: this.state.gl }}>
             </canvas>
             <div ref='divUI' className='divUI'
-                style={{ marginTop: this.state.gt, marginLeft: this.state.gl }}>
-                <button>HaHa</button>
+                style={{
+                    marginTop: this.state.gt,
+                    marginLeft: this.state.gl,
+                    width: this.state.gw,
+                    height: this.state.gh,
+                    zIndex: uiDepth
+                }}>
+                {window.g.uiMgr.getUI()}
             </div>
         </div>
     }

@@ -32,22 +32,9 @@ class Game {
 
         window.g.gameEventListener.register(macro.EventRestart, this, () => { this.restartGame() })
         window.g.gameEventListener.register(macro.EventReady, this, () => { this.readyForGame() })
-        window.g.gameEventListener.register(macro.EventLoadFinish, this, () => { this.loadFinish() })
+        window.g.gameEventListener.register(macro.EventLoadFinish, this, () => { this.readyForGame() })
 
         window.requestAnimationFrame(this.frame)
-    }
-
-    startLoad() {
-        window.g.gameState = macro.StateLoad
-        window.g.resMgr.loadRes(() => {
-            this.loadFinish()
-        })
-    }
-
-    loadFinish() {
-        this.loadFlag++
-        if (this.loadFlag >= 2)
-            this.readyForGame()
     }
 
     initController() {
@@ -57,7 +44,6 @@ class Game {
     }
 
     readyForGame() {
-        window.g.pageMgr.hide('PageLoad')
         window.g.pageMgr.show('PageStart')
         window.g.gameState = macro.StateReady
         window.g.gameLv = 1

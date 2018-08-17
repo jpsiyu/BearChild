@@ -22,5 +22,7 @@ export default {
     ChildModeDrink: 'ChildModeDrink',
     ChildModeWarrior: 'ChildModeWarrior',
 
+    UIRefresh: 'UIRefresh',
     UIStart: 'UIStart',
+    UILoading: 'UILoading',
 }

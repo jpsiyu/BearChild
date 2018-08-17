@@ -19777,7 +19777,9 @@ exports.default = {
     ChildModeDrink: 'ChildModeDrink',
     ChildModeWarrior: 'ChildModeWarrior',
 
-    UIStart: 'UIStart'
+    UIRefresh: 'UIRefresh',
+    UIStart: 'UIStart',
+    UILoading: 'UILoading'
 };
 },{}],"../src/gameConfig.js":[function(require,module,exports) {
 "use strict";
@@ -21395,43 +21397,26 @@ var Game = function () {
             _this.readyForGame();
         });
         window.g.gameEventListener.register(_macro2.default.EventLoadFinish, this, function () {
-            _this.loadFinish();
+            _this.readyForGame();
         });
 
         window.requestAnimationFrame(this.frame);
     }
 
     _createClass(Game, [{
-        key: 'startLoad',
-        value: function startLoad() {
-            var _this2 = this;
-
-            window.g.gameState = _macro2.default.StateLoad;
-            window.g.resMgr.loadRes(function () {
-                _this2.loadFinish();
-            });
-        }
-    }, {
-        key: 'loadFinish',
-        value: function loadFinish() {
-            this.loadFlag++;
-            if (this.loadFlag >= 2) this.readyForGame();
-        }
-    }, {
         key: 'initController',
         value: function initController() {
-            var _this3 = this;
+            var _this2 = this;
 
             var controller = new _controller2.default(this.context);
             controller.setChildHanlder(function () {
-                return _this3.child;
+                return _this2.child;
             });
             return controller;
         }
     }, {
         key: 'readyForGame',
         value: function readyForGame() {
-            window.g.pageMgr.hide('PageLoad');
             window.g.pageMgr.show('PageStart');
             window.g.gameState = _macro2.default.StateReady;
             window.g.gameLv = 1;
@@ -21549,7 +21534,7 @@ var Game = function () {
     }, {
         key: 'update',
         value: function update(elapsed) {
-            var _this4 = this;
+            var _this3 = this;
 
             this.fps = 1 / elapsed;
             this.drawMask = true;
@@ -21562,7 +21547,7 @@ var Game = function () {
                         window.g.gameAudio.pause('bg.mp3');
                         window.g.gameState = _macro2.default.StateReachDoor;
                         setTimeout(function () {
-                            _this4.levelUp();
+                            _this3.levelUp();
                         }, 2 * 1000);
                         window.g.gameAudio.play('win.mp3');
                         return;
@@ -24155,89 +24140,7 @@ var PageEnd = function (_Page) {
 }(_page2.default);
 
 exports.default = PageEnd;
-},{"./tool":"../src/tool.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js","./page":"../src/page.js"}],"../src/pageLoad.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _indicator = require('./indicator');
-
-var _tool = require('./tool');
-
-var _tool2 = _interopRequireDefault(_tool);
-
-var _macro = require('./macro');
-
-var _macro2 = _interopRequireDefault(_macro);
-
-var _page = require('./page');
-
-var _page2 = _interopRequireDefault(_page);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var PageLoad = function (_Page) {
-    _inherits(PageLoad, _Page);
-
-    function PageLoad() {
-        _classCallCheck(this, PageLoad);
-
-        var _this = _possibleConstructorReturn(this, (PageLoad.__proto__ || Object.getPrototypeOf(PageLoad)).call(this));
-
-        _this.load = new _indicator.Indicator('Loading  ', _this.loadingBarPos.bind(_this));
-        _this.laodTime = 3;
-        _this.pass = 0;
-        _this.end = false;
-        return _this;
-    }
-
-    _createClass(PageLoad, [{
-        key: 'loadingBarPos',
-        value: function loadingBarPos() {
-            var w = _tool2.default.gameWidth();
-            var h = _tool2.default.gameHeight();
-            var size = _tool2.default.viewUnit();
-            return {
-                x: w / 2,
-                y: h / 2,
-                width: 8 * size,
-                height: size / 3
-            };
-        }
-    }, {
-        key: 'update',
-        value: function update(elapsed) {
-            if (this.end) return;
-            if (this.pass < this.laodTime) {
-                this.pass += elapsed;
-            } else {
-                this.end = true;
-                window.g.gameEventListener.dispatch(_macro2.default.EventLoadFinish);
-            }
-            this.load.update(elapsed);
-        }
-    }, {
-        key: 'draw',
-        value: function draw(context) {
-            this.load.draw(context, this.pass, this.laodTime);
-        }
-    }]);
-
-    return PageLoad;
-}(_page2.default);
-
-exports.default = PageLoad;
-},{"./indicator":"../src/indicator.js","./tool":"../src/tool.js","./macro":"../src/macro.js","./page":"../src/page.js"}],"../src/pageMgr.js":[function(require,module,exports) {
+},{"./tool":"../src/tool.js","./drawing":"../src/drawing.js","./macro":"../src/macro.js","./page":"../src/page.js"}],"../src/pageMgr.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24253,10 +24156,6 @@ var _pageStart2 = _interopRequireDefault(_pageStart);
 var _pageEnd = require('./pageEnd');
 
 var _pageEnd2 = _interopRequireDefault(_pageEnd);
-
-var _pageLoad = require('./pageLoad');
-
-var _pageLoad2 = _interopRequireDefault(_pageLoad);
 
 var _macro = require('./macro');
 
@@ -24315,9 +24214,6 @@ var PageMgr = function () {
                 case 'PageEnd':
                     p = new _pageEnd2.default();
                     break;
-                case 'PageLoad':
-                    p = new _pageLoad2.default();
-                    break;
             }
             this.pages[pageName] = p;
             return p;
@@ -24350,7 +24246,184 @@ var PageMgr = function () {
 }();
 
 exports.default = PageMgr;
-},{"./pageStart":"../src/pageStart.js","./pageEnd":"../src/pageEnd.js","./pageLoad":"../src/pageLoad.js","./macro":"../src/macro.js"}],"../src/global.js":[function(require,module,exports) {
+},{"./pageStart":"../src/pageStart.js","./pageEnd":"../src/pageEnd.js","./macro":"../src/macro.js"}],"../src/ui/uiLoading.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _macro = require('../macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var UILoading = function (_React$Component) {
+    _inherits(UILoading, _React$Component);
+
+    function UILoading() {
+        _classCallCheck(this, UILoading);
+
+        var _this = _possibleConstructorReturn(this, (UILoading.__proto__ || Object.getPrototypeOf(UILoading)).call(this));
+
+        _this.time = 3;
+        _this.pass = 0;
+        _this.timer = undefined;
+        _this.intever = 0.1;
+        _this.state = {
+            percent: 0
+        };
+        _this.count = 0;
+        _this.progressEnd = false;
+        _this.loadFinish = false;
+        return _this;
+    }
+
+    _createClass(UILoading, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            this.timer = setInterval(function () {
+                _this2.count++;
+                if (_this2.pass < _this2.time) {
+                    _this2.pass += _this2.intever;
+                } else {
+                    _this2.progressEnd = true;
+                }
+                var p = _this2.pass / _this2.time;
+                p = Math.min(p, 0.99);
+                _this2.setState({ percent: p });
+                if (_this2.progressEnd && _this2.loadFinish) {
+                    clearInterval(_this2.timer);
+                    window.g.uiMgr.hide(_macro2.default.UILoading);
+                    window.g.gameEventListener.dispatch(_macro2.default.EventLoadFinish);
+                }
+            }, this.intever * 1000);
+
+            window.g.resMgr.loadRes(function () {
+                _this2.loadFinish = true;
+            });
+        }
+    }, {
+        key: 'dots',
+        value: function dots() {
+            return '.'.repeat(this.count % 6);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var wp = Math.floor(this.state.percent * 100);
+            var wps = wp + '%';
+
+            return _react2.default.createElement(
+                'div',
+                { className: 'uiFull UILoading' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'progressBorder' },
+                    _react2.default.createElement(
+                        'h3',
+                        null,
+                        'Loading ' + this.dots()
+                    ),
+                    _react2.default.createElement('div', { className: 'progressFill', style: { width: wps } }),
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        wps
+                    )
+                )
+            );
+        }
+    }]);
+
+    return UILoading;
+}(_react2.default.Component);
+
+exports.default = UILoading;
+},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js"}],"../src/ui/uiMgr.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _uiLoading = require('./uiLoading');
+
+var _uiLoading2 = _interopRequireDefault(_uiLoading);
+
+var _macro = require('../macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var uiConfig = {};
+uiConfig[_macro2.default.UILoading] = { cls: _uiLoading2.default };
+
+var UIMgr = function () {
+    function UIMgr() {
+        _classCallCheck(this, UIMgr);
+
+        this.showing = {};
+    }
+
+    _createClass(UIMgr, [{
+        key: 'getUI',
+        value: function getUI() {
+            if (this.isShowing()) return this.showing[Object.keys(this.showing)[0]];else return null;
+        }
+    }, {
+        key: 'isShowing',
+        value: function isShowing() {
+            var res = Object.keys(this.showing).length != 0;
+            return res;
+        }
+    }, {
+        key: 'show',
+        value: function show(uiName) {
+            var cfg = uiConfig[uiName];
+            if (!cfg) return;
+            this.showing[uiName] = _react2.default.createElement(cfg.cls, null);
+            window.g.gameEventListener.dispatch(_macro2.default.UIRefresh);
+        }
+    }, {
+        key: 'hide',
+        value: function hide(uiName) {
+            var ui = this.showing[uiName];
+            if (!ui) return;
+            delete this.showing[uiName];
+            window.g.gameEventListener.dispatch(_macro2.default.UIRefresh);
+        }
+    }]);
+
+    return UIMgr;
+}();
+
+exports.default = UIMgr;
+},{"./uiLoading":"../src/ui/uiLoading.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24383,6 +24456,10 @@ var _pageMgr = require('./pageMgr');
 
 var _pageMgr2 = _interopRequireDefault(_pageMgr);
 
+var _uiMgr = require('./ui/uiMgr');
+
+var _uiMgr2 = _interopRequireDefault(_uiMgr);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24399,6 +24476,7 @@ var Global = function () {
         this.context = undefined;
         this.gameEventListener = new _gameEventListener2.default();
         this.pageMgr = new _pageMgr2.default();
+        this.uiMgr = new _uiMgr2.default();
     }
 
     _createClass(Global, [{
@@ -24415,73 +24493,7 @@ var g = new Global();
 window.g = g;
 
 exports.default = { g: g };
-},{"./resMgr":"../src/resMgr.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js"}],"../../node_modules/parcel/src/builtins/bundle-url.js":[function(require,module,exports) {
-var bundleURL = null;
-function getBundleURLCached() {
-  if (!bundleURL) {
-    bundleURL = getBundleURL();
-  }
-
-  return bundleURL;
-}
-
-function getBundleURL() {
-  // Attempt to find the URL of the current script and use that as the base URL
-  try {
-    throw new Error();
-  } catch (err) {
-    var matches = ('' + err.stack).match(/(https?|file|ftp):\/\/[^)\n]+/g);
-    if (matches) {
-      return getBaseURL(matches[0]);
-    }
-  }
-
-  return '/';
-}
-
-function getBaseURL(url) {
-  return ('' + url).replace(/^((?:https?|file|ftp):\/\/.+)\/[^/]+$/, '$1') + '/';
-}
-
-exports.getBundleURL = getBundleURLCached;
-exports.getBaseURL = getBaseURL;
-},{}],"../../node_modules/parcel/src/builtins/css-loader.js":[function(require,module,exports) {
-var bundle = require('./bundle-url');
-
-function updateLink(link) {
-  var newLink = link.cloneNode();
-  newLink.onload = function () {
-    link.remove();
-  };
-  newLink.href = link.href.split('?')[0] + '?' + Date.now();
-  link.parentNode.insertBefore(newLink, link.nextSibling);
-}
-
-var cssTimeout = null;
-function reloadCSS() {
-  if (cssTimeout) {
-    return;
-  }
-
-  cssTimeout = setTimeout(function () {
-    var links = document.querySelectorAll('link[rel="stylesheet"]');
-    for (var i = 0; i < links.length; i++) {
-      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
-        updateLink(links[i]);
-      }
-    }
-
-    cssTimeout = null;
-  }, 50);
-}
-
-module.exports = reloadCSS;
-},{"./bundle-url":"../../node_modules/parcel/src/builtins/bundle-url.js"}],"style.css":[function(require,module,exports) {
-
-var reloadCSS = require('_css_loader');
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../../node_modules/parcel/src/builtins/css-loader.js"}],"../src/mainScene.js":[function(require,module,exports) {
+},{"./resMgr":"../src/resMgr.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./pageMgr":"../src/pageMgr.js","./ui/uiMgr":"../src/ui/uiMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
 
 'use strict';
 
@@ -24507,8 +24519,6 @@ var _global = require('./global');
 
 var _global2 = _interopRequireDefault(_global);
 
-require('../public/style.css');
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24526,10 +24536,13 @@ var MainScene = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (MainScene.__proto__ || Object.getPrototypeOf(MainScene)).call(this));
 
         _this.canvas = undefined;
-        _this.ui = undefined;
+        _this.divUI = undefined;
         _this.state = {
+            gt: 0,
             gl: 0,
-            gt: 0
+            gw: 0,
+            gh: 0,
+            uiRefresh: 0
         };
         _this.game = undefined;
         return _this;
@@ -24561,22 +24574,29 @@ var MainScene = function (_React$Component) {
                     _this2.resizeCanvas();
                 }, 200);
             });
-            this.startLoading();
+            window.g.gameEventListener.register(_macro2.default.UIRefresh, this, function () {
+                _this2.setState({ uiRefresh: _this2.state.uiRefresh + 1 });
+            });
+
+            this.initGlobal();
         }
     }, {
-        key: 'startLoading',
-        value: function startLoading() {
+        key: 'initGlobal',
+        value: function initGlobal() {
             var _this3 = this;
 
             window.g.context = this.context;
             window.g.map.init(function () {
                 _this3.resizeCanvas();
             });
-
+            this.startLoading();
+        }
+    }, {
+        key: 'startLoading',
+        value: function startLoading() {
+            window.g.uiMgr.show(_macro2.default.UILoading);
             this.game = new _game2.default(this.context);
             window.g.pageMgr.addListener();
-            window.g.pageMgr.show('PageLoad');
-            this.game.startLoad();
         }
     }, {
         key: 'resizeCanvas',
@@ -24599,11 +24619,11 @@ var MainScene = function (_React$Component) {
 
             this.canvas.width = gw;
             this.canvas.height = gh;
-            this.divUI.width = gw;
-            this.divUI.height = gh;
 
             updateState.gl = (window.innerWidth - gw) / 2;
             updateState.gt = (window.innerHeight - gh) / 2;
+            updateState.gw = gw;
+            updateState.gh = gh;
             this.setState(updateState);
 
             setTimeout(function () {
@@ -24613,6 +24633,7 @@ var MainScene = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var uiDepth = window.g.uiMgr.isShowing() ? 1 : -1;
             return _react2.default.createElement(
                 'div',
                 { ref: 'div', className: 'divRoot' },
@@ -24621,12 +24642,14 @@ var MainScene = function (_React$Component) {
                 _react2.default.createElement(
                     'div',
                     { ref: 'divUI', className: 'divUI',
-                        style: { marginTop: this.state.gt, marginLeft: this.state.gl } },
-                    _react2.default.createElement(
-                        'button',
-                        null,
-                        'HaHa'
-                    )
+                        style: {
+                            marginTop: this.state.gt,
+                            marginLeft: this.state.gl,
+                            width: this.state.gw,
+                            height: this.state.gh,
+                            zIndex: uiDepth
+                        } },
+                    window.g.uiMgr.getUI()
                 )
             );
         }
@@ -24636,7 +24659,7 @@ var MainScene = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = MainScene;
-},{"react":"../../node_modules/react/index.js","./macro":"../src/macro.js","./game":"../src/game.js","./global":"../src/global.js","../public/style.css":"style.css"}],"../src/index.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","./macro":"../src/macro.js","./game":"../src/game.js","./global":"../src/global.js"}],"../src/index.js":[function(require,module,exports) {
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -24710,7 +24733,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '52818' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '54449' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
