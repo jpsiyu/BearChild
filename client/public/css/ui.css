@@ -95,28 +95,33 @@
 
 /* UI End */
 .UIEnd{
-    display: grid;
-    grid-template-rows: 2fr 3fr
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.UIEnd h2{
-    align-self: center;
-    text-align: center;
-    font-size: calc(var(--ui-unit) * 6);
+.UIEnd .title{
+    flex: 1;
+    font-size: calc(var(--ui-unit) * 4);
+    display: flex;
+}
+
+.UIEnd .title h2{
+    margin: auto;
 }
 
 .UIEnd .btnContainer{
-    justify-self: center;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 50%;
+    flex: 1;
+    display: flex;
+    width: 100%;
+    justify-content: center;
 }
 
 .UIEnd .btnGroup{
     display: flex;
+    width: 20%;
     flex-direction: column;
     align-items: center;
-    width: 100%;
 }
 
 .UIEnd .btn{

@@ -23,7 +23,9 @@ class UIEnd extends React.Component {
 
     render() {
         return <div className='uiPop UIEnd'>
-            <h2>Game Over</h2>
+            <div className='title'>
+                <h2>Game Over</h2>
+            </div>
             <div className='btnContainer'>
                 <div className='btnGroup'>
                     <button className='btn' onTouchEnd={this.onBtnQuitClick} onClick={this.onBtnQuitClick}>{this.quitSymbol}</button>
