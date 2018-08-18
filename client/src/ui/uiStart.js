@@ -13,6 +13,7 @@ class UIStart extends React.Component{
     }
 
     onBtnStartClick(){
+        console.log('click start')
         window.g.uiMgr.hide(macro.UIStart)
         window.g.gameEventListener.dispatch(macro.EventRestart)
     }

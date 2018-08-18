@@ -23932,6 +23932,7 @@ var UIStart = function (_React$Component) {
     _createClass(UIStart, [{
         key: 'onBtnStartClick',
         value: function onBtnStartClick() {
+            console.log('click start');
             window.g.uiMgr.hide(_macro2.default.UIStart);
             window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
         }
