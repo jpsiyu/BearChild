@@ -23922,6 +23922,10 @@ var UIStart = function (_React$Component) {
 
         _this.onBtnStartClick = _this.onBtnStartClick.bind(_this);
         _this.onBtnMusicClick = _this.onBtnMusicClick.bind(_this);
+        var musicColor = _this.getMusicColor();
+        _this.state = {
+            musicColor: musicColor
+        };
         return _this;
     }
 
@@ -23935,6 +23939,14 @@ var UIStart = function (_React$Component) {
         key: 'onBtnMusicClick',
         value: function onBtnMusicClick() {
             window.g.gameAudio.active = !window.g.gameAudio.active;
+            var musicColor = this.getMusicColor();
+            this.setState({ musicColor: musicColor });
+        }
+    }, {
+        key: 'getMusicColor',
+        value: function getMusicColor() {
+            var c = window.g.gameAudio.active ? 'green' : 'black';
+            return c;
         }
     }, {
         key: 'render',
@@ -23961,13 +23973,13 @@ var UIStart = function (_React$Component) {
                         { className: 'right-bottom' },
                         _react2.default.createElement(
                             'button',
-                            { onClick: this.onBtnMusicClick },
-                            'Music'
+                            { onClick: this.onBtnMusicClick, style: { backgroundColor: this.state.musicColor } },
+                            '\u266C'
                         ),
                         _react2.default.createElement(
                             'button',
                             null,
-                            'Setting'
+                            '\u273F'
                         )
                     )
                 )
@@ -24483,7 +24495,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '54449' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49209' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

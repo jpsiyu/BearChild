@@ -6,6 +6,10 @@ class UIStart extends React.Component{
         super()
         this.onBtnStartClick = this.onBtnStartClick.bind(this)
         this.onBtnMusicClick = this.onBtnMusicClick.bind(this)
+        const musicColor = this.getMusicColor()
+        this.state = {
+            musicColor,
+        }
     }
 
     onBtnStartClick(){
@@ -15,6 +19,13 @@ class UIStart extends React.Component{
 
     onBtnMusicClick(){
         window.g.gameAudio.active = !window.g.gameAudio.active
+        const musicColor = this.getMusicColor()
+        this.setState({musicColor})
+    }
+
+    getMusicColor(){
+        const c = window.g.gameAudio.active ? 'green' : 'black'
+        return c
     }
 
     render() {
@@ -26,8 +37,8 @@ class UIStart extends React.Component{
             <div className='right'>
                 <div></div>
                 <div className='right-bottom'>
-                    <button onClick={this.onBtnMusicClick}>Music</button>
-                    <button>Setting</button>
+                    <button onClick={this.onBtnMusicClick} style={{backgroundColor: this.state.musicColor}}>♬</button>
+                    <button>✿</button>
                 </div>
             </div>
         </div>
