@@ -23932,7 +23932,6 @@ var UIStart = function (_React$Component) {
     _createClass(UIStart, [{
         key: 'onBtnStartClick',
         value: function onBtnStartClick() {
-            console.log('click start');
             window.g.uiMgr.hide(_macro2.default.UIStart);
             window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
         }
@@ -23961,7 +23960,7 @@ var UIStart = function (_React$Component) {
                     { className: 'mid' },
                     _react2.default.createElement(
                         'button',
-                        { onClick: this.onBtnStartClick },
+                        { onClick: this.onBtnStartClick, onTouchStart: this.onBtnStartClick },
                         'Start Game'
                     )
                 ),
@@ -23974,7 +23973,7 @@ var UIStart = function (_React$Component) {
                         { className: 'right-bottom' },
                         _react2.default.createElement(
                             'button',
-                            { onClick: this.onBtnMusicClick, style: { backgroundColor: this.state.musicColor } },
+                            { onClick: this.onBtnMusicClick, onTouchStart: this.onBtnMusicClick, style: { backgroundColor: this.state.musicColor } },
                             '\u266C'
                         ),
                         _react2.default.createElement(
@@ -24063,7 +24062,7 @@ var UIEnd = function (_React$Component) {
                         { className: 'btnGroup' },
                         _react2.default.createElement(
                             'button',
-                            { className: 'btn', onClick: this.onBtnQuitClick },
+                            { className: 'btn', onTouchStart: this.onBtnQuitClick, onClick: this.onBtnQuitClick },
                             this.quitSymbol
                         ),
                         _react2.default.createElement(
@@ -24077,7 +24076,7 @@ var UIEnd = function (_React$Component) {
                         { className: 'btnGroup' },
                         _react2.default.createElement(
                             'button',
-                            { className: 'btn', onClick: this.onBtnRestartClick },
+                            { className: 'btn', onTouchStart: this.onBtnRestartClick, onClick: this.onBtnRestartClick },
                             this.restartSymbol
                         ),
                         _react2.default.createElement(

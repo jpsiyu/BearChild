@@ -26,11 +26,11 @@ class UIEnd extends React.Component {
             <h2>Game Over</h2>
             <div className='btnContainer'>
                 <div className='btnGroup'>
-                    <button className='btn' onClick={this.onBtnQuitClick}>{this.quitSymbol}</button>
+                    <button className='btn' onTouchStart={this.onBtnQuitClick} onClick={this.onBtnQuitClick}>{this.quitSymbol}</button>
                     <label>Quit</label>
                 </div>
                 <div className='btnGroup'>
-                    <button className='btn' onClick={this.onBtnRestartClick}>{this.restartSymbol}</button>
+                    <button className='btn' onTouchStart={this.onBtnRestartClick} onClick={this.onBtnRestartClick}>{this.restartSymbol}</button>
                     <label>Restart</label>
                 </div>
             </div>
