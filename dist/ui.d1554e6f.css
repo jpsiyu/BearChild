@@ -1,3 +1,7 @@
+:root{
+    --ui-unit: 2.2vh;
+}
+
 /* UI Loading */
 .UILoading{
     display:flex;
@@ -65,18 +69,18 @@
 
 .UIStart .mid button{
     padding: 0;
-    width: 50%;
-    height: 20%;
+    width: calc(var(--ui-unit) * 30);
+    height: calc(var(--ui-unit) * 8);
     outline: none;
     background-color: black;
     color: white;
-    font-size: 4vmin;
+    font-size: calc(var(--ui-unit) * 3);
 }
 
 .UIStart .right button{
-    width: 35%;
-    height: 30%;
-    font-size: 4vmin;
+    height: calc(var(--ui-unit) * 10);
+    width: calc(var(--ui-unit) * 10);
+    font-size: calc(var(--ui-unit) * 3);
     margin-bottom: 10%;
     margin-right: 10%;
     border-radius: 50%;
@@ -98,7 +102,7 @@
 .UIEnd h2{
     align-self: center;
     text-align: center;
-    font-size: 8vmin;
+    font-size: calc(var(--ui-unit) * 6);
 }
 
 .UIEnd .btnContainer{
@@ -116,9 +120,9 @@
 }
 
 .UIEnd .btn{
-    width: 50%; 
-    height: 40%;
-    font-size: 5vmin;
+    width: calc(var(--ui-unit) * 8);
+    height: calc(var(--ui-unit) * 8);
+    font-size: calc(var(--ui-unit) * 5);
     margin-bottom: 10%;
     border-radius: 50%;
     outline: none;
@@ -131,5 +135,12 @@
 }
 
 .UIEnd .btnGroup label{
-    font-size: 5vmin;
+    font-size: calc(var(--ui-unit) * 4);
+}
+
+@media (max-aspect-ratio: 22/10){
+    :root{
+        --ui-unit: 1vw;
+    }
+
 }
