@@ -38,7 +38,6 @@ class GameAudio {
     }
 
     loadMusic(name, success) {
-        const url = pjson.production ? pjson.ip : pjson.localHost
         axios.get(`music/${name}`, { responseType: 'arraybuffer', cache: false }).then(response => {
             this.ac.decodeAudioData(response.data,
                 (buffer) => {

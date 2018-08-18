@@ -23384,7 +23384,6 @@ var GameAudio = function () {
         value: function loadMusic(name, success) {
             var _this2 = this;
 
-            var url = _package2.default.production ? _package2.default.ip : _package2.default.localHost;
             _axios2.default.get('music/' + name, { responseType: 'arraybuffer', cache: false }).then(function (response) {
                 _this2.ac.decodeAudioData(response.data, function (buffer) {
                     _this2.buffers[name] = buffer;
@@ -23960,7 +23959,7 @@ var UIStart = function (_React$Component) {
                     { className: 'mid' },
                     _react2.default.createElement(
                         'button',
-                        { onClick: this.onBtnStartClick, onTouchStart: this.onBtnStartClick },
+                        { onClick: this.onBtnStartClick, onTouchEnd: this.onBtnStartClick },
                         'Start Game'
                     )
                 ),
@@ -23973,7 +23972,7 @@ var UIStart = function (_React$Component) {
                         { className: 'right-bottom' },
                         _react2.default.createElement(
                             'button',
-                            { onClick: this.onBtnMusicClick, onTouchStart: this.onBtnMusicClick, style: { backgroundColor: this.state.musicColor } },
+                            { onClick: this.onBtnMusicClick, onTouchEnd: this.onBtnMusicClick, style: { backgroundColor: this.state.musicColor } },
                             '\u266C'
                         ),
                         _react2.default.createElement(
@@ -24062,7 +24061,7 @@ var UIEnd = function (_React$Component) {
                         { className: 'btnGroup' },
                         _react2.default.createElement(
                             'button',
-                            { className: 'btn', onTouchStart: this.onBtnQuitClick, onClick: this.onBtnQuitClick },
+                            { className: 'btn', onTouchEnd: this.onBtnQuitClick, onClick: this.onBtnQuitClick },
                             this.quitSymbol
                         ),
                         _react2.default.createElement(
@@ -24076,7 +24075,7 @@ var UIEnd = function (_React$Component) {
                         { className: 'btnGroup' },
                         _react2.default.createElement(
                             'button',
-                            { className: 'btn', onTouchStart: this.onBtnRestartClick, onClick: this.onBtnRestartClick },
+                            { className: 'btn', onTouchEnd: this.onBtnRestartClick, onClick: this.onBtnRestartClick },
                             this.restartSymbol
                         ),
                         _react2.default.createElement(
@@ -24495,7 +24494,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49209' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '61944' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

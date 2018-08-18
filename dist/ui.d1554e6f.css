@@ -46,7 +46,7 @@
 
 .UIStart .right{
     display: grid;
-    grid-template-rows: 3fr 4fr;
+    grid-template-rows: 2fr 4fr;
 }
 
 .UIStart .right .right-bottom{
@@ -57,6 +57,7 @@
 }
 
 .UIStart .mid{
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -64,8 +65,8 @@
 
 .UIStart .mid button{
     padding: 0;
-    width: 30vmin;
-    height: 10vmin;
+    width: 50%;
+    height: 20%;
     outline: none;
     background-color: black;
     color: white;
@@ -73,8 +74,8 @@
 }
 
 .UIStart .right button{
-    width: 10vmin;
-    height: 10vmin;
+    width: 35%;
+    height: 30%;
     font-size: 4vmin;
     margin-bottom: 10%;
     margin-right: 10%;
@@ -104,7 +105,7 @@
     justify-self: center;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    width: 50vmin;
+    width: 50%;
 }
 
 .UIEnd .btnGroup{
@@ -115,8 +116,8 @@
 }
 
 .UIEnd .btn{
-    width: 10vmin; 
-    height: 10vmin;
+    width: 50%; 
+    height: 40%;
     font-size: 5vmin;
     margin-bottom: 10%;
     border-radius: 50%;

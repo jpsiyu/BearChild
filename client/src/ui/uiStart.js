@@ -32,12 +32,12 @@ class UIStart extends React.Component{
         return <div className='UIStart uiFull'>
             <div className='left'></div>
             <div className='mid'>
-                <button onClick={this.onBtnStartClick} onTouchStart={this.onBtnStartClick}>Start Game</button>
+                <button onClick={this.onBtnStartClick} onTouchEnd={this.onBtnStartClick}>Start Game</button>
             </div>
             <div className='right'>
                 <div></div>
                 <div className='right-bottom'>
-                    <button onClick={this.onBtnMusicClick} onTouchStart={this.onBtnMusicClick} style={{backgroundColor: this.state.musicColor}}>♬</button>
+                    <button onClick={this.onBtnMusicClick} onTouchEnd={this.onBtnMusicClick} style={{backgroundColor: this.state.musicColor}}>♬</button>
                     <button>✿</button>
                 </div>
             </div>
