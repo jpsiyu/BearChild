@@ -23867,6 +23867,11 @@ var UILoading = function (_React$Component) {
                     'div',
                     { className: 'progressBorder' },
                     _react2.default.createElement(
+                        'h2',
+                        null,
+                        'Bear Child Run'
+                    ),
+                    _react2.default.createElement(
                         'h3',
                         null,
                         'Loading ' + this.dots()
@@ -23978,7 +23983,7 @@ var UIStart = function (_React$Component) {
                         _react2.default.createElement(
                             'button',
                             null,
-                            '\u273F'
+                            '\u2729'
                         )
                     )
                 )
@@ -24023,7 +24028,7 @@ var UIEnd = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (UIEnd.__proto__ || Object.getPrototypeOf(UIEnd)).call(this));
 
-        _this.quitSymbol = '<';
+        _this.quitSymbol = '⏎';
         _this.restartSymbol = '↺';
         _this.onBtnQuitClick = _this.onBtnQuitClick.bind(_this);
         _this.onBtnRestartClick = _this.onBtnRestartClick.bind(_this);
@@ -24328,7 +24333,7 @@ var MainScene = function (_React$Component) {
                 event.preventDefault();
             });
             document.addEventListener('visibilitychange', function () {
-                document.hidden ? window.g.gameAudio.pause('bg.mp3') : window.g.gameAudio.play('bg.mp3');
+                if (document.hidden) window.g.gameAudio.pause('bg.mp3');
                 _this2.game.setPause(document.hidden);
             });
             window.addEventListener('resize', function (ev) {
@@ -24498,7 +24503,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '50724' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49303' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

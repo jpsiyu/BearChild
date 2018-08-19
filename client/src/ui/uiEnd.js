@@ -4,7 +4,7 @@ import macro from '../macro'
 class UIEnd extends React.Component {
     constructor() {
         super()
-        this.quitSymbol = '<'
+        this.quitSymbol = '⏎'
         this.restartSymbol = '↺'
         this.onBtnQuitClick = this.onBtnQuitClick.bind(this)
         this.onBtnRestartClick = this.onBtnRestartClick.bind(this)

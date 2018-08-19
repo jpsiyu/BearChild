@@ -38,7 +38,7 @@ class UIStart extends React.Component{
                 <div></div>
                 <div className='right-bottom'>
                     <button onClick={this.onBtnMusicClick} onTouchEnd={this.onBtnMusicClick} style={{backgroundColor: this.state.musicColor}}>♬</button>
-                    <button>✿</button>
+                    <button>✩</button>
                 </div>
             </div>
         </div>
