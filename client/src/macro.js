@@ -1,6 +1,8 @@
 export default {
+    UID: 'uid',
     Visiable: 3,
     WidthHeightRatio: 2.2,
+    BgColor: 'rgb(238, 217, 255)',
 
     StateLoad: 'StateLoad',
     StateReady: 'StateReady',
@@ -9,8 +11,6 @@ export default {
     StateLevelUp: 'StateLevelUp',
     StateRebuild: 'StateRebuild',
     StateGameOver: 'StateGameOver',
-
-    BgColor: 'rgb(238, 217, 255)',
 
     EventRestart: 'EventRestart',
     EventReady: 'EventReady',

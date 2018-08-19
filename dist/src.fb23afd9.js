@@ -19754,8 +19754,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
+    UID: 'uid',
     Visiable: 3,
     WidthHeightRatio: 2.2,
+    BgColor: 'rgb(238, 217, 255)',
 
     StateLoad: 'StateLoad',
     StateReady: 'StateReady',
@@ -19764,8 +19766,6 @@ exports.default = {
     StateLevelUp: 'StateLevelUp',
     StateRebuild: 'StateRebuild',
     StateGameOver: 'StateGameOver',
-
-    BgColor: 'rgb(238, 217, 255)',
 
     EventRestart: 'EventRestart',
     EventReady: 'EventReady',
@@ -20754,7 +20754,7 @@ var NumberIndicator = function () {
         this.y = y;
         this.digits = options.digits || 0;
         this.pt = options.pt || 8;
-        this.align = options.align || 'end';
+        this.align = options.align || 'left';
     }
 
     _createClass(NumberIndicator, [{
@@ -20764,7 +20764,7 @@ var NumberIndicator = function () {
             ctx.fillStyle = 'black';
             ctx.font = this.pt + 'pt Arial';
             ctx.textAlign = this.align;
-            ctx.fillText(this.label + ' ' + value.toFixed(this.digits), this.x, this.y + this.pt - 1);
+            ctx.fillText(this.label + ' ' + value, this.x, this.y + this.pt - 1);
             ctx.restore();
         }
     }]);
@@ -21386,7 +21386,8 @@ var Game = function () {
         this.child = undefined;
         this.rebuild = new _rebuild2.default();
         this.controller = this.initController();
-        this.levelIndicator = new _indicator.NumberIndicator('Level ', 70, 10, { pt: 12 });
+        this.uidIndicator = new _indicator.NumberIndicator('ID:', 10, 10, { pt: 12 });
+        this.levelIndicator = new _indicator.NumberIndicator('LV:', 10, 25, { pt: 12 });
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
         this.loadFlag = 0;
         this.drawMask = true;
@@ -21598,6 +21599,7 @@ var Game = function () {
                     this.door.draw(this.context);
 
                     this.levelIndicator.draw(this.context, window.g.gameLv);
+                    this.uidIndicator.draw(this.context, window.g.uid);
                     //this.fpsIndicator.draw(this.context, this.fps) 
                     this.controller.draw(this.context);
                     this.child.draw(this.context);
@@ -23296,7 +23298,7 @@ module.exports = {
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server/app.js --watch ./server -V",
+    "start": "nodemon server/app.js --watch ./server --ignore server/game.db -V",
     "watch": "parcel watch client/public/index.html --public-url /bearchild"
   },
   "keywords": [],
@@ -23311,10 +23313,10 @@ module.exports = {
     "axios": "^0.18.0",
     "cors": "^2.8.4",
     "express": "^4.16.3",
+    "nedb": "^1.8.0",
     "parcel": "^1.9.7",
     "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "redux-devtools-extension": "^2.13.5"
+    "react-dom": "^16.4.1"
   }
 };
 },{}],"../src/gameAudio.js":[function(require,module,exports) {
@@ -23777,6 +23779,38 @@ var GameEventListener = function () {
 }();
 
 exports.default = GameEventListener;
+},{}],"../src/gameCookie.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var setCookie = function setCookie(name, value) {
+    var exdays = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 365;
+
+    var d = new Date();
+    d.setTime(d.getTime() + exdays * 24 * 3600 * 1000);
+    var expires = 'expires=' + d.toUTCString();
+    document.cookie = name + '=' + value + ';' + expires + ';path=/';
+};
+
+var getCookie = function getCookie(cname) {
+    var name = cname + '=';
+    var ca = document.cookie.split(';');
+    var c = void 0;
+    for (var i = 0; i < ca.length; i++) {
+        c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return '';
+};
+
+exports.default = { setCookie: setCookie, getCookie: getCookie };
 },{}],"../src/ui/uiLoading.js":[function(require,module,exports) {
 'use strict';
 
@@ -23793,6 +23827,14 @@ var _react2 = _interopRequireDefault(_react);
 var _macro = require('../macro');
 
 var _macro2 = _interopRequireDefault(_macro);
+
+var _gameCookie = require('../gameCookie');
+
+var _gameCookie2 = _interopRequireDefault(_gameCookie);
+
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23848,6 +23890,21 @@ var UILoading = function (_React$Component) {
             window.g.resMgr.loadRes(function () {
                 _this2.loadFinish = true;
             });
+            this.getUid();
+        }
+    }, {
+        key: 'getUid',
+        value: function getUid() {
+            var uid = _gameCookie2.default.getCookie(_macro2.default.UID);
+            if (!uid) {
+                _axios2.default.get(_macro2.default.UID).then(function (response) {
+                    uid = response.data;
+                    _gameCookie2.default.setCookie(_macro2.default.UID, uid);
+                    window.g.uid = uid;
+                });
+            } else {
+                window.g.uid = uid;
+            }
         }
     }, {
         key: 'dots',
@@ -23891,7 +23948,7 @@ var UILoading = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = UILoading;
-},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js"}],"../src/ui/uiStart.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js","../gameCookie":"../src/gameCookie.js","axios":"../../node_modules/axios/index.js"}],"../src/ui/uiStart.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24239,6 +24296,7 @@ var Global = function () {
     function Global() {
         _classCallCheck(this, Global);
 
+        this.uid = undefined;
         this.gameState = _macro2.default.StateLoad;
         this.gameLv = 1;
         this.resMgr = new _resMgr2.default();
@@ -24503,7 +24561,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49303' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49731' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

@@ -1,5 +1,7 @@
 import React from 'react'
 import macro from '../macro'
+import gameCookie from '../gameCookie'
+import axios from 'axios'
 
 class UILoading extends React.Component {
     constructor() {
@@ -37,6 +39,20 @@ class UILoading extends React.Component {
         window.g.resMgr.loadRes(() => {
             this.loadFinish = true
         })
+        this.getUid()
+    }
+
+    getUid() {
+        let uid = gameCookie.getCookie(macro.UID)
+        if (!uid) {
+            axios.get(macro.UID).then(response => {
+                uid = response.data
+                gameCookie.setCookie(macro.UID, uid)
+                window.g.uid = uid
+            })
+        } else {
+            window.g.uid = uid
+        }
     }
 
     dots() {

@@ -7,6 +7,7 @@ import UIMgr from './ui/uiMgr'
 
 class Global {
     constructor() {
+        this.uid = undefined
         this.gameState = macro.StateLoad
         this.gameLv = 1
         this.resMgr = new ResMgr()

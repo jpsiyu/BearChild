@@ -55,7 +55,7 @@ class NumberIndicator {
         this.y = y
         this.digits = options.digits || 0
         this.pt = options.pt || 8
-        this.align = options.align || 'end'
+        this.align = options.align || 'left'
     }
 
     draw(ctx, value) {
@@ -63,7 +63,7 @@ class NumberIndicator {
         ctx.fillStyle = 'black'
         ctx.font = `${this.pt}pt Arial`
         ctx.textAlign = this.align
-        ctx.fillText(`${this.label} ${value.toFixed(this.digits)}`, this.x, this.y + this.pt - 1)
+        ctx.fillText(`${this.label} ${value}`, this.x, this.y + this.pt - 1)
         ctx.restore()
     }
 }

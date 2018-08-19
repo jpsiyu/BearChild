@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const pjson = require('../package.json')
 const cors = require('cors')
+const db = require('./db')
 
 const app = express()
 app.use(cors())
@@ -9,10 +10,16 @@ app.use('*', (req, res, next) => {
     next()
 })
 
-const prefix = (url='') => { return `${pjson.prefix}${url}` }
+const prefix = (url = '') => { return `${pjson.prefix}${url}` }
 
 app.use(prefix(), express.static(path.resolve(__dirname, '../dist')))
 app.use(prefix(), express.static(path.resolve(__dirname, '../client/public')))
+
+app.get(prefix('/uid'), (req, res) => {
+    res.status(200).json(idNum)
+    idNum++
+    db.updateNum(idNum)
+})
 
 app.use('*', (req, res) => {
     console.log('404', req.originalUrl)
@@ -24,4 +31,11 @@ app.use((err, req, res) => {
     res.status(500).json('500')
 })
 
-app.listen(pjson.port, console.log(`app listening on port ${pjson.port}....`))
+
+let idNum = undefined
+db.load((num) => {
+    idNum = num
+    app.listen(pjson.port, () => {
+        console.log(`app listening on port ${pjson.port}, current idNum: ${idNum}`)
+    })
+})
