@@ -18,7 +18,7 @@ app.use(prefix(), express.static(path.resolve(__dirname, '../client/public')))
 app.get(prefix('/uid'), (req, res) => {
     res.status(200).json(idNum)
     idNum++
-    db.updateNum(idNum)
+    db.getCounter().updateCounter(idNum)
 })
 
 app.use('*', (req, res) => {
