@@ -1,29 +1,35 @@
 import React from 'react'
 import macro from '../macro'
 
-class UIStart extends React.Component{
-    constructor(){
+class UIStart extends React.Component {
+    constructor() {
         super()
         this.onBtnStartClick = this.onBtnStartClick.bind(this)
         this.onBtnMusicClick = this.onBtnMusicClick.bind(this)
+        this.onBtnRankClick = this.onBtnRankClick.bind(this)
         const musicColor = this.getMusicColor()
         this.state = {
             musicColor,
         }
     }
 
-    onBtnStartClick(){
+    onBtnStartClick() {
         window.g.uiMgr.hide(macro.UIStart)
         window.g.gameEventListener.dispatch(macro.EventRestart)
     }
 
-    onBtnMusicClick(){
+    onBtnMusicClick() {
         window.g.gameAudio.active = !window.g.gameAudio.active
         const musicColor = this.getMusicColor()
-        this.setState({musicColor})
+        this.setState({ musicColor })
     }
 
-    getMusicColor(){
+    onBtnRankClick() {
+        window.g.uiMgr.hide(macro.UIStart)
+        window.g.uiMgr.show(macro.UIRank)
+    }
+
+    getMusicColor() {
         const c = window.g.gameAudio.active ? 'green' : 'black'
         return c
     }
@@ -37,8 +43,8 @@ class UIStart extends React.Component{
             <div className='right'>
                 <div></div>
                 <div className='right-bottom'>
-                    <button onClick={this.onBtnMusicClick} onTouchEnd={this.onBtnMusicClick} style={{backgroundColor: this.state.musicColor}}>♬</button>
-                    <button>✩</button>
+                    <button onClick={this.onBtnMusicClick} onTouchEnd={this.onBtnMusicClick} style={{ backgroundColor: this.state.musicColor }}>♬</button>
+                    <button onClick={this.onBtnRankClick} onTouchEnd={this.onBtnRankClick}>✩</button>
                 </div>
             </div>
         </div>

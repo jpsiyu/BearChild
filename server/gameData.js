@@ -29,26 +29,26 @@ class GameData {
             return
         }
         const last = this.lvList[this.limit - 1]
-        if(this.lvList.length >= this.limit && info.lv < last.lv){
+        if (this.lvList.length >= this.limit && info.lv < last.lv) {
             return
         }
 
         let insertIndex = undefined
         this.lvList.forEach((element, index) => {
-            if(!insertIndex && info.lv > element.lv){
+            if (insertIndex == undefined && info.lv > element.lv) {
                 insertIndex = index
             }
         })
-        if(insertIndex == undefined && this.lvList.length < this.limit){
+        if (insertIndex == undefined && this.lvList.length < this.limit) {
             insertIndex = this.lvList.length
         }
-        if(insertIndex != undefined){
+        if (insertIndex != undefined) {
             this.lvList.splice(insertIndex, 0, info)
             this.updateDbLvList()
         }
     }
 
-    updateDbLvList(){
+    updateDbLvList() {
         db.getRecordLvs().updateList(this.lvList)
     }
 }

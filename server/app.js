@@ -27,6 +27,10 @@ app.post(prefix('/lv'), (req, res) => {
     res.status(200).json(1)
 })
 
+app.get(prefix('/rank'), (req, res) => {
+    res.status(200).json(data.lvList)
+})
+
 app.use('*', (req, res) => {
     console.log('404', req.originalUrl)
     res.status(404).json('404, Hey, Page Not Found!')

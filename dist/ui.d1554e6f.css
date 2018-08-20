@@ -158,6 +158,83 @@
     font-size: calc(var(--ui-unit) * 1.5);
 }
 
+/* UI Rank */
+.UIRank{
+    text-align: center;
+    font-family: 'Comic Sans MS';
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.UIRank .top{
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.UIRank button{
+    background-color: black;
+    color: white;
+    border: 1px white solid;
+    width: calc(var(--ui-unit) * 8);
+    height: calc(var(--ui-unit) * 4);
+    font-size: calc(var(--ui-unit) * 2);
+    outline: none;
+}
+
+.UIRank button:active{
+    background-color: green;
+}
+
+.UIRank .title{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    font-size: calc(var(--ui-unit) * 3);
+}
+
+
+.UIRank .rankList{
+    flex: 3;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.UIRank li{
+    display: flex;
+    justify-content: space-between;
+}
+
+.UIRank li:nth-child(1){
+    background-color: lightcoral;
+    color: black;
+    border-radius: 20%;
+}
+
+.UIRank .liStar{
+    align-self: center;
+    justify-self: center;
+    display: flex;
+    flex: 1;
+    margin-right: calc(var(--ui-unit) * 2);
+    justify-content: center;
+    text-align: left;
+}
+
+.UIRank .liStar p{
+    width: 50%;
+}
+
+.UIRank .liUid{
+    flex: 1;
+}
+
+.UIRank .liLv{
+    flex: 1;
+}
+
 @media (max-aspect-ratio: 22/10){
     :root{
         --ui-unit: 1vw;

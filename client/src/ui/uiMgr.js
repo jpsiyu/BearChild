@@ -1,6 +1,7 @@
 import UILoading from './uiLoading'
 import UIStart from './uiStart'
 import UIEnd from './uiEnd'
+import UIRank from './uiRank'
 import macro from '../macro'
 import React from 'react'
 
@@ -8,7 +9,7 @@ const uiConfig = {}
 uiConfig[macro.UILoading] = {cls: UILoading, full:true}
 uiConfig[macro.UIStart] = {cls: UIStart, full:true}
 uiConfig[macro.UIEnd] = {cls: UIEnd, full:false}
-
+uiConfig[macro.UIRank] = {cls: UIRank, full:true}
 
 class UIMgr{
     constructor(){

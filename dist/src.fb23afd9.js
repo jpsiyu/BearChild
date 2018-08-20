@@ -19780,7 +19780,8 @@ exports.default = {
     UIRefresh: 'UIRefresh',
     UIStart: 'UIStart',
     UILoading: 'UILoading',
-    UIEnd: 'UIEnd'
+    UIEnd: 'UIEnd',
+    UIRank: 'UIRank'
 };
 },{}],"../src/gameConfig.js":[function(require,module,exports) {
 "use strict";
@@ -23995,6 +23996,7 @@ var UIStart = function (_React$Component) {
 
         _this.onBtnStartClick = _this.onBtnStartClick.bind(_this);
         _this.onBtnMusicClick = _this.onBtnMusicClick.bind(_this);
+        _this.onBtnRankClick = _this.onBtnRankClick.bind(_this);
         var musicColor = _this.getMusicColor();
         _this.state = {
             musicColor: musicColor
@@ -24014,6 +24016,12 @@ var UIStart = function (_React$Component) {
             window.g.gameAudio.active = !window.g.gameAudio.active;
             var musicColor = this.getMusicColor();
             this.setState({ musicColor: musicColor });
+        }
+    }, {
+        key: 'onBtnRankClick',
+        value: function onBtnRankClick() {
+            window.g.uiMgr.hide(_macro2.default.UIStart);
+            window.g.uiMgr.show(_macro2.default.UIRank);
         }
     }, {
         key: 'getMusicColor',
@@ -24051,7 +24059,7 @@ var UIStart = function (_React$Component) {
                         ),
                         _react2.default.createElement(
                             'button',
-                            null,
+                            { onClick: this.onBtnRankClick, onTouchEnd: this.onBtnRankClick },
                             '\u2729'
                         )
                     )
@@ -24171,7 +24179,183 @@ var UIEnd = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = UIEnd;
-},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js"}],"../src/ui/uiMgr.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js"}],"../src/ui/uiRank.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _macro = require('../macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var UIRank = function (_React$Component) {
+    _inherits(UIRank, _React$Component);
+
+    function UIRank() {
+        _classCallCheck(this, UIRank);
+
+        var _this = _possibleConstructorReturn(this, (UIRank.__proto__ || Object.getPrototypeOf(UIRank)).call(this));
+
+        _this.onBtnBackClick = _this.onBtnBackClick.bind(_this);
+        _this.state = {
+            fetchList: []
+        };
+        return _this;
+    }
+
+    _createClass(UIRank, [{
+        key: 'liList',
+        value: function liList() {
+            var l = [];
+            var header = _react2.default.createElement(
+                'li',
+                { key: 'header' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'liStar' },
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        'STAR'
+                    )
+                ),
+                _react2.default.createElement(
+                    'p',
+                    { className: 'liUid' },
+                    'UID'
+                ),
+                _react2.default.createElement(
+                    'p',
+                    { className: 'liLv' },
+                    'LV'
+                )
+            );
+            l.push(header);
+
+            var li = void 0;
+            var element = void 0;
+            for (var i = 0; i < this.state.fetchList.length; i++) {
+                element = this.state.fetchList[i];
+                li = _react2.default.createElement(
+                    'li',
+                    { key: i },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'liStar' },
+                        _react2.default.createElement(
+                            'p',
+                            null,
+                            this.getStar(i)
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'liUid' },
+                        element.uid
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'liLv' },
+                        element.lv
+                    )
+                );
+                l.push(li);
+            }
+            return l;
+        }
+    }, {
+        key: 'getStar',
+        value: function getStar(n) {
+            switch (n) {
+                case 0:
+                    return '✩✩✩';
+                case 1:
+                    return '✩✩';
+                case 2:
+                    return '✩';
+                default:
+                    return n + 1;
+            }
+        }
+    }, {
+        key: 'onBtnBackClick',
+        value: function onBtnBackClick() {
+            window.g.uiMgr.hide(_macro2.default.UIRank);
+            window.g.uiMgr.show(_macro2.default.UIStart);
+        }
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            _axios2.default.get('rank').then(function (response) {
+                _this2.setState({
+                    fetchList: response.data
+                });
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                { className: 'UIRank uiFull' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'top' },
+                    _react2.default.createElement(
+                        'button',
+                        { onClick: this.onBtnBackClick, onTouchEnd: this.onBtnBackClick },
+                        '⏎'
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'title' },
+                    _react2.default.createElement(
+                        'h2',
+                        null,
+                        'Ranking'
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'rankList' },
+                    _react2.default.createElement(
+                        'ul',
+                        null,
+                        this.liList()
+                    )
+                )
+            );
+        }
+    }]);
+
+    return UIRank;
+}(_react2.default.Component);
+
+exports.default = UIRank;
+},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js","axios":"../../node_modules/axios/index.js"}],"../src/ui/uiMgr.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24192,6 +24376,10 @@ var _uiEnd = require('./uiEnd');
 
 var _uiEnd2 = _interopRequireDefault(_uiEnd);
 
+var _uiRank = require('./uiRank');
+
+var _uiRank2 = _interopRequireDefault(_uiRank);
+
 var _macro = require('../macro');
 
 var _macro2 = _interopRequireDefault(_macro);
@@ -24208,6 +24396,7 @@ var uiConfig = {};
 uiConfig[_macro2.default.UILoading] = { cls: _uiLoading2.default, full: true };
 uiConfig[_macro2.default.UIStart] = { cls: _uiStart2.default, full: true };
 uiConfig[_macro2.default.UIEnd] = { cls: _uiEnd2.default, full: false };
+uiConfig[_macro2.default.UIRank] = { cls: _uiRank2.default, full: true };
 
 var UIMgr = function () {
     function UIMgr() {
@@ -24267,7 +24456,7 @@ var UIMgr = function () {
 }();
 
 exports.default = UIMgr;
-},{"./uiLoading":"../src/ui/uiLoading.js","./uiStart":"../src/ui/uiStart.js","./uiEnd":"../src/ui/uiEnd.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
+},{"./uiLoading":"../src/ui/uiLoading.js","./uiStart":"../src/ui/uiStart.js","./uiEnd":"../src/ui/uiEnd.js","./uiRank":"../src/ui/uiRank.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24573,7 +24762,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49238' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49343' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
