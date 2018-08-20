@@ -28,8 +28,8 @@ class GameData {
             this.updateDbLvList()
             return
         }
-        const last = this.lvList[this.limit - 1]
-        if (this.lvList.length >= this.limit && info.lv < last.lv) {
+        const last = this.lvList[this.lvList.length - 1]
+        if (this.lvList.length >= this.limit && info.lv <= last.lv) {
             return
         }
 
@@ -39,11 +39,15 @@ class GameData {
                 insertIndex = index
             }
         })
+
         if (insertIndex == undefined && this.lvList.length < this.limit) {
             insertIndex = this.lvList.length
         }
         if (insertIndex != undefined) {
             this.lvList.splice(insertIndex, 0, info)
+            if(this.lvList.length >= this.limit){
+                this.lvList.splice(this.limit, this.lvList.length-this.limit+1)
+            }
             this.updateDbLvList()
         }
     }

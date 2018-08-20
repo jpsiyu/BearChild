@@ -192,7 +192,7 @@
     flex-direction: column;
     justify-content: center;
     flex: 1;
-    font-size: calc(var(--ui-unit) * 3);
+    font-size: calc(var(--ui-unit) * 2.5);
 }
 
 
