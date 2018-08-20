@@ -23299,7 +23299,8 @@ module.exports = {
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server/app.js --watch ./server --ignore server/game.db -V",
-    "watch": "parcel watch client/public/index.html --public-url /bearchild"
+    "watch": "parcel watch client/public/index.html --public-url /bearchild",
+    "forever": "forever start server/app.js --uid BearChild"
   },
   "keywords": [],
   "production": false,
