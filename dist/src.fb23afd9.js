@@ -20762,7 +20762,7 @@ var NumberIndicator = function () {
         value: function draw(ctx, value) {
             ctx.save();
             ctx.fillStyle = 'black';
-            ctx.font = this.pt + 'pt Arial';
+            ctx.font = this.pt + 'pt Comic Sans MS';
             ctx.textAlign = this.align;
             ctx.fillText(this.label + ' ' + value, this.x, this.y + this.pt - 1);
             ctx.restore();
@@ -21386,8 +21386,8 @@ var Game = function () {
         this.child = undefined;
         this.rebuild = new _rebuild2.default();
         this.controller = this.initController();
-        this.uidIndicator = new _indicator.NumberIndicator('ID:', 10, 10, { pt: 12 });
-        this.levelIndicator = new _indicator.NumberIndicator('LV:', 10, 25, { pt: 12 });
+        this.uidIndicator = new _indicator.NumberIndicator('id:', 10, 10, { pt: 12 });
+        this.levelIndicator = new _indicator.NumberIndicator('lv: ', 10, 25, { pt: 12 });
         this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
         this.loadFlag = 0;
         this.drawMask = true;
@@ -24561,7 +24561,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49731' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49238' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

@@ -61,7 +61,7 @@ class NumberIndicator {
     draw(ctx, value) {
         ctx.save()
         ctx.fillStyle = 'black'
-        ctx.font = `${this.pt}pt Arial`
+        ctx.font = `${this.pt}pt Comic Sans MS`
         ctx.textAlign = this.align
         ctx.fillText(`${this.label} ${value}`, this.x, this.y + this.pt - 1)
         ctx.restore()

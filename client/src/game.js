@@ -25,8 +25,8 @@ class Game {
         this.child = undefined
         this.rebuild = new Rebuild()
         this.controller = this.initController()
-        this.uidIndicator = new NumberIndicator('ID:', 10, 10, { pt: 12 })
-        this.levelIndicator = new NumberIndicator(`LV:`, 10, 25, { pt: 12 })
+        this.uidIndicator = new NumberIndicator('id:', 10, 10, { pt: 12 })
+        this.levelIndicator = new NumberIndicator('lv: ', 10, 25, { pt: 12 })
         this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
         this.loadFlag = 0
         this.drawMask = true
