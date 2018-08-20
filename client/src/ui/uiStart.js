@@ -25,7 +25,6 @@ class UIStart extends React.Component {
     }
 
     onBtnRankClick() {
-        window.g.uiMgr.hide(macro.UIStart)
         window.g.uiMgr.show(macro.UIRank)
     }
 

@@ -81,19 +81,17 @@ class MainScene extends React.Component {
     }
 
     render() {
-        const uiDepth = window.g.uiMgr.isShowing() ? 1 : -1
-        const uiClass = window.g.uiMgr.isPopUI() ? 'divPopUI' : 'divUI'
         return <div ref='div' className='divRoot' >
             <canvas ref='canvasGame' className='canvasGame'
                 style={{ marginTop: this.state.gt, marginLeft: this.state.gl }}>
             </canvas>
-            <div ref='divUI' className={uiClass}
+            <div ref='divUI' className='divUI'
                 style={{
                     marginTop: this.state.gt,
                     marginLeft: this.state.gl,
                     width: this.state.gw,
                     height: this.state.gh,
-                    zIndex: uiDepth,
+                    zIndex: 1,
                 }}>
                 {window.g.uiMgr.getComponent()}
             </div>

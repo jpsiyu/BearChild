@@ -17,8 +17,13 @@ class UIMgr{
     }
 
     getComponent(){
-        const uiInfo = this.getUIInfo()
-        return uiInfo ?  uiInfo.component: null
+        const components = []
+        let ui
+        Object.keys(this.showing).forEach( key => {
+            ui = this.showing[key]
+            components.push(ui.component)
+        })
+        return components
     }
 
     getUIInfo(){
@@ -42,7 +47,7 @@ class UIMgr{
         const cfg = uiConfig[uiName]
         if(!cfg) return
         this.showing[uiName] = {
-            component: <cfg.cls />,
+            component: <cfg.cls key={uiName}/>,
             cfg: cfg
         }
         window.g.gameEventListener.dispatch(macro.UIRefresh)

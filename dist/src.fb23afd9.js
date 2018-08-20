@@ -24020,7 +24020,6 @@ var UIStart = function (_React$Component) {
     }, {
         key: 'onBtnRankClick',
         value: function onBtnRankClick() {
-            window.g.uiMgr.hide(_macro2.default.UIStart);
             window.g.uiMgr.show(_macro2.default.UIRank);
         }
     }, {
@@ -24301,7 +24300,6 @@ var UIRank = function (_React$Component) {
         key: 'onBtnBackClick',
         value: function onBtnBackClick() {
             window.g.uiMgr.hide(_macro2.default.UIRank);
-            window.g.uiMgr.show(_macro2.default.UIStart);
         }
     }, {
         key: 'componentDidMount',
@@ -24408,8 +24406,15 @@ var UIMgr = function () {
     _createClass(UIMgr, [{
         key: 'getComponent',
         value: function getComponent() {
-            var uiInfo = this.getUIInfo();
-            return uiInfo ? uiInfo.component : null;
+            var _this = this;
+
+            var components = [];
+            var ui = void 0;
+            Object.keys(this.showing).forEach(function (key) {
+                ui = _this.showing[key];
+                components.push(ui.component);
+            });
+            return components;
         }
     }, {
         key: 'getUIInfo',
@@ -24437,7 +24442,7 @@ var UIMgr = function () {
             var cfg = uiConfig[uiName];
             if (!cfg) return;
             this.showing[uiName] = {
-                component: _react2.default.createElement(cfg.cls, null),
+                component: _react2.default.createElement(cfg.cls, { key: uiName }),
                 cfg: cfg
             };
             window.g.gameEventListener.dispatch(_macro2.default.UIRefresh);
@@ -24661,8 +24666,6 @@ var MainScene = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var uiDepth = window.g.uiMgr.isShowing() ? 1 : -1;
-            var uiClass = window.g.uiMgr.isPopUI() ? 'divPopUI' : 'divUI';
             return _react2.default.createElement(
                 'div',
                 { ref: 'div', className: 'divRoot' },
@@ -24670,13 +24673,13 @@ var MainScene = function (_React$Component) {
                     style: { marginTop: this.state.gt, marginLeft: this.state.gl } }),
                 _react2.default.createElement(
                     'div',
-                    { ref: 'divUI', className: uiClass,
+                    { ref: 'divUI', className: 'divUI',
                         style: {
                             marginTop: this.state.gt,
                             marginLeft: this.state.gl,
                             width: this.state.gw,
                             height: this.state.gh,
-                            zIndex: uiDepth
+                            zIndex: 1
                         } },
                     window.g.uiMgr.getComponent()
                 )

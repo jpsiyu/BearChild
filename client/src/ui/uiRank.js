@@ -46,7 +46,6 @@ class UIRank extends React.Component {
 
     onBtnBackClick() {
         window.g.uiMgr.hide(macro.UIRank)
-        window.g.uiMgr.show(macro.UIStart)
     }
 
     componentDidMount() {

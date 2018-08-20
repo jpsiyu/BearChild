@@ -17,15 +17,11 @@
 
 .divUI{
     position: absolute;
-    background-color: black;
-}
-
-.divPopUI{
-    position: absolute;
-    background-color: 'rgba(0,0,0,0)'
+    background-color: 'rgba(0,0,0,0)';
 }
 
 .uiFull{
+    position: absolute;
     background-color: black;
     width: 100%;
     height: 100%;
