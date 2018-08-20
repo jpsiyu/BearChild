@@ -21299,376 +21299,7 @@ var Shield = function (_Element) {
 }(_element2.default);
 
 exports.default = Shield;
-},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js","./macro":"../src/macro.js"}],"../src/game.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _drawing = require('./drawing');
-
-var _drawing2 = _interopRequireDefault(_drawing);
-
-var _child = require('./child');
-
-var _child2 = _interopRequireDefault(_child);
-
-var _door = require('./door');
-
-var _door2 = _interopRequireDefault(_door);
-
-var _mom = require('./mom');
-
-var _mom2 = _interopRequireDefault(_mom);
-
-var _rebuild = require('./rebuild');
-
-var _rebuild2 = _interopRequireDefault(_rebuild);
-
-var _macro = require('./macro');
-
-var _macro2 = _interopRequireDefault(_macro);
-
-var _grid = require('./grid');
-
-var _indicator = require('./indicator');
-
-var _tool = require('./tool');
-
-var _tool2 = _interopRequireDefault(_tool);
-
-var _controller = require('./controller');
-
-var _controller2 = _interopRequireDefault(_controller);
-
-var _fence = require('./fence');
-
-var _fence2 = _interopRequireDefault(_fence);
-
-var _milk = require('./milk');
-
-var _milk2 = _interopRequireDefault(_milk);
-
-var _hole = require('./hole');
-
-var _hole2 = _interopRequireDefault(_hole);
-
-var _eye = require('./eye');
-
-var _eye2 = _interopRequireDefault(_eye);
-
-var _ball = require('./ball');
-
-var _ball2 = _interopRequireDefault(_ball);
-
-var _shield = require('./shield');
-
-var _shield2 = _interopRequireDefault(_shield);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Game = function () {
-    function Game(context) {
-        var _this = this;
-
-        _classCallCheck(this, Game);
-
-        this.context = context;
-        this.previous = undefined;
-        this.frame = this.frame.bind(this);
-        this.fps = 0;
-        this.pause = false;
-        this.child = undefined;
-        this.rebuild = new _rebuild2.default();
-        this.controller = this.initController();
-        this.uidIndicator = new _indicator.NumberIndicator('id:', 10, 10, { pt: 12 });
-        this.levelIndicator = new _indicator.NumberIndicator('lv: ', 10, 25, { pt: 12 });
-        this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
-        this.loadFlag = 0;
-        this.drawMask = true;
-
-        window.g.gameEventListener.register(_macro2.default.EventRestart, this, function () {
-            _this.restartGame();
-        });
-        window.g.gameEventListener.register(_macro2.default.EventReady, this, function () {
-            _this.readyForGame();
-        });
-        window.g.gameEventListener.register(_macro2.default.EventLoadFinish, this, function () {
-            _this.readyForGame();
-        });
-
-        window.requestAnimationFrame(this.frame);
-    }
-
-    _createClass(Game, [{
-        key: 'initController',
-        value: function initController() {
-            var _this2 = this;
-
-            var controller = new _controller2.default(this.context);
-            controller.setChildHanlder(function () {
-                return _this2.child;
-            });
-            return controller;
-        }
-    }, {
-        key: 'readyForGame',
-        value: function readyForGame() {
-            window.g.uiMgr.show(_macro2.default.UIStart);
-            window.g.gameState = _macro2.default.StateReady;
-            window.g.gameLv = 1;
-        }
-    }, {
-        key: 'restartGame',
-        value: function restartGame() {
-            window.g.gameState = _macro2.default.StateGame;
-            window.g.gameLv = 1;
-            this.resetGame();
-        }
-    }, {
-        key: 'resetGame',
-        value: function resetGame() {
-            window.g.gameAudio.play('bg.mp3');
-            window.g.map.reset();
-
-            this.grid = new _grid.Grid();
-            var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 2);
-            this.child = new _child2.default(pos.x, pos.y);
-            pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 0);
-            this.mom = new _mom2.default(pos.x, pos.y);
-            this.door = new _door2.default(this.context.canvas.width - _tool2.default.gridSize(), _tool2.default.gridSize());
-        }
-    }, {
-        key: 'levelUp',
-        value: function levelUp() {
-            window.g.gameState = _macro2.default.StateLevelUp;
-            window.g.gameLv += 1;
-            this.resetGame();
-            setTimeout(function () {
-                window.g.gameState = _macro2.default.StateGame;
-            }, 2 * 1000);
-        }
-    }, {
-        key: 'reachDoor',
-        value: function reachDoor() {
-            var dis = _tool2.default.distance(this.child, this.door);
-            return dis < this.child.radius + this.door.radius;
-        }
-    }, {
-        key: 'momCatchChild',
-        value: function momCatchChild() {
-            var dis = _tool2.default.distance(this.child, this.mom);
-            return dis < this.mom.radius;
-        }
-    }, {
-        key: 'handleCollision',
-        value: function handleCollision(obj, index) {
-            if (obj instanceof _milk2.default) {
-                window.g.map.milks.splice(index, 1);
-                switch (this.child.mode) {
-                    case _macro2.default.ChildModeNormal:
-                        this.child.changeMode(_macro2.default.ChildModeDrink);
-                        break;
-                    case _macro2.default.ChildModeWarrior:
-                        window.g.map.createExplosion(obj.img, obj.x, obj.y);
-                        break;
-                }
-            } else if (obj instanceof _fence2.default) {
-                window.g.map.fences.splice(index, 1);
-                window.g.map.createExplosion(obj.img, obj.x, obj.y);
-            } else if (obj instanceof _hole2.default) {
-                this.rebuild.reset(obj);
-                window.g.gameState = _macro2.default.StateRebuild;
-                window.g.map.holes.splice(index, 1);
-            } else if (obj instanceof _ball2.default) {
-                this.child.changeMode(_macro2.default.ChildModeWarrior);
-                window.g.map.balls.splice(index, 1);
-            } else if (obj instanceof _eye2.default) {
-                this.drawMask = false;
-            } else if (obj instanceof _shield2.default) {
-                obj.holdShield(this.child);
-            }
-        }
-    }, {
-        key: 'childCollisionMapObj',
-        value: function childCollisionMapObj() {
-            var all = window.g.map.allDraws();
-            var objList = void 0,
-                obj = void 0;
-            var targetObj = void 0,
-                targetIndex = void 0;
-            for (var i = 0; i < all.length; i++) {
-                objList = all[i];
-                for (var j = 0; j < objList.length; j++) {
-                    obj = objList[j];
-                    var dis = _tool2.default.distance(this.child, obj);
-                    if (dis < 1) {
-                        targetObj = obj;
-                        targetIndex = j;
-                        break;
-                    }
-                }
-            }
-            if (targetObj) this.handleCollision(targetObj, targetIndex);
-        }
-    }, {
-        key: 'setPause',
-        value: function setPause(bool) {
-            this.pause = bool;
-            if (this.pause) this.previous = undefined;
-        }
-    }, {
-        key: 'frame',
-        value: function frame(timestamp) {
-            if (this.pause) return;
-            this.previous = this.previous || timestamp;
-            var elapsed = (timestamp - this.previous) / 1000;
-            this.previous = timestamp;
-            this.update(elapsed);
-            this.draw();
-            window.requestAnimationFrame(this.frame);
-        }
-    }, {
-        key: 'update',
-        value: function update(elapsed) {
-            var _this3 = this;
-
-            this.fps = 1 / elapsed;
-            this.drawMask = true;
-            switch (window.g.gameState) {
-                case _macro2.default.StateRebuild:
-                    this.rebuild.update(elapsed);
-                    break;
-                case _macro2.default.StateGame:
-                    if (this.reachDoor()) {
-                        window.g.gameAudio.pause('bg.mp3');
-                        window.g.gameState = _macro2.default.StateReachDoor;
-                        setTimeout(function () {
-                            _this3.levelUp();
-                        }, 2 * 1000);
-                        window.g.gameAudio.play('win.mp3');
-                        return;
-                    }
-                    if (this.momCatchChild()) {
-                        window.g.gameAudio.pause('bg.mp3');
-                        window.g.gameAudio.play('lose.mp3');
-                        window.g.gameState = _macro2.default.StateGameOver;
-                        window.g.uiMgr.show(_macro2.default.UIEnd);
-                        return;
-                    }
-                    this.childCollisionMapObj();
-                    window.g.map.update(elapsed);
-                    this.child.update(elapsed);
-                    this.mom.update(this.child, elapsed);
-                    this.controller.update(elapsed);
-                    this.grid.update(elapsed, this.child);
-                    break;
-                case _macro2.default.StateReachDoor:
-                    this.child.update(elapsed);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }, {
-        key: 'draw',
-        value: function draw() {
-            this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
-            switch (window.g.gameState) {
-                case _macro2.default.StateLoad:
-                case _macro2.default.StateReady:
-                    break;
-                case _macro2.default.StateLevelUp:
-                    _drawing2.default.drawLabel(this.context, 'Level ' + window.g.gameLv, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
-                    break;
-                case _macro2.default.StateRebuild:
-                    this.grid.draw(this.context);
-                    window.g.map.draw(this.context);
-                    this.rebuild.draw(this.context);
-                    this.door.draw(this.context);
-                    break;
-                default:
-                    this.grid.draw(this.context);
-                    window.g.map.draw(this.context);
-                    if (this.drawMask) this.grid.drawMask(this.context);
-                    this.door.draw(this.context);
-
-                    this.levelIndicator.draw(this.context, window.g.gameLv);
-                    this.uidIndicator.draw(this.context, window.g.uid);
-                    //this.fpsIndicator.draw(this.context, this.fps) 
-                    this.controller.draw(this.context);
-                    this.child.draw(this.context);
-                    this.mom.draw(this.context);
-                    break;
-            }
-        }
-    }]);
-
-    return Game;
-}();
-
-exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./rebuild":"../src/rebuild.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js","./fence":"../src/fence.js","./milk":"../src/milk.js","./hole":"../src/hole.js","./eye":"../src/eye.js","./ball":"../src/ball.js","./shield":"../src/shield.js"}],"../src/resMgr.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ResMgr = function () {
-    function ResMgr() {
-        _classCallCheck(this, ResMgr);
-
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole', 'eye', 'shield'];
-        this.images = {};
-    }
-
-    _createClass(ResMgr, [{
-        key: 'loadRes',
-        value: function loadRes(callback) {
-            this.loadImgs(function () {
-                //window.g.music.loadMusics(callback)
-                window.g.gameAudio.loadAll(callback);
-            });
-        }
-    }, {
-        key: 'loadImgs',
-        value: function loadImgs(callback) {
-            var _this = this;
-
-            var loadNum = 0;
-            this.names.forEach(function (name) {
-                var img = new Image();
-                var path = 'images/' + name + '.png';
-                img.src = path;
-                img.onload = function () {
-                    _this.images[name] = img;
-                    loadNum++;
-                    if (loadNum === _this.names.length) callback();
-                };
-            });
-        }
-    }, {
-        key: 'getImg',
-        value: function getImg(name) {
-            return this.images[name];
-        }
-    }]);
-
-    return ResMgr;
-}();
-
-exports.default = ResMgr;
-},{}],"../../node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./tool":"../src/tool.js","./element":"../src/element.js","./macro":"../src/macro.js"}],"../../node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -23290,7 +22921,386 @@ module.exports.default = axios;
 
 },{"./utils":"../../node_modules/axios/lib/utils.js","./helpers/bind":"../../node_modules/axios/lib/helpers/bind.js","./core/Axios":"../../node_modules/axios/lib/core/Axios.js","./defaults":"../../node_modules/axios/lib/defaults.js","./cancel/Cancel":"../../node_modules/axios/lib/cancel/Cancel.js","./cancel/CancelToken":"../../node_modules/axios/lib/cancel/CancelToken.js","./cancel/isCancel":"../../node_modules/axios/lib/cancel/isCancel.js","./helpers/spread":"../../node_modules/axios/lib/helpers/spread.js"}],"../../node_modules/axios/index.js":[function(require,module,exports) {
 module.exports = require('./lib/axios');
-},{"./lib/axios":"../../node_modules/axios/lib/axios.js"}],"../../package.json":[function(require,module,exports) {
+},{"./lib/axios":"../../node_modules/axios/lib/axios.js"}],"../src/game.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawing = require('./drawing');
+
+var _drawing2 = _interopRequireDefault(_drawing);
+
+var _child = require('./child');
+
+var _child2 = _interopRequireDefault(_child);
+
+var _door = require('./door');
+
+var _door2 = _interopRequireDefault(_door);
+
+var _mom = require('./mom');
+
+var _mom2 = _interopRequireDefault(_mom);
+
+var _rebuild = require('./rebuild');
+
+var _rebuild2 = _interopRequireDefault(_rebuild);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+var _grid = require('./grid');
+
+var _indicator = require('./indicator');
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _controller = require('./controller');
+
+var _controller2 = _interopRequireDefault(_controller);
+
+var _fence = require('./fence');
+
+var _fence2 = _interopRequireDefault(_fence);
+
+var _milk = require('./milk');
+
+var _milk2 = _interopRequireDefault(_milk);
+
+var _hole = require('./hole');
+
+var _hole2 = _interopRequireDefault(_hole);
+
+var _eye = require('./eye');
+
+var _eye2 = _interopRequireDefault(_eye);
+
+var _ball = require('./ball');
+
+var _ball2 = _interopRequireDefault(_ball);
+
+var _shield = require('./shield');
+
+var _shield2 = _interopRequireDefault(_shield);
+
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Game = function () {
+    function Game(context) {
+        var _this = this;
+
+        _classCallCheck(this, Game);
+
+        this.context = context;
+        this.previous = undefined;
+        this.frame = this.frame.bind(this);
+        this.fps = 0;
+        this.pause = false;
+        this.child = undefined;
+        this.rebuild = new _rebuild2.default();
+        this.controller = this.initController();
+        this.uidIndicator = new _indicator.NumberIndicator('id:', 10, 10, { pt: 12 });
+        this.levelIndicator = new _indicator.NumberIndicator('lv: ', 10, 25, { pt: 12 });
+        this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
+        this.loadFlag = 0;
+        this.drawMask = true;
+
+        window.g.gameEventListener.register(_macro2.default.EventRestart, this, function () {
+            _this.restartGame();
+        });
+        window.g.gameEventListener.register(_macro2.default.EventReady, this, function () {
+            _this.readyForGame();
+        });
+        window.g.gameEventListener.register(_macro2.default.EventLoadFinish, this, function () {
+            _this.readyForGame();
+        });
+
+        window.requestAnimationFrame(this.frame);
+    }
+
+    _createClass(Game, [{
+        key: 'initController',
+        value: function initController() {
+            var _this2 = this;
+
+            var controller = new _controller2.default(this.context);
+            controller.setChildHanlder(function () {
+                return _this2.child;
+            });
+            return controller;
+        }
+    }, {
+        key: 'readyForGame',
+        value: function readyForGame() {
+            window.g.uiMgr.show(_macro2.default.UIStart);
+            window.g.gameState = _macro2.default.StateReady;
+            window.g.gameLv = 1;
+        }
+    }, {
+        key: 'restartGame',
+        value: function restartGame() {
+            window.g.gameState = _macro2.default.StateGame;
+            window.g.gameLv = 1;
+            this.resetGame();
+        }
+    }, {
+        key: 'resetGame',
+        value: function resetGame() {
+            window.g.gameAudio.play('bg.mp3');
+            window.g.map.reset();
+
+            this.grid = new _grid.Grid();
+            var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 2);
+            this.child = new _child2.default(pos.x, pos.y);
+            pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 0);
+            this.mom = new _mom2.default(pos.x, pos.y);
+            this.door = new _door2.default(this.context.canvas.width - _tool2.default.gridSize(), _tool2.default.gridSize());
+        }
+    }, {
+        key: 'levelUp',
+        value: function levelUp() {
+            window.g.gameState = _macro2.default.StateLevelUp;
+            window.g.gameLv += 1;
+            this.resetGame();
+            setTimeout(function () {
+                window.g.gameState = _macro2.default.StateGame;
+            }, 2 * 1000);
+        }
+    }, {
+        key: 'reachDoor',
+        value: function reachDoor() {
+            var dis = _tool2.default.distance(this.child, this.door);
+            return dis < this.child.radius + this.door.radius;
+        }
+    }, {
+        key: 'momCatchChild',
+        value: function momCatchChild() {
+            var dis = _tool2.default.distance(this.child, this.mom);
+            return dis < this.mom.radius;
+        }
+    }, {
+        key: 'handleCollision',
+        value: function handleCollision(obj, index) {
+            if (obj instanceof _milk2.default) {
+                window.g.map.milks.splice(index, 1);
+                switch (this.child.mode) {
+                    case _macro2.default.ChildModeNormal:
+                        this.child.changeMode(_macro2.default.ChildModeDrink);
+                        break;
+                    case _macro2.default.ChildModeWarrior:
+                        window.g.map.createExplosion(obj.img, obj.x, obj.y);
+                        break;
+                }
+            } else if (obj instanceof _fence2.default) {
+                window.g.map.fences.splice(index, 1);
+                window.g.map.createExplosion(obj.img, obj.x, obj.y);
+            } else if (obj instanceof _hole2.default) {
+                this.rebuild.reset(obj);
+                window.g.gameState = _macro2.default.StateRebuild;
+                window.g.map.holes.splice(index, 1);
+            } else if (obj instanceof _ball2.default) {
+                this.child.changeMode(_macro2.default.ChildModeWarrior);
+                window.g.map.balls.splice(index, 1);
+            } else if (obj instanceof _eye2.default) {
+                this.drawMask = false;
+            } else if (obj instanceof _shield2.default) {
+                obj.holdShield(this.child);
+            }
+        }
+    }, {
+        key: 'childCollisionMapObj',
+        value: function childCollisionMapObj() {
+            var all = window.g.map.allDraws();
+            var objList = void 0,
+                obj = void 0;
+            var targetObj = void 0,
+                targetIndex = void 0;
+            for (var i = 0; i < all.length; i++) {
+                objList = all[i];
+                for (var j = 0; j < objList.length; j++) {
+                    obj = objList[j];
+                    var dis = _tool2.default.distance(this.child, obj);
+                    if (dis < 1) {
+                        targetObj = obj;
+                        targetIndex = j;
+                        break;
+                    }
+                }
+            }
+            if (targetObj) this.handleCollision(targetObj, targetIndex);
+        }
+    }, {
+        key: 'setPause',
+        value: function setPause(bool) {
+            this.pause = bool;
+            if (this.pause) this.previous = undefined;
+        }
+    }, {
+        key: 'gameEnd',
+        value: function gameEnd() {
+            window.g.gameAudio.pause('bg.mp3');
+            window.g.gameAudio.play('lose.mp3');
+            window.g.gameState = _macro2.default.StateGameOver;
+            window.g.uiMgr.show(_macro2.default.UIEnd);
+            _axios2.default.post('lv', { uid: window.g.uid, lv: window.g.gameLv }).then(function (response) {});
+        }
+    }, {
+        key: 'frame',
+        value: function frame(timestamp) {
+            if (this.pause) return;
+            this.previous = this.previous || timestamp;
+            var elapsed = (timestamp - this.previous) / 1000;
+            this.previous = timestamp;
+            this.update(elapsed);
+            this.draw();
+            window.requestAnimationFrame(this.frame);
+        }
+    }, {
+        key: 'update',
+        value: function update(elapsed) {
+            var _this3 = this;
+
+            this.fps = 1 / elapsed;
+            this.drawMask = true;
+            switch (window.g.gameState) {
+                case _macro2.default.StateRebuild:
+                    this.rebuild.update(elapsed);
+                    break;
+                case _macro2.default.StateGame:
+                    if (this.reachDoor()) {
+                        window.g.gameAudio.pause('bg.mp3');
+                        window.g.gameState = _macro2.default.StateReachDoor;
+                        setTimeout(function () {
+                            _this3.levelUp();
+                        }, 2 * 1000);
+                        window.g.gameAudio.play('win.mp3');
+                        return;
+                    }
+                    if (this.momCatchChild()) {
+                        this.gameEnd();
+                        return;
+                    }
+                    this.childCollisionMapObj();
+                    window.g.map.update(elapsed);
+                    this.child.update(elapsed);
+                    this.mom.update(this.child, elapsed);
+                    this.controller.update(elapsed);
+                    this.grid.update(elapsed, this.child);
+                    break;
+                case _macro2.default.StateReachDoor:
+                    this.child.update(elapsed);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }, {
+        key: 'draw',
+        value: function draw() {
+            this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+            switch (window.g.gameState) {
+                case _macro2.default.StateLoad:
+                case _macro2.default.StateReady:
+                    break;
+                case _macro2.default.StateLevelUp:
+                    _drawing2.default.drawLabel(this.context, 'Level ' + window.g.gameLv, this.context.canvas.width / 2, this.context.canvas.height / 2, { pt: 30, color: 'white' });
+                    break;
+                case _macro2.default.StateRebuild:
+                    this.grid.draw(this.context);
+                    window.g.map.draw(this.context);
+                    this.rebuild.draw(this.context);
+                    this.door.draw(this.context);
+                    break;
+                default:
+                    this.grid.draw(this.context);
+                    window.g.map.draw(this.context);
+                    if (this.drawMask) this.grid.drawMask(this.context);
+                    this.door.draw(this.context);
+
+                    this.levelIndicator.draw(this.context, window.g.gameLv);
+                    this.uidIndicator.draw(this.context, window.g.uid);
+                    //this.fpsIndicator.draw(this.context, this.fps) 
+                    this.controller.draw(this.context);
+                    this.child.draw(this.context);
+                    this.mom.draw(this.context);
+                    break;
+            }
+        }
+    }]);
+
+    return Game;
+}();
+
+exports.default = Game;
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./rebuild":"../src/rebuild.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js","./fence":"../src/fence.js","./milk":"../src/milk.js","./hole":"../src/hole.js","./eye":"../src/eye.js","./ball":"../src/ball.js","./shield":"../src/shield.js","axios":"../../node_modules/axios/index.js"}],"../src/resMgr.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ResMgr = function () {
+    function ResMgr() {
+        _classCallCheck(this, ResMgr);
+
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole', 'eye', 'shield'];
+        this.images = {};
+    }
+
+    _createClass(ResMgr, [{
+        key: 'loadRes',
+        value: function loadRes(callback) {
+            this.loadImgs(function () {
+                //window.g.music.loadMusics(callback)
+                window.g.gameAudio.loadAll(callback);
+            });
+        }
+    }, {
+        key: 'loadImgs',
+        value: function loadImgs(callback) {
+            var _this = this;
+
+            var loadNum = 0;
+            this.names.forEach(function (name) {
+                var img = new Image();
+                var path = 'images/' + name + '.png';
+                img.src = path;
+                img.onload = function () {
+                    _this.images[name] = img;
+                    loadNum++;
+                    if (loadNum === _this.names.length) callback();
+                };
+            });
+        }
+    }, {
+        key: 'getImg',
+        value: function getImg(name) {
+            return this.images[name];
+        }
+    }]);
+
+    return ResMgr;
+}();
+
+exports.default = ResMgr;
+},{}],"../../package.json":[function(require,module,exports) {
 module.exports = {
   "name": "BearChild",
   "version": "1.0.0",
@@ -23312,6 +23322,7 @@ module.exports = {
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "nedb": "^1.8.0",

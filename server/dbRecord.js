@@ -33,11 +33,50 @@ class RecordUidCounter {
     }
 
     updateCounter(newCounter) {
-        console.log(this.updatePattern(newCounter))
         this.dbHander.update(this.query(), this.updatePattern(newCounter), {}, (err, doc) => {
             if (err) console.log(`err: ${err}`)
         })
     }
 }
 
-module.exports = { RecordUidCounter }
+class RecordLevelList{
+    constructor(dbHander){
+        this.dbHander = dbHander
+        this.key = 'RecordLevelList'
+    }
+
+    format(l){
+        return {'key': this.key, 'list': l}
+    }
+
+    query(){
+        return { 'key': this.key }
+    }
+
+    updatePattern(l){
+        return { $set: { 'list': l} }
+    }
+
+    getList(cb){
+        this.dbHander.findOne(this.query(), (err, doc) => {
+            if (err) {
+                console.log(`err: ${err}`)
+                return cb([])
+            }
+            if (doc) {
+                return cb(doc.list)
+            }
+            this.dbHander.insert(this.format([]), (err, doc) => {
+                return cb(doc.list)
+            })
+        })
+    }
+
+    updateList(newList){
+        this.dbHander.update(this.query(), this.updatePattern(newList), {}, (err, doc) => {
+            if (err) console.log(`err: ${err}`)
+        })
+    }
+}
+
+module.exports = { RecordUidCounter, RecordLevelList }

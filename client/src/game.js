@@ -14,6 +14,7 @@ import Hole from './hole'
 import Eye from './eye'
 import Ball from './ball'
 import Shield from './shield'
+import axios from 'axios'
 
 class Game {
     constructor(context) {
@@ -142,6 +143,15 @@ class Game {
         if (this.pause) this.previous = undefined
     }
 
+    gameEnd() {
+        window.g.gameAudio.pause('bg.mp3')
+        window.g.gameAudio.play('lose.mp3')
+        window.g.gameState = macro.StateGameOver
+        window.g.uiMgr.show(macro.UIEnd)
+        axios.post('lv', {uid: window.g.uid, lv: window.g.gameLv}).then(response => {
+        })
+    }
+
     frame(timestamp) {
         if (this.pause) return
         this.previous = this.previous || timestamp
@@ -168,10 +178,7 @@ class Game {
                     return
                 }
                 if (this.momCatchChild()) {
-                    window.g.gameAudio.pause('bg.mp3')
-                    window.g.gameAudio.play('lose.mp3')
-                    window.g.gameState = macro.StateGameOver
-                    window.g.uiMgr.show(macro.UIEnd)
+                    this.gameEnd()
                     return
                 }
                 this.childCollisionMapObj()

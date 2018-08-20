@@ -3,8 +3,11 @@ const path = require('path')
 const pjson = require('../package.json')
 const cors = require('cors')
 const db = require('./db')
+const GameData = require('./gameData')
+const bodyParser = require('body-parser')
 
 const app = express()
+app.use(bodyParser.json())
 app.use(cors())
 app.use('*', (req, res, next) => {
     next()
@@ -16,9 +19,12 @@ app.use(prefix(), express.static(path.resolve(__dirname, '../dist')))
 app.use(prefix(), express.static(path.resolve(__dirname, '../client/public')))
 
 app.get(prefix('/uid'), (req, res) => {
-    res.status(200).json(idNum)
-    idNum++
-    db.getCounter().updateCounter(idNum)
+    res.status(200).json(data.increase())
+})
+
+app.post(prefix('/lv'), (req, res) => {
+    data.remember({uid: req.body.uid, lv: req.body.lv})
+    res.status(200).json(1)
 })
 
 app.use('*', (req, res) => {
@@ -32,10 +38,9 @@ app.use((err, req, res) => {
 })
 
 
-let idNum = undefined
-db.load((num) => {
-    idNum = num
+const data = new GameData()
+data.init(() => {
     app.listen(pjson.port, () => {
-        console.log(`app listening on port ${pjson.port}, current idNum: ${idNum}`)
+        console.log(`app listening on port ${pjson.port}...`)
     })
 })
