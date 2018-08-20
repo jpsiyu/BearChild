@@ -27,4 +27,5 @@ export default {
     UILoading: 'UILoading',
     UIEnd: 'UIEnd',
     UIRank: 'UIRank',
+    UIGame: 'UIGame',
 }

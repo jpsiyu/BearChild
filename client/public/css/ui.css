@@ -236,6 +236,61 @@
     flex: 1;
 }
 
+/* UI Game */
+.UIGame {
+    background-color: rgba(0,0,0,0);
+    display: flex;
+    flex-direction: column;
+}
+
+.UIGame .top{
+    flex: 1;
+    display: flex;
+    justify-content: left;
+}
+
+.UIGame .board{
+    width: 15%;
+    text-align: center;
+    font-size: calc(var(--ui-unit) * 2);
+    font-family: 'Comic Sans MS';
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: calc(var(--ui-unit) * 3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.UIGame .middle{
+    flex: 7;
+}
+
+.UIGame .controller{
+    flex: 7;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.UIGame .btn{
+    width: calc(var(--ui-unit) * 9);
+    height: calc(var(--ui-unit) * 9);
+    font-size: calc(var(--ui-unit) * 5);
+    font-weight: 800;
+    border-radius: 50%;
+    outline: none;
+    border: 1px white solid;
+    background-color: rgba(0,0,0,0);
+    color: black;
+}
+
+.UIGame .btn:active{
+    background-color: lightcoral;
+    color: white;
+}
+
+/* Media && Animation */
 @media (max-aspect-ratio: 22/10){
     :root{
         --ui-unit: 1vw;

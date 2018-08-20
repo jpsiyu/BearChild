@@ -2,6 +2,7 @@ import UILoading from './uiLoading'
 import UIStart from './uiStart'
 import UIEnd from './uiEnd'
 import UIRank from './uiRank'
+import UIGame from './uiGame'
 import macro from '../macro'
 import React from 'react'
 
@@ -10,6 +11,7 @@ uiConfig[macro.UILoading] = {cls: UILoading, full:true}
 uiConfig[macro.UIStart] = {cls: UIStart, full:true}
 uiConfig[macro.UIEnd] = {cls: UIEnd, full:false}
 uiConfig[macro.UIRank] = {cls: UIRank, full:true}
+uiConfig[macro.UIGame] = {cls: UIGame, full:true}
 
 class UIMgr{
     constructor(){

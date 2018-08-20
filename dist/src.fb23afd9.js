@@ -19781,7 +19781,8 @@ exports.default = {
     UIStart: 'UIStart',
     UILoading: 'UILoading',
     UIEnd: 'UIEnd',
-    UIRank: 'UIRank'
+    UIRank: 'UIRank',
+    UIGame: 'UIGame'
 };
 },{}],"../src/gameConfig.js":[function(require,module,exports) {
 "use strict";
@@ -20675,290 +20676,7 @@ var Grid = function () {
 }();
 
 exports.Grid = Grid;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./tool":"../src/tool.js"}],"../src/indicator.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Indicator = function () {
-    function Indicator(label, posCallback) {
-        _classCallCheck(this, Indicator);
-
-        this.posCallback = posCallback;
-        this.label = label;
-        this.updatePos();
-        this.pass = 0;
-        this.dots = ['', '.', '..', '...'];
-        this.dot = '.';
-    }
-
-    _createClass(Indicator, [{
-        key: 'setPosCallback',
-        value: function setPosCallback(callback) {
-            this.posCallback = callback;
-        }
-    }, {
-        key: 'updatePos',
-        value: function updatePos() {
-            var info = this.posCallback();
-            this.x = info.x;
-            this.y = info.y;
-            this.width = info.width;
-            this.height = info.height;
-        }
-    }, {
-        key: 'update',
-        value: function update(elpased) {
-            this.pass += elpased;
-            var n = Math.round(this.pass / 0.2) % 4;
-            this.dot = this.dots[n];
-
-            this.updatePos();
-        }
-    }, {
-        key: 'draw',
-        value: function draw(ctx, cur, max) {
-            ctx.save();
-            ctx.strokeStyle = 'white';
-            ctx.fillStyle = 'white';
-            ctx.font = this.height + 'pt Arial';
-            var t = this.label + this.dot;
-            var tl = ctx.measureText(this.label).width;
-            ctx.textAlign = 'left';
-            ctx.fillText(t, this.x - tl / 2, this.y - this.height * 0.5);
-            ctx.beginPath();
-            ctx.rect(-this.width / 2 + this.x, this.y, this.width, this.height);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.rect(-this.width / 2 + this.x, this.y, this.width * (cur / max), this.height);
-            ctx.fill();
-            ctx.restore();
-        }
-    }]);
-
-    return Indicator;
-}();
-
-var NumberIndicator = function () {
-    function NumberIndicator(label, x, y, options) {
-        _classCallCheck(this, NumberIndicator);
-
-        options = options || {};
-        this.label = label;
-        this.x = x;
-        this.y = y;
-        this.digits = options.digits || 0;
-        this.pt = options.pt || 8;
-        this.align = options.align || 'left';
-    }
-
-    _createClass(NumberIndicator, [{
-        key: 'draw',
-        value: function draw(ctx, value) {
-            ctx.save();
-            ctx.fillStyle = 'black';
-            ctx.font = this.pt + 'pt Comic Sans MS';
-            ctx.textAlign = this.align;
-            ctx.fillText(this.label + ' ' + value, this.x, this.y + this.pt - 1);
-            ctx.restore();
-        }
-    }]);
-
-    return NumberIndicator;
-}();
-
-exports.Indicator = Indicator;
-exports.NumberIndicator = NumberIndicator;
-},{}],"../src/controller.js":[function(require,module,exports) {
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _drawing = require('./drawing');
-
-var _drawing2 = _interopRequireDefault(_drawing);
-
-var _macro = require('./macro');
-
-var _macro2 = _interopRequireDefault(_macro);
-
-var _element = require('./element');
-
-var _element2 = _interopRequireDefault(_element);
-
-var _tool = require('./tool');
-
-var _tool2 = _interopRequireDefault(_tool);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Controller = function (_Element) {
-    _inherits(Controller, _Element);
-
-    function Controller(context) {
-        _classCallCheck(this, Controller);
-
-        var radius = _tool2.default.viewUnit() * 1;
-
-        var _this = _possibleConstructorReturn(this, (Controller.__proto__ || Object.getPrototypeOf(Controller)).call(this, 0, 0, radius));
-
-        _this.context = context;
-        _this.resetPos();
-        _this.startGameText = 'Start Game';
-        _this.setEventListener();
-        return _this;
-    }
-
-    _createClass(Controller, [{
-        key: 'setEventListener',
-        value: function setEventListener() {
-            var _this2 = this;
-
-            window.addEventListener('keydown', function (ev) {
-                _this2.keyHandler(ev.key);
-            });
-
-            this.context.canvas.addEventListener('click', function (event) {
-                var pos = _this2.getMousePos(event);
-                _this2.handleClick(pos);
-            });
-
-            this.context.canvas.addEventListener('touchstart', function (event) {
-                var pos = _this2.getTouchPos(event);
-                _this2.handleClick(pos);
-                event.preventDefault();
-            });
-        }
-    }, {
-        key: 'setChildHanlder',
-        value: function setChildHanlder(childHandler) {
-            this.childHandler = childHandler;
-        }
-    }, {
-        key: 'resetPos',
-        value: function resetPos() {
-            this.radius = _tool2.default.viewUnit() * 1;
-            this.posArrowUp = {
-                x: _tool2.default.gameWidth() - this.radius * 2.5,
-                y: _tool2.default.gameHeight() - this.radius * 2.5
-            };
-            this.posArrowRight = {
-                x: _tool2.default.gameWidth() - this.radius,
-                y: _tool2.default.gameHeight() - this.radius
-            };
-        }
-    }, {
-        key: 'update',
-        value: function update(elapsed) {
-            this.resetPos();
-        }
-    }, {
-        key: 'draw',
-        value: function draw(context) {
-            switch (window.g.gameState) {
-                case _macro2.default.StateGame:
-                    this.drawArrow(context, this.posArrowUp, '↑');
-                    this.drawArrow(context, this.posArrowRight, '→');
-                    break;
-            }
-        }
-    }, {
-        key: 'drawArrow',
-        value: function drawArrow(context, pos, arrow) {
-            var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-            context.save();
-            context.translate(pos.x, pos.y);
-            _drawing2.default.drawButton(context, this.radius, arrow, options);
-            context.restore();
-        }
-    }, {
-        key: 'arrowRightClick',
-        value: function arrowRightClick() {
-            window.g.gameAudio.play('click.wav');
-            var c = this.childHandler();
-            if (c) {
-                c.moveRight();
-            }
-        }
-    }, {
-        key: 'arrowUpClick',
-        value: function arrowUpClick() {
-            window.g.gameAudio.play('click.wav');
-            var c = this.childHandler();
-            if (c) {
-                c.moveUp();
-            }
-        }
-    }, {
-        key: 'handleClick',
-        value: function handleClick(pos) {
-            var distance = void 0;
-            switch (window.g.gameState) {
-                case _macro2.default.StateGame:
-                    distance = _tool2.default.distancePos(pos, this.posArrowUp);
-                    if (distance < this.radius) this.arrowUpClick();
-
-                    distance = _tool2.default.distancePos(pos, this.posArrowRight);
-                    if (distance < this.radius) this.arrowRightClick();
-                    break;
-            }
-            window.g.gameEventListener.dispatch(_macro2.default.EventClick, pos);
-        }
-    }, {
-        key: 'getMousePos',
-        value: function getMousePos(event) {
-            var rect = this.context.canvas.getBoundingClientRect();
-            return {
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top
-            };
-        }
-    }, {
-        key: 'getTouchPos',
-        value: function getTouchPos(event) {
-            var rect = this.context.canvas.getBoundingClientRect();
-            return {
-                x: event.touches[0].clientX - rect.left,
-                y: event.touches[0].clientY - rect.top
-            };
-        }
-    }, {
-        key: 'keyHandler',
-        value: function keyHandler(key) {
-            switch (window.g.gameState) {
-                case _macro2.default.StateGame:
-                    var c = this.childHandler();
-                    c.move(this.context, key);
-                    break;
-                case _macro2.default.StateGameOver:
-                    if (key === ' ') window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
-                    break;
-            }
-        }
-    }]);
-
-    return Controller;
-}(_element2.default);
-
-exports.default = Controller;
-},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./element":"../src/element.js","./tool":"../src/tool.js"}],"../src/fence.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./macro":"../src/macro.js","./tool":"../src/tool.js"}],"../src/fence.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22957,15 +22675,9 @@ var _macro2 = _interopRequireDefault(_macro);
 
 var _grid = require('./grid');
 
-var _indicator = require('./indicator');
-
 var _tool = require('./tool');
 
 var _tool2 = _interopRequireDefault(_tool);
-
-var _controller = require('./controller');
-
-var _controller2 = _interopRequireDefault(_controller);
 
 var _fence = require('./fence');
 
@@ -23012,10 +22724,6 @@ var Game = function () {
         this.pause = false;
         this.child = undefined;
         this.rebuild = new _rebuild2.default();
-        this.controller = this.initController();
-        this.uidIndicator = new _indicator.NumberIndicator('id:', 10, 10, { pt: 12 });
-        this.levelIndicator = new _indicator.NumberIndicator('lv: ', 10, 25, { pt: 12 });
-        this.fpsIndicator = new _indicator.NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 });
         this.loadFlag = 0;
         this.drawMask = true;
 
@@ -23028,22 +22736,14 @@ var Game = function () {
         window.g.gameEventListener.register(_macro2.default.EventLoadFinish, this, function () {
             _this.readyForGame();
         });
+        window.addEventListener('keydown', function (ev) {
+            _this.keyHandler(ev.key);
+        });
 
         window.requestAnimationFrame(this.frame);
     }
 
     _createClass(Game, [{
-        key: 'initController',
-        value: function initController() {
-            var _this2 = this;
-
-            var controller = new _controller2.default(this.context);
-            controller.setChildHanlder(function () {
-                return _this2.child;
-            });
-            return controller;
-        }
-    }, {
         key: 'readyForGame',
         value: function readyForGame() {
             window.g.uiMgr.show(_macro2.default.UIStart);
@@ -23054,6 +22754,7 @@ var Game = function () {
         key: 'restartGame',
         value: function restartGame() {
             window.g.gameState = _macro2.default.StateGame;
+            window.g.uiMgr.show(_macro2.default.UIGame);
             window.g.gameLv = 1;
             this.resetGame();
         }
@@ -23066,6 +22767,7 @@ var Game = function () {
             this.grid = new _grid.Grid();
             var pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 2);
             this.child = new _child2.default(pos.x, pos.y);
+            window.g.child = this.child;
             pos = _tool2.default.grid2coord(_tool2.default.maxRow(), 0);
             this.mom = new _mom2.default(pos.x, pos.y);
             this.door = new _door2.default(this.context.canvas.width - _tool2.default.gridSize(), _tool2.default.gridSize());
@@ -23074,10 +22776,12 @@ var Game = function () {
         key: 'levelUp',
         value: function levelUp() {
             window.g.gameState = _macro2.default.StateLevelUp;
+            window.g.uiMgr.hide(_macro2.default.UIGame);
             window.g.gameLv += 1;
             this.resetGame();
             setTimeout(function () {
                 window.g.gameState = _macro2.default.StateGame;
+                window.g.uiMgr.show(_macro2.default.UIGame);
             }, 2 * 1000);
         }
     }, {
@@ -23155,6 +22859,7 @@ var Game = function () {
             window.g.gameAudio.pause('bg.mp3');
             window.g.gameAudio.play('lose.mp3');
             window.g.gameState = _macro2.default.StateGameOver;
+            window.g.uiMgr.hide(_macro2.default.UIGame);
             window.g.uiMgr.show(_macro2.default.UIEnd);
             _axios2.default.post('lv', { uid: window.g.uid, lv: window.g.gameLv }).then(function (response) {});
         }
@@ -23172,7 +22877,7 @@ var Game = function () {
     }, {
         key: 'update',
         value: function update(elapsed) {
-            var _this3 = this;
+            var _this2 = this;
 
             this.fps = 1 / elapsed;
             this.drawMask = true;
@@ -23185,7 +22890,7 @@ var Game = function () {
                         window.g.gameAudio.pause('bg.mp3');
                         window.g.gameState = _macro2.default.StateReachDoor;
                         setTimeout(function () {
-                            _this3.levelUp();
+                            _this2.levelUp();
                         }, 2 * 1000);
                         window.g.gameAudio.play('win.mp3');
                         return;
@@ -23198,7 +22903,6 @@ var Game = function () {
                     window.g.map.update(elapsed);
                     this.child.update(elapsed);
                     this.mom.update(this.child, elapsed);
-                    this.controller.update(elapsed);
                     this.grid.update(elapsed, this.child);
                     break;
                 case _macro2.default.StateReachDoor:
@@ -23231,12 +22935,20 @@ var Game = function () {
                     if (this.drawMask) this.grid.drawMask(this.context);
                     this.door.draw(this.context);
 
-                    this.levelIndicator.draw(this.context, window.g.gameLv);
-                    this.uidIndicator.draw(this.context, window.g.uid);
-                    //this.fpsIndicator.draw(this.context, this.fps) 
-                    this.controller.draw(this.context);
                     this.child.draw(this.context);
                     this.mom.draw(this.context);
+                    break;
+            }
+        }
+    }, {
+        key: 'keyHandler',
+        value: function keyHandler(key) {
+            switch (window.g.gameState) {
+                case _macro2.default.StateGame:
+                    this.child.move(this.context, key);
+                    break;
+                case _macro2.default.StateGameOver:
+                    if (key === ' ') window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
                     break;
             }
         }
@@ -23246,7 +22958,7 @@ var Game = function () {
 }();
 
 exports.default = Game;
-},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./rebuild":"../src/rebuild.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./indicator":"../src/indicator.js","./tool":"../src/tool.js","./controller":"../src/controller.js","./fence":"../src/fence.js","./milk":"../src/milk.js","./hole":"../src/hole.js","./eye":"../src/eye.js","./ball":"../src/ball.js","./shield":"../src/shield.js","axios":"../../node_modules/axios/index.js"}],"../src/resMgr.js":[function(require,module,exports) {
+},{"./drawing":"../src/drawing.js","./child":"../src/child.js","./door":"../src/door.js","./mom":"../src/mom.js","./rebuild":"../src/rebuild.js","./macro":"../src/macro.js","./grid":"../src/grid.js","./tool":"../src/tool.js","./fence":"../src/fence.js","./milk":"../src/milk.js","./hole":"../src/hole.js","./eye":"../src/eye.js","./ball":"../src/ball.js","./shield":"../src/shield.js","axios":"../../node_modules/axios/index.js"}],"../src/resMgr.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24353,7 +24065,125 @@ var UIRank = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = UIRank;
-},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js","axios":"../../node_modules/axios/index.js"}],"../src/ui/uiMgr.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js","axios":"../../node_modules/axios/index.js"}],"../src/ui/uiGame.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _macro = require('../macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var UIGame = function (_React$Component) {
+    _inherits(UIGame, _React$Component);
+
+    function UIGame() {
+        _classCallCheck(this, UIGame);
+
+        var _this = _possibleConstructorReturn(this, (UIGame.__proto__ || Object.getPrototypeOf(UIGame)).call(this));
+
+        _this.onBtnRClick = _this.onBtnRClick.bind(_this);
+        _this.onBtnUClick = _this.onBtnUClick.bind(_this);
+        return _this;
+    }
+
+    _createClass(UIGame, [{
+        key: 'onBtnUClick',
+        value: function onBtnUClick() {
+            if (window.g.gameState !== _macro2.default.StateGame) return;
+            window.g.gameAudio.play('click.wav');
+            var c = window.g.child;
+            if (c) {
+                c.moveUp();
+            }
+        }
+    }, {
+        key: 'onBtnRClick',
+        value: function onBtnRClick() {
+            if (window.g.gameState !== _macro2.default.StateGame) return;
+            window.g.gameAudio.play('click.wav');
+            var c = window.g.child;
+            if (c) {
+                c.moveRight();
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                { className: 'uiFull UIGame' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'top' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'board' },
+                        _react2.default.createElement(
+                            'p',
+                            null,
+                            'uid:' + window.g.uid
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'board' },
+                        _react2.default.createElement(
+                            'p',
+                            null,
+                            'lv:' + window.g.gameLv
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'board' },
+                        _react2.default.createElement(
+                            'p',
+                            null,
+                            'score:0'
+                        )
+                    )
+                ),
+                _react2.default.createElement('div', { className: 'middle' }),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'controller' },
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'btn', onClick: this.onBtnUClick, onTouchStart: this.onBtnUClick },
+                        '\u2191'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'btn', onClick: this.onBtnRClick, onTouchStart: this.onBtnRClick },
+                        '\u2192'
+                    )
+                )
+            );
+        }
+    }]);
+
+    return UIGame;
+}(_react2.default.Component);
+
+exports.default = UIGame;
+},{"react":"../../node_modules/react/index.js","../macro":"../src/macro.js"}],"../src/ui/uiMgr.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24378,6 +24208,10 @@ var _uiRank = require('./uiRank');
 
 var _uiRank2 = _interopRequireDefault(_uiRank);
 
+var _uiGame = require('./uiGame');
+
+var _uiGame2 = _interopRequireDefault(_uiGame);
+
 var _macro = require('../macro');
 
 var _macro2 = _interopRequireDefault(_macro);
@@ -24395,6 +24229,7 @@ uiConfig[_macro2.default.UILoading] = { cls: _uiLoading2.default, full: true };
 uiConfig[_macro2.default.UIStart] = { cls: _uiStart2.default, full: true };
 uiConfig[_macro2.default.UIEnd] = { cls: _uiEnd2.default, full: false };
 uiConfig[_macro2.default.UIRank] = { cls: _uiRank2.default, full: true };
+uiConfig[_macro2.default.UIGame] = { cls: _uiGame2.default, full: true };
 
 var UIMgr = function () {
     function UIMgr() {
@@ -24461,7 +24296,7 @@ var UIMgr = function () {
 }();
 
 exports.default = UIMgr;
-},{"./uiLoading":"../src/ui/uiLoading.js","./uiStart":"../src/ui/uiStart.js","./uiEnd":"../src/ui/uiEnd.js","./uiRank":"../src/ui/uiRank.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
+},{"./uiLoading":"../src/ui/uiLoading.js","./uiStart":"../src/ui/uiStart.js","./uiEnd":"../src/ui/uiEnd.js","./uiRank":"../src/ui/uiRank.js","./uiGame":"../src/ui/uiGame.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24511,6 +24346,7 @@ var Global = function () {
         this.context = undefined;
         this.gameEventListener = new _gameEventListener2.default();
         this.uiMgr = new _uiMgr2.default();
+        this.child = undefined;
     }
 
     _createClass(Global, [{

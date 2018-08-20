@@ -5,9 +5,7 @@ import Mom from './mom'
 import Rebuild from './rebuild'
 import macro from './macro'
 import { Grid } from './grid'
-import { NumberIndicator } from './indicator'
 import tool from './tool'
-import Controller from './controller'
 import Fence from './fence'
 import Milk from './milk'
 import Hole from './hole'
@@ -25,24 +23,17 @@ class Game {
         this.pause = false
         this.child = undefined
         this.rebuild = new Rebuild()
-        this.controller = this.initController()
-        this.uidIndicator = new NumberIndicator('id:', 10, 10, { pt: 12 })
-        this.levelIndicator = new NumberIndicator('lv: ', 10, 25, { pt: 12 })
-        this.fpsIndicator = new NumberIndicator('fps ', 200, 10, { pt: 12, digits: 2 })
         this.loadFlag = 0
         this.drawMask = true
 
         window.g.gameEventListener.register(macro.EventRestart, this, () => { this.restartGame() })
         window.g.gameEventListener.register(macro.EventReady, this, () => { this.readyForGame() })
         window.g.gameEventListener.register(macro.EventLoadFinish, this, () => { this.readyForGame() })
+        window.addEventListener('keydown', ev => {
+            this.keyHandler(ev.key)
+        })
 
         window.requestAnimationFrame(this.frame)
-    }
-
-    initController() {
-        const controller = new Controller(this.context)
-        controller.setChildHanlder(() => { return this.child })
-        return controller
     }
 
     readyForGame() {
@@ -53,6 +44,7 @@ class Game {
 
     restartGame() {
         window.g.gameState = macro.StateGame
+        window.g.uiMgr.show(macro.UIGame)
         window.g.gameLv = 1
         this.resetGame()
     }
@@ -64,6 +56,7 @@ class Game {
         this.grid = new Grid()
         let pos = tool.grid2coord(tool.maxRow(), 2)
         this.child = new Child(pos.x, pos.y)
+        window.g.child = this.child
         pos = tool.grid2coord(tool.maxRow(), 0)
         this.mom = new Mom(pos.x, pos.y)
         this.door = new Door(
@@ -74,10 +67,12 @@ class Game {
 
     levelUp() {
         window.g.gameState = macro.StateLevelUp
+        window.g.uiMgr.hide(macro.UIGame)
         window.g.gameLv += 1
         this.resetGame()
         setTimeout(() => {
             window.g.gameState = macro.StateGame
+            window.g.uiMgr.show(macro.UIGame)
         }, 2 * 1000)
     }
 
@@ -147,6 +142,7 @@ class Game {
         window.g.gameAudio.pause('bg.mp3')
         window.g.gameAudio.play('lose.mp3')
         window.g.gameState = macro.StateGameOver
+        window.g.uiMgr.hide(macro.UIGame)
         window.g.uiMgr.show(macro.UIEnd)
         axios.post('lv', {uid: window.g.uid, lv: window.g.gameLv}).then(response => {
         })
@@ -185,7 +181,6 @@ class Game {
                 window.g.map.update(elapsed)
                 this.child.update(elapsed)
                 this.mom.update(this.child, elapsed)
-                this.controller.update(elapsed)
                 this.grid.update(elapsed, this.child)
                 break
             case macro.StateReachDoor:
@@ -222,12 +217,20 @@ class Game {
                 if (this.drawMask) this.grid.drawMask(this.context)
                 this.door.draw(this.context)
 
-                this.levelIndicator.draw(this.context, window.g.gameLv)
-                this.uidIndicator.draw(this.context, window.g.uid)
-                //this.fpsIndicator.draw(this.context, this.fps) 
-                this.controller.draw(this.context)
                 this.child.draw(this.context)
                 this.mom.draw(this.context)
+                break
+        }
+    }
+
+    keyHandler(key) {
+        switch (window.g.gameState) {
+            case macro.StateGame:
+                this.child.move(this.context, key)
+                break
+            case macro.StateGameOver:
+                if (key === ' ')
+                    window.g.gameEventListener.dispatch(macro.EventRestart)
                 break
         }
     }

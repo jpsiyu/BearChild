@@ -16,6 +16,7 @@ class Global {
         this.context = undefined
         this.gameEventListener = new GameEventListener()
         this.uiMgr = new UIMgr()
+        this.child = undefined
     }
 
     init(){
