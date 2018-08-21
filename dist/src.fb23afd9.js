@@ -23787,10 +23787,9 @@ var UIStart = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var bgImg = window.g.resMgr.getImg('uiBg');
             return _react2.default.createElement(
                 'div',
-                { className: 'UIStart uiFull', style: { backgroundImage: 'url(' + bgImg.src + ')' } },
+                { className: 'UIStart uiFull' },
                 _react2.default.createElement('div', { className: 'left' }),
                 _react2.default.createElement(
                     'div',
@@ -23893,7 +23892,7 @@ var UIEnd = function (_React$Component) {
             var bgImg = window.g.resMgr.getImg('uiBg');
             return _react2.default.createElement(
                 'div',
-                { className: 'uiPop UIEnd', style: { backgroundImage: 'url(' + bgImg.src + ')' } },
+                { className: 'uiPop UIEnd' },
                 _react2.default.createElement(
                     'div',
                     { className: 'title' },
@@ -24107,7 +24106,7 @@ var UIRank = function (_React$Component) {
             var bgImg = window.g.resMgr.getImg('uiBg');
             return _react2.default.createElement(
                 'div',
-                { className: 'UIRank uiFull', style: { backgroundImage: 'url(' + bgImg.src + ')' } },
+                { className: 'UIRank uiFull' },
                 _react2.default.createElement(
                     'div',
                     { className: 'top' },
