@@ -23617,6 +23617,7 @@ var UILoading = function (_React$Component) {
         _this.count = 0;
         _this.progressEnd = false;
         _this.loadFinish = false;
+        _this.version = '0.5.3';
         return _this;
     }
 
@@ -23696,6 +23697,16 @@ var UILoading = function (_React$Component) {
                         'p',
                         null,
                         wps
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'bottom' },
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        '\xA9 Copyright 2018, Email:cowbigcar@163.com, Version:',
+                        this.version
                     )
                 )
             );

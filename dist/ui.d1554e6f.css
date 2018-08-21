@@ -7,10 +7,15 @@
     display:flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     color: white;
     background-repeat: no-repeat;
     background-size: cover;
+}
+
+.UILoading .bottom{
+    justify-self: flex-end;
+    font-size: calc(var(--ui-unit) * 2);
 }
 
 .UILoading h2{

@@ -16,6 +16,7 @@ class UILoading extends React.Component {
         this.count = 0
         this.progressEnd = false
         this.loadFinish = false
+        this.version = '0.5.3'
     }
 
     componentDidMount() {
@@ -72,6 +73,9 @@ class UILoading extends React.Component {
                 <h3>{`Loading ${this.dots()}`}</h3>
                 <div className='progressFill' style={{ width: wps }}></div>
                 <p>{wps}</p>
+            </div>
+            <div className='bottom'>
+                <p>&copy; Copyright 2018, Email:cowbigcar@163.com, Version:{this.version}</p>
             </div>
         </div>
     }
