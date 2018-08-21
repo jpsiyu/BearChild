@@ -24133,8 +24133,8 @@ var UIGame = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (UIGame.__proto__ || Object.getPrototypeOf(UIGame)).call(this));
 
         _this.state = {
-            lv: 1,
-            score: 0
+            lv: window.g.gameLv,
+            score: window.g.gameScore
         };
         _this.onBtnRClick = _this.onBtnRClick.bind(_this);
         _this.onBtnUClick = _this.onBtnUClick.bind(_this);
@@ -24815,7 +24815,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49229' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49435' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

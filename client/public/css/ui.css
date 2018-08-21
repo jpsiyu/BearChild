@@ -165,6 +165,9 @@
     display: flex;
     flex-direction: column;
     color: white;
+    background-image: url(../images/rankBg.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .UIRank .top{
@@ -174,18 +177,19 @@
 }
 
 .UIRank button{
-    background-color: black;
-    color: white;
-    border: 1px white solid;
-    width: calc(var(--ui-unit) * 10);
+    background-color: white;
+    color: black;
+    border: 1px plum solid;
+    width: calc(var(--ui-unit) * 4);
     height: calc(var(--ui-unit) * 4);
     font-size: calc(var(--ui-unit) * 2);
     outline: none;
-    border-radius: calc(var(--ui-unit)*1);
+    border-radius: 50%;
 }
 
 .UIRank button:active{
-    background-color: green;
+    background-color: lightcoral;
+    color: white;
 }
 
 .UIRank .title{

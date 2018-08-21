@@ -5,8 +5,8 @@ class UIGame extends React.Component {
     constructor() {
         super()
         this.state = {
-            lv: 1,
-            score: 0,
+            lv: window.g.gameLv,
+            score: window.g.gameScore,
         }
         this.onBtnRClick = this.onBtnRClick.bind(this)
         this.onBtnUClick = this.onBtnUClick.bind(this)
