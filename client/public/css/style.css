@@ -28,6 +28,7 @@
 }
 
 .uiPop{
+    position: absolute;
     background-color: yellow;
     width: 60%;
     height: 80%;

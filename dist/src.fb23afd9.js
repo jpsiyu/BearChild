@@ -23852,8 +23852,10 @@ var UIEnd = function (_React$Component) {
 
         _this.quitSymbol = '⏎';
         _this.restartSymbol = '↺';
+        _this.rankSymbal = '✩';
         _this.onBtnQuitClick = _this.onBtnQuitClick.bind(_this);
         _this.onBtnRestartClick = _this.onBtnRestartClick.bind(_this);
+        _this.onBtnRankClick = _this.onBtnRankClick.bind(_this);
         return _this;
     }
 
@@ -23868,6 +23870,11 @@ var UIEnd = function (_React$Component) {
         value: function onBtnRestartClick() {
             window.g.gameEventListener.dispatch(_macro2.default.EventRestart);
             window.g.uiMgr.hide(_macro2.default.UIEnd);
+        }
+    }, {
+        key: 'onBtnRankClick',
+        value: function onBtnRankClick() {
+            window.g.uiMgr.show(_macro2.default.UIRank);
         }
     }, {
         key: 'render',
@@ -23899,6 +23906,20 @@ var UIEnd = function (_React$Component) {
                             'label',
                             null,
                             'Quit'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'btnGroup' },
+                        _react2.default.createElement(
+                            'button',
+                            { className: 'btn', onTouchEnd: this.onBtnRankClick, onClick: this.onBtnRankClick },
+                            this.rankSymbal
+                        ),
+                        _react2.default.createElement(
+                            'label',
+                            null,
+                            'Rank'
                         )
                     ),
                     _react2.default.createElement(

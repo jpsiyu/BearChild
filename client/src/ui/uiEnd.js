@@ -6,8 +6,10 @@ class UIEnd extends React.Component {
         super()
         this.quitSymbol = '⏎'
         this.restartSymbol = '↺'
+        this.rankSymbal = '✩'
         this.onBtnQuitClick = this.onBtnQuitClick.bind(this)
         this.onBtnRestartClick = this.onBtnRestartClick.bind(this)
+        this.onBtnRankClick = this.onBtnRankClick.bind(this)
     }
 
 
@@ -21,6 +23,10 @@ class UIEnd extends React.Component {
         window.g.uiMgr.hide(macro.UIEnd)
     }
 
+    onBtnRankClick(){
+        window.g.uiMgr.show(macro.UIRank)
+    }
+
     render() {
         return <div className='uiPop UIEnd'>
             <div className='title'>
@@ -30,6 +36,10 @@ class UIEnd extends React.Component {
                 <div className='btnGroup'>
                     <button className='btn' onTouchEnd={this.onBtnQuitClick} onClick={this.onBtnQuitClick}>{this.quitSymbol}</button>
                     <label>Quit</label>
+                </div>
+                <div className='btnGroup'>
+                    <button className='btn' onTouchEnd={this.onBtnRankClick} onClick={this.onBtnRankClick}>{this.rankSymbal}</button>
+                    <label>Rank</label>
                 </div>
                 <div className='btnGroup'>
                     <button className='btn' onTouchEnd={this.onBtnRestartClick} onClick={this.onBtnRestartClick}>{this.restartSymbol}</button>
