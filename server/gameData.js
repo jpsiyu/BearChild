@@ -38,14 +38,14 @@ class GameData {
     }
 
     filter() {
-        if (this.lvList.length >= this.limit) {
-            this.lvList.splice(this.limit, this.lvList.length - this.limit + 1)
-        }
         this.lvList.sort((a, b) => {
             if (a.score != b.score) return b.score - a.score
             if (a.lv != b.lv) return b.lv - a.lv
             return a.uid - b.uid
         })
+        if (this.lvList.length >= this.limit) {
+            this.lvList.splice(this.limit, this.lvList.length - this.limit + 1)
+        }
         this.updateDbLvList()
     }
 

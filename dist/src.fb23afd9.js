@@ -24196,7 +24196,6 @@ var UIGame = function (_React$Component) {
     }, {
         key: 'scoreInfoChange',
         value: function scoreInfoChange() {
-            if (!this.mounted) return;
             this.setState({
                 lv: window.g.gameLv,
                 score: window.g.gameScore

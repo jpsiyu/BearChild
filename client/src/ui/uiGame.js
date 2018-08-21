@@ -22,7 +22,6 @@ class UIGame extends React.Component {
     }
 
     scoreInfoChange(){
-        if(!this.mounted) return
         this.setState({
             lv: window.g.gameLv,
             score: window.g.gameScore,
