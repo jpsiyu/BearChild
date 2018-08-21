@@ -24664,16 +24664,11 @@ var MainScene = function (_React$Component) {
             this.canvas.focus();
             this.context = this.canvas.getContext('2d');
 
-            this.div.addEventListener('touchstart', function (event) {
-                var t2 = event.timeStamp;
-                var t1 = _this2.lastTouch || t2;
-                var dt = t2 - t1;
-                var fingers = event.touches.length;
-                _this2.lastTouch = t2;
-                console.log(dt, fingers);
-                if (!dt || dt > 500 || fingers > 1) return;
-                event.preventDefault();
-            });
+            /*
+            this.div.addEventListener('touchstart', event => { 
+                event.preventDefault() 
+            })
+            */
             document.addEventListener('visibilitychange', function () {
                 if (document.hidden) window.g.gameAudio.pause('bg.mp3');
                 _this2.game.setPause(document.hidden);

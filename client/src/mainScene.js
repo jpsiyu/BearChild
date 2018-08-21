@@ -26,16 +26,11 @@ class MainScene extends React.Component {
         this.canvas.focus()
         this.context = this.canvas.getContext('2d')
 
+        /*
         this.div.addEventListener('touchstart', event => { 
-            const t2 = event.timeStamp
-            const t1 = this.lastTouch || t2
-            const dt = t2 - t1
-            const fingers = event.touches.length
-            this.lastTouch = t2
-            console.log(dt, fingers)
-            if(!dt || dt > 500 || fingers > 1) return
             event.preventDefault() 
         })
+        */
         document.addEventListener('visibilitychange', () => {
             if(document.hidden) window.g.gameAudio.pause('bg.mp3')
             this.game.setPause(document.hidden)
