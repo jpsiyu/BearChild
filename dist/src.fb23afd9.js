@@ -23518,6 +23518,16 @@ var GameEventListener = function () {
                 if (!eventInfo.obj) eventList.splice(i, 1);else eventInfo.callback(argument);
             });
         }
+    }, {
+        key: "logout",
+        value: function logout(event, obj) {
+            var eventList = this.dict[event] || [];
+            eventList.forEach(function (eventInfo, i) {
+                if (eventInfo.obj === obj) {
+                    eventList.splice(i, 1);
+                }
+            });
+        }
     }]);
 
     return GameEventListener;
@@ -24139,13 +24149,23 @@ var UIGame = function (_React$Component) {
         _this.onBtnRClick = _this.onBtnRClick.bind(_this);
         _this.onBtnUClick = _this.onBtnUClick.bind(_this);
         _this.scoreInfoChange = _this.scoreInfoChange.bind(_this);
-        window.g.gameEventListener.register(_macro2.default.EventScore, _this, _this.scoreInfoChange);
         return _this;
     }
 
     _createClass(UIGame, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            window.g.gameEventListener.register(_macro2.default.EventScore, this, this.scoreInfoChange);
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            window.g.gameEventListener.logout(_macro2.default.EventScore, this);
+        }
+    }, {
         key: 'scoreInfoChange',
         value: function scoreInfoChange() {
+            if (!this.mounted) return;
             this.setState({
                 lv: window.g.gameLv,
                 score: window.g.gameScore
@@ -24629,6 +24649,7 @@ var MainScene = function (_React$Component) {
             uiRefresh: 0
         };
         _this.game = undefined;
+        _this.lastTouch = undefined;
         return _this;
     }
 
@@ -24644,6 +24665,12 @@ var MainScene = function (_React$Component) {
             this.context = this.canvas.getContext('2d');
 
             this.div.addEventListener('touchstart', function (event) {
+                var t2 = event.timeStamp;
+                var t1 = _this2.lastTouch || t2;
+                var dt = t2 - t1;
+                var fingers = event.originalEvent.touches.length;
+                _this2.lastTouch = t2;
+                if (!dt || dt > 500 || fingers > 1) return;
                 event.preventDefault();
             });
             document.addEventListener('visibilitychange', function () {

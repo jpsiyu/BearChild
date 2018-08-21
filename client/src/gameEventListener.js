@@ -19,6 +19,15 @@ class GameEventListener {
                 eventInfo.callback(argument)
         })
     }
+
+    logout(event, obj){
+        const eventList = this.dict[event] || []
+        eventList.forEach((eventInfo, i) => {
+            if(eventInfo.obj === obj){
+                eventList.splice(i, 1)
+            }
+        })
+    }
 }
 
 export default GameEventListener

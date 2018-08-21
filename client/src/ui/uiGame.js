@@ -11,10 +11,18 @@ class UIGame extends React.Component {
         this.onBtnRClick = this.onBtnRClick.bind(this)
         this.onBtnUClick = this.onBtnUClick.bind(this)
         this.scoreInfoChange = this.scoreInfoChange.bind(this)
+    }
+
+    componentDidMount(){
         window.g.gameEventListener.register(macro.EventScore, this, this.scoreInfoChange)
     }
 
+    componentWillUnmount(){
+        window.g.gameEventListener.logout(macro.EventScore, this)
+    }
+
     scoreInfoChange(){
+        if(!this.mounted) return
         this.setState({
             lv: window.g.gameLv,
             score: window.g.gameScore,
