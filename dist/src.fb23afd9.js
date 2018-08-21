@@ -24664,11 +24664,9 @@ var MainScene = function (_React$Component) {
             this.canvas.focus();
             this.context = this.canvas.getContext('2d');
 
-            /*
-            this.div.addEventListener('touchstart', event => { 
-                event.preventDefault() 
-            })
-            */
+            this.div.addEventListener('touchstart', function (event) {
+                event.preventDefault();
+            });
             document.addEventListener('visibilitychange', function () {
                 if (document.hidden) window.g.gameAudio.pause('bg.mp3');
                 _this2.game.setPause(document.hidden);

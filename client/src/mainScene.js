@@ -26,11 +26,9 @@ class MainScene extends React.Component {
         this.canvas.focus()
         this.context = this.canvas.getContext('2d')
 
-        /*
         this.div.addEventListener('touchstart', event => { 
             event.preventDefault() 
         })
-        */
         document.addEventListener('visibilitychange', () => {
             if(document.hidden) window.g.gameAudio.pause('bg.mp3')
             this.game.setPause(document.hidden)
