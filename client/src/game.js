@@ -40,12 +40,14 @@ class Game {
         window.g.uiMgr.show(macro.UIStart)
         window.g.gameState = macro.StateReady
         window.g.gameLv = 1
+        window.g.gameScore = 0
     }
 
     restartGame() {
         window.g.gameState = macro.StateGame
         window.g.uiMgr.show(macro.UIGame)
         window.g.gameLv = 1
+        window.g.gameScore = 0
         this.resetGame()
     }
 
@@ -89,6 +91,7 @@ class Game {
     handleCollision(obj, index) {
         if (obj instanceof Milk) {
             window.g.map.milks.splice(index, 1)
+            this.addScore(obj.x, obj.y, macro.ScoreMilk)
             switch (this.child.mode) {
                 case macro.ChildModeNormal:
                     this.child.changeMode(macro.ChildModeDrink)
@@ -100,6 +103,7 @@ class Game {
         } else if (obj instanceof Fence) {
             window.g.map.fences.splice(index, 1)
             window.g.map.createExplosion(obj.img, obj.x, obj.y)
+            this.addScore(obj.x, obj.y, macro.ScoreFence)
         } else if (obj instanceof Hole) {
             this.rebuild.reset(obj)
             window.g.gameState = macro.StateRebuild
@@ -144,8 +148,14 @@ class Game {
         window.g.gameState = macro.StateGameOver
         window.g.uiMgr.hide(macro.UIGame)
         window.g.uiMgr.show(macro.UIEnd)
-        axios.post('lv', {uid: window.g.uid, lv: window.g.gameLv}).then(response => {
+        axios.post('lv', { uid: window.g.uid, lv: window.g.gameLv }).then(response => {
         })
+    }
+
+    addScore(posX, posY, score) {
+        window.g.floatingMgr.popFloating(posX, posY, score)
+        window.g.gameScore += score
+        window.g.gameEventListener.dispatch(macro.EventScore)
     }
 
     frame(timestamp) {
@@ -168,6 +178,7 @@ class Game {
             case macro.StateGame:
                 if (this.reachDoor()) {
                     window.g.gameAudio.pause('bg.mp3')
+                    this.addScore(this.child.x, this.child.y, macro.ScoreLevel)
                     window.g.gameState = macro.StateReachDoor
                     setTimeout(() => { this.levelUp() }, 2 * 1000)
                     window.g.gameAudio.play('win.mp3')
@@ -177,14 +188,16 @@ class Game {
                     this.gameEnd()
                     return
                 }
-                this.childCollisionMapObj()
                 window.g.map.update(elapsed)
+                this.childCollisionMapObj()
                 this.child.update(elapsed)
                 this.mom.update(this.child, elapsed)
                 this.grid.update(elapsed, this.child)
+                window.g.floatingMgr.update(elapsed)
                 break
             case macro.StateReachDoor:
                 this.child.update(elapsed)
+                window.g.floatingMgr.update(elapsed)
                 break
             default:
                 break
@@ -219,6 +232,7 @@ class Game {
 
                 this.child.draw(this.context)
                 this.mom.draw(this.context)
+                window.g.floatingMgr.draw(this.context)
                 break
         }
     }

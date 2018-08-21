@@ -4,8 +4,21 @@ import macro from '../macro'
 class UIGame extends React.Component {
     constructor() {
         super()
+        this.state = {
+            lv: 1,
+            score: 0,
+        }
         this.onBtnRClick = this.onBtnRClick.bind(this)
         this.onBtnUClick = this.onBtnUClick.bind(this)
+        this.scoreInfoChange = this.scoreInfoChange.bind(this)
+        window.g.gameEventListener.register(macro.EventScore, this, this.scoreInfoChange)
+    }
+
+    scoreInfoChange(){
+        this.setState({
+            lv: window.g.gameLv,
+            score: window.g.gameScore,
+        })
     }
 
     onBtnUClick() {
@@ -31,8 +44,8 @@ class UIGame extends React.Component {
         return <div className='uiFull UIGame'>
             <div className='top'>
                 <div className='board'><p>{`uid:${window.g.uid}`}</p></div>
-                <div className='board'><p>{`lv:${window.g.gameLv}`}</p></div>
-                <div className='board'><p>{`score:0`}</p></div>
+                <div className='board'><p>{`lv:${this.state.lv}`}</p></div>
+                <div className='board'><p>{`score:${this.state.score}`}</p></div>
             </div>
             <div className='middle'></div>
             <div className='controller'>

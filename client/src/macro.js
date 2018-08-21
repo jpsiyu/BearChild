@@ -17,6 +17,7 @@ export default {
     EventLoadFinish: 'EventLoadFinish',
     EventClick: 'EventClick',
     EventUIRefresh: 'EventUIRefresh',
+    EventScore: 'EventScore',
 
     ChildModeNormal: 'ChildModeNormal ',
     ChildModeDrink: 'ChildModeDrink',
@@ -28,4 +29,8 @@ export default {
     UIEnd: 'UIEnd',
     UIRank: 'UIRank',
     UIGame: 'UIGame',
+
+    ScoreMilk: 5,
+    ScoreFence: 8,
+    ScoreLevel: 10,
 }

@@ -19772,6 +19772,7 @@ exports.default = {
     EventLoadFinish: 'EventLoadFinish',
     EventClick: 'EventClick',
     EventUIRefresh: 'EventUIRefresh',
+    EventScore: 'EventScore',
 
     ChildModeNormal: 'ChildModeNormal ',
     ChildModeDrink: 'ChildModeDrink',
@@ -19782,7 +19783,11 @@ exports.default = {
     UILoading: 'UILoading',
     UIEnd: 'UIEnd',
     UIRank: 'UIRank',
-    UIGame: 'UIGame'
+    UIGame: 'UIGame',
+
+    ScoreMilk: 5,
+    ScoreFence: 8,
+    ScoreLevel: 10
 };
 },{}],"../src/gameConfig.js":[function(require,module,exports) {
 "use strict";
@@ -22749,6 +22754,7 @@ var Game = function () {
             window.g.uiMgr.show(_macro2.default.UIStart);
             window.g.gameState = _macro2.default.StateReady;
             window.g.gameLv = 1;
+            window.g.gameScore = 0;
         }
     }, {
         key: 'restartGame',
@@ -22756,6 +22762,7 @@ var Game = function () {
             window.g.gameState = _macro2.default.StateGame;
             window.g.uiMgr.show(_macro2.default.UIGame);
             window.g.gameLv = 1;
+            window.g.gameScore = 0;
             this.resetGame();
         }
     }, {
@@ -22801,6 +22808,7 @@ var Game = function () {
         value: function handleCollision(obj, index) {
             if (obj instanceof _milk2.default) {
                 window.g.map.milks.splice(index, 1);
+                this.addScore(obj.x, obj.y, _macro2.default.ScoreMilk);
                 switch (this.child.mode) {
                     case _macro2.default.ChildModeNormal:
                         this.child.changeMode(_macro2.default.ChildModeDrink);
@@ -22812,6 +22820,7 @@ var Game = function () {
             } else if (obj instanceof _fence2.default) {
                 window.g.map.fences.splice(index, 1);
                 window.g.map.createExplosion(obj.img, obj.x, obj.y);
+                this.addScore(obj.x, obj.y, _macro2.default.ScoreFence);
             } else if (obj instanceof _hole2.default) {
                 this.rebuild.reset(obj);
                 window.g.gameState = _macro2.default.StateRebuild;
@@ -22864,6 +22873,13 @@ var Game = function () {
             _axios2.default.post('lv', { uid: window.g.uid, lv: window.g.gameLv }).then(function (response) {});
         }
     }, {
+        key: 'addScore',
+        value: function addScore(posX, posY, score) {
+            window.g.floatingMgr.popFloating(posX, posY, score);
+            window.g.gameScore += score;
+            window.g.gameEventListener.dispatch(_macro2.default.EventScore);
+        }
+    }, {
         key: 'frame',
         value: function frame(timestamp) {
             if (this.pause) return;
@@ -22888,6 +22904,7 @@ var Game = function () {
                 case _macro2.default.StateGame:
                     if (this.reachDoor()) {
                         window.g.gameAudio.pause('bg.mp3');
+                        this.addScore(this.child.x, this.child.y, _macro2.default.ScoreLevel);
                         window.g.gameState = _macro2.default.StateReachDoor;
                         setTimeout(function () {
                             _this2.levelUp();
@@ -22899,14 +22916,16 @@ var Game = function () {
                         this.gameEnd();
                         return;
                     }
-                    this.childCollisionMapObj();
                     window.g.map.update(elapsed);
+                    this.childCollisionMapObj();
                     this.child.update(elapsed);
                     this.mom.update(this.child, elapsed);
                     this.grid.update(elapsed, this.child);
+                    window.g.floatingMgr.update(elapsed);
                     break;
                 case _macro2.default.StateReachDoor:
                     this.child.update(elapsed);
+                    window.g.floatingMgr.update(elapsed);
                     break;
                 default:
                     break;
@@ -22937,6 +22956,7 @@ var Game = function () {
 
                     this.child.draw(this.context);
                     this.mom.draw(this.context);
+                    window.g.floatingMgr.draw(this.context);
                     break;
             }
         }
@@ -24098,12 +24118,26 @@ var UIGame = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (UIGame.__proto__ || Object.getPrototypeOf(UIGame)).call(this));
 
+        _this.state = {
+            lv: 1,
+            score: 0
+        };
         _this.onBtnRClick = _this.onBtnRClick.bind(_this);
         _this.onBtnUClick = _this.onBtnUClick.bind(_this);
+        _this.scoreInfoChange = _this.scoreInfoChange.bind(_this);
+        window.g.gameEventListener.register(_macro2.default.EventScore, _this, _this.scoreInfoChange);
         return _this;
     }
 
     _createClass(UIGame, [{
+        key: 'scoreInfoChange',
+        value: function scoreInfoChange() {
+            this.setState({
+                lv: window.g.gameLv,
+                score: window.g.gameScore
+            });
+        }
+    }, {
         key: 'onBtnUClick',
         value: function onBtnUClick() {
             if (window.g.gameState !== _macro2.default.StateGame) return;
@@ -24147,7 +24181,7 @@ var UIGame = function (_React$Component) {
                         _react2.default.createElement(
                             'p',
                             null,
-                            'lv:' + window.g.gameLv
+                            'lv:' + this.state.lv
                         )
                     ),
                     _react2.default.createElement(
@@ -24156,7 +24190,7 @@ var UIGame = function (_React$Component) {
                         _react2.default.createElement(
                             'p',
                             null,
-                            'score:0'
+                            'score:' + this.state.score
                         )
                     )
                 ),
@@ -24296,7 +24330,174 @@ var UIMgr = function () {
 }();
 
 exports.default = UIMgr;
-},{"./uiLoading":"../src/ui/uiLoading.js","./uiStart":"../src/ui/uiStart.js","./uiEnd":"../src/ui/uiEnd.js","./uiRank":"../src/ui/uiRank.js","./uiGame":"../src/ui/uiGame.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/global.js":[function(require,module,exports) {
+},{"./uiLoading":"../src/ui/uiLoading.js","./uiStart":"../src/ui/uiStart.js","./uiEnd":"../src/ui/uiEnd.js","./uiRank":"../src/ui/uiRank.js","./uiGame":"../src/ui/uiGame.js","../macro":"../src/macro.js","react":"../../node_modules/react/index.js"}],"../src/floating.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _tool = require('./tool');
+
+var _tool2 = _interopRequireDefault(_tool);
+
+var _element = require('./element');
+
+var _element2 = _interopRequireDefault(_element);
+
+var _macro = require('./macro');
+
+var _macro2 = _interopRequireDefault(_macro);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Floating = function (_Element) {
+    _inherits(Floating, _Element);
+
+    function Floating(x, y, score) {
+        _classCallCheck(this, Floating);
+
+        var radius = _tool2.default.gridSize() / 2;
+
+        var _this = _possibleConstructorReturn(this, (Floating.__proto__ || Object.getPrototypeOf(Floating)).call(this, x, y, radius));
+
+        _this.score = score;
+        _this.showTime = 0.3;
+        _this.pass = 0;
+        _this.speed = 100;
+        _this.active = true;
+        return _this;
+    }
+
+    _createClass(Floating, [{
+        key: 'reset',
+        value: function reset(x, y, score) {
+            this.x = x;
+            this.y = y;
+            this.score = score;
+            this.pass = 0;
+            this.active = true;
+        }
+    }, {
+        key: 'update',
+        value: function update(elapsed) {
+            if (!this.active) return;
+
+            if (this.pass < this.showTime) {
+                this.pass += elapsed;
+                this.y -= elapsed * this.speed;
+            } else {
+                this.active = false;
+            }
+        }
+    }, {
+        key: 'getColor',
+        value: function getColor() {
+            var c = 'red';
+            switch (this.score) {
+                case _macro2.default.ScoreMilk:
+                    c = 'blue';
+                    break;
+                case _macro2.default.ScoreFence:
+                    c = 'blue';
+                    break;
+                case _macro2.default.ScoreLevel:
+                    c = 'yellow';
+                    break;
+                default:
+                    c = 'red';
+                    break;
+            }
+            return c;
+        }
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            if (!this.active) return;
+            context.save();
+            context.translate(this.x, this.y);
+            context.fillStyle = '' + this.getColor();
+            context.font = '23pt Arial';
+            context.fillText('+' + this.score, 0, 0);
+            context.restore();
+        }
+    }]);
+
+    return Floating;
+}(_element2.default);
+
+exports.default = Floating;
+},{"./tool":"../src/tool.js","./element":"../src/element.js","./macro":"../src/macro.js"}],"../src/floatingMgr.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _floating = require('./floating');
+
+var _floating2 = _interopRequireDefault(_floating);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var FloatingMgr = function () {
+    function FloatingMgr() {
+        _classCallCheck(this, FloatingMgr);
+
+        this.floatings = [];
+    }
+
+    _createClass(FloatingMgr, [{
+        key: 'update',
+        value: function update(elapsed) {
+            this.floatings.forEach(function (flo) {
+                flo.update(elapsed);
+            });
+        }
+    }, {
+        key: 'draw',
+        value: function draw(context) {
+            this.floatings.forEach(function (flo) {
+                flo.draw(context);
+            });
+        }
+    }, {
+        key: 'popFloating',
+        value: function popFloating(x, y, score) {
+            var element = undefined;
+            var target = undefined;
+            for (var i = 0; i < this.floatings.length; i++) {
+                element = this.floatings[i];
+                if (!element.active) {
+                    target = element;
+                    target.reset(x, y, score);
+                    break;
+                }
+            }
+            if (!target) {
+                target = new _floating2.default(x, y, score);
+                this.floatings.push(target);
+            }
+        }
+    }]);
+
+    return FloatingMgr;
+}();
+
+exports.default = FloatingMgr;
+},{"./floating":"../src/floating.js"}],"../src/global.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -24329,6 +24530,10 @@ var _uiMgr = require('./ui/uiMgr');
 
 var _uiMgr2 = _interopRequireDefault(_uiMgr);
 
+var _floatingMgr = require('./floatingMgr');
+
+var _floatingMgr2 = _interopRequireDefault(_floatingMgr);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24340,12 +24545,14 @@ var Global = function () {
         this.uid = undefined;
         this.gameState = _macro2.default.StateLoad;
         this.gameLv = 1;
+        this.gameScore = 0;
         this.resMgr = new _resMgr2.default();
         this.map = new _map2.default();
         this.gameAudio = new _gameAudio2.default();
         this.context = undefined;
         this.gameEventListener = new _gameEventListener2.default();
         this.uiMgr = new _uiMgr2.default();
+        this.floatingMgr = new _floatingMgr2.default();
         this.child = undefined;
     }
 
@@ -24363,7 +24570,7 @@ var g = new Global();
 window.g = g;
 
 exports.default = { g: g };
-},{"./resMgr":"../src/resMgr.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./ui/uiMgr":"../src/ui/uiMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
+},{"./resMgr":"../src/resMgr.js","./gameAudio":"../src/gameAudio.js","./map":"../src/map.js","./macro":"../src/macro.js","./gameEventListener":"../src/gameEventListener.js","./ui/uiMgr":"../src/ui/uiMgr.js","./floatingMgr":"../src/floatingMgr.js"}],"../src/mainScene.js":[function(require,module,exports) {
 
 'use strict';
 
@@ -24601,7 +24808,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49476' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49229' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
