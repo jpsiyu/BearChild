@@ -22993,7 +22993,7 @@ var ResMgr = function () {
     function ResMgr() {
         _classCallCheck(this, ResMgr);
 
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole', 'eye', 'shield'];
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole', 'eye', 'shield', 'uiBg'];
         this.images = {};
     }
 
@@ -23001,7 +23001,6 @@ var ResMgr = function () {
         key: 'loadRes',
         value: function loadRes(callback) {
             this.loadImgs(function () {
-                //window.g.music.loadMusics(callback)
                 window.g.gameAudio.loadAll(callback);
             });
         }
@@ -23777,9 +23776,10 @@ var UIStart = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var bgImg = window.g.resMgr.getImg('uiBg');
             return _react2.default.createElement(
                 'div',
-                { className: 'UIStart uiFull' },
+                { className: 'UIStart uiFull', style: { backgroundImage: 'url(' + bgImg.src + ')' } },
                 _react2.default.createElement('div', { className: 'left' }),
                 _react2.default.createElement(
                     'div',
@@ -23879,9 +23879,10 @@ var UIEnd = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var bgImg = window.g.resMgr.getImg('uiBg');
             return _react2.default.createElement(
                 'div',
-                { className: 'uiPop UIEnd' },
+                { className: 'uiPop UIEnd', style: { backgroundImage: 'url(' + bgImg.src + ')' } },
                 _react2.default.createElement(
                     'div',
                     { className: 'title' },
@@ -24092,9 +24093,10 @@ var UIRank = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var bgImg = window.g.resMgr.getImg('uiBg');
             return _react2.default.createElement(
                 'div',
-                { className: 'UIRank uiFull' },
+                { className: 'UIRank uiFull', style: { backgroundImage: 'url(' + bgImg.src + ')' } },
                 _react2.default.createElement(
                     'div',
                     { className: 'top' },

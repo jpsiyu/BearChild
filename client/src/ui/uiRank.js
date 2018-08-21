@@ -58,7 +58,8 @@ class UIRank extends React.Component {
     }
 
     render() {
-        return <div className='UIRank uiFull'>
+        const bgImg = window.g.resMgr.getImg('uiBg')
+        return <div className='UIRank uiFull' style={{backgroundImage: `url(${bgImg.src})`}}>
             <div className='top'>
                 <button onClick={this.onBtnBackClick} onTouchEnd={this.onBtnBackClick}>{'⏎'}</button>
             </div>

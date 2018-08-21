@@ -28,7 +28,8 @@ class UIEnd extends React.Component {
     }
 
     render() {
-        return <div className='uiPop UIEnd'>
+        const bgImg = window.g.resMgr.getImg('uiBg')
+        return <div className='uiPop UIEnd' style={{backgroundImage: `url(${bgImg.src})`}}>
             <div className='title'>
                 <h2>Game Over</h2>
             </div>

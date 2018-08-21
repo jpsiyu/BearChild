@@ -34,7 +34,8 @@ class UIStart extends React.Component {
     }
 
     render() {
-        return <div className='UIStart uiFull'>
+        const bgImg = window.g.resMgr.getImg('uiBg')
+        return <div className='UIStart uiFull' style={{backgroundImage: `url(${bgImg.src})`}}>
             <div className='left'></div>
             <div className='mid'>
                 <button onClick={this.onBtnStartClick} onTouchEnd={this.onBtnStartClick}>Start Game</button>

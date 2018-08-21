@@ -9,7 +9,6 @@
     align-items: center;
     justify-content: center;
     color: white;
-    background-image: url(../images/rankBg.jpeg);
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -62,7 +61,6 @@
     height: 100%;
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
-    background-image: url(../images/rankBg.jpeg);
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -121,7 +119,6 @@
     flex-direction: column;
     align-items: center;
     box-shadow: 0 8px 10px 0 rgba(0, 0, 0, 0.3), 0 8px 20px 0 rgba(0, 0, 0, 0.3);
-    background-image: url(../images/rankBg.jpeg);
     background-repeat: no-repeat;
     background-size: cover;
     color: white;
@@ -181,7 +178,6 @@
     display: flex;
     flex-direction: column;
     color: white;
-    background-image: url(../images/rankBg.jpeg);
     background-repeat: no-repeat;
     background-size: cover;
 }

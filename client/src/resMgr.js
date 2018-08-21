@@ -16,13 +16,13 @@ class ResMgr {
             'hole',
             'eye',
             'shield',
+            'uiBg'
         ]
         this.images = {}
     }
 
     loadRes(callback){
         this.loadImgs( () => {
-            //window.g.music.loadMusics(callback)
             window.g.gameAudio.loadAll(callback)
         })
     }
