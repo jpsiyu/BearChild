@@ -32,6 +32,7 @@ class MainScene extends React.Component {
             const dt = t2 - t1
             const fingers = event.originalEvent.touches.length
             this.lastTouch = t2
+            console.log(dt, fingers)
             if(!dt || dt > 500 || fingers > 1) return
             event.preventDefault() 
         })

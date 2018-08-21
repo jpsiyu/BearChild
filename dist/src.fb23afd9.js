@@ -24670,6 +24670,7 @@ var MainScene = function (_React$Component) {
                 var dt = t2 - t1;
                 var fingers = event.originalEvent.touches.length;
                 _this2.lastTouch = t2;
+                console.log(dt, fingers);
                 if (!dt || dt > 500 || fingers > 1) return;
                 event.preventDefault();
             });
