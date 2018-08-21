@@ -29,7 +29,7 @@ class UIStart extends React.Component {
     }
 
     getMusicColor() {
-        const c = window.g.gameAudio.active ? 'green' : 'black'
+        const c = window.g.gameAudio.active ? 'lightcoral' : 'rgba(0,0,0,0)'
         return c
     }
 

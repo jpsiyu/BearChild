@@ -23771,7 +23771,7 @@ var UIStart = function (_React$Component) {
     }, {
         key: 'getMusicColor',
         value: function getMusicColor() {
-            var c = window.g.gameAudio.active ? 'green' : 'black';
+            var c = window.g.gameAudio.active ? 'lightcoral' : 'rgba(0,0,0,0)';
             return c;
         }
     }, {
@@ -24836,7 +24836,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49204' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '49189' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
