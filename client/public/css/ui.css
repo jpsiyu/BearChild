@@ -180,9 +180,9 @@
     background-color: white;
     color: black;
     border: 1px plum solid;
-    width: calc(var(--ui-unit) * 4);
-    height: calc(var(--ui-unit) * 4);
-    font-size: calc(var(--ui-unit) * 2);
+    width: calc(var(--ui-unit) * 6);
+    height: calc(var(--ui-unit) * 6);
+    font-size: calc(var(--ui-unit) * 3);
     outline: none;
     border-radius: 50%;
 }
