@@ -16,7 +16,6 @@ class ResMgr {
             'hole',
             'eye',
             'shield',
-            'uiBg'
         ]
         this.images = {}
     }

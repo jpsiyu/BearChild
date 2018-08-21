@@ -22993,7 +22993,7 @@ var ResMgr = function () {
     function ResMgr() {
         _classCallCheck(this, ResMgr);
 
-        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole', 'eye', 'shield', 'uiBg'];
+        this.names = ['door', 'fence', 'milk', 'drink', 'catched', 'mom-run', 'child-roll', 'sky', 'grassland', 'warrior', 'ball', 'hole', 'eye', 'shield'];
         this.images = {};
     }
 
@@ -23787,10 +23787,9 @@ var UIStart = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var bgImg = window.g.resMgr.getImg('uiBg');
             return _react2.default.createElement(
                 'div',
-                { className: 'UIStart uiFull', style: { backgroundImage: 'url(' + bgImg.src + ')' } },
+                { className: 'UIStart uiFull' },
                 _react2.default.createElement('div', { className: 'left' }),
                 _react2.default.createElement(
                     'div',
@@ -23890,10 +23889,9 @@ var UIEnd = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var bgImg = window.g.resMgr.getImg('uiBg');
             return _react2.default.createElement(
                 'div',
-                { className: 'uiPop UIEnd', style: { backgroundImage: 'url(' + bgImg.src + ')' } },
+                { className: 'uiPop UIEnd' },
                 _react2.default.createElement(
                     'div',
                     { className: 'title' },
@@ -24104,10 +24102,9 @@ var UIRank = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var bgImg = window.g.resMgr.getImg('uiBg');
             return _react2.default.createElement(
                 'div',
-                { className: 'UIRank uiFull', style: { backgroundImage: 'url(' + bgImg.src + ')' } },
+                { className: 'UIRank uiFull' },
                 _react2.default.createElement(
                     'div',
                     { className: 'top' },
