@@ -4,16 +4,17 @@ import macro from './macro'
 
 class Floating extends Element {
     constructor(x, y, score) {
-        const radius = tool.gridSize()/2
+        const radius = tool.gridSize() / 2
         super(x, y, radius)
         this.score = score
-        this.showTime = 0.3
+        this.moveTime = 0.1
+        this.showTime = this.moveTime + 0.2
         this.pass = 0
-        this.speed = 100
+        this.speed = 300
         this.active = true
     }
 
-    reset(x, y, score){
+    reset(x, y, score) {
         this.x = x
         this.y = y
         this.score = score
@@ -21,28 +22,30 @@ class Floating extends Element {
         this.active = true
     }
 
-    update(elapsed) { 
-        if(!this.active) return
+    update(elapsed) {
+        if (!this.active) return
 
-        if(this.pass < this.showTime){
+        if (this.pass < this.moveTime) {
             this.pass += elapsed
             this.y -= elapsed * this.speed
-        }else{
+        } else if (this.pass < this.showTime) {
+            this.pass += elapsed
+        } else {
             this.active = false
         }
     }
 
-    getColor(){
+    getColor() {
         let c = 'red'
-        switch(this.score){
+        switch (this.score) {
             case macro.ScoreMilk:
                 c = 'blue'
                 break
             case macro.ScoreFence:
-                c = 'blue'
+                c = 'gold'
                 break
             case macro.ScoreLevel:
-                c = 'yellow'
+                c = 'white'
                 break
             default:
                 c = 'red'
@@ -52,11 +55,13 @@ class Floating extends Element {
     }
 
     draw(context) {
-        if(!this.active) return
+        if (!this.active) return
+        const text = `+${this.score}`
+        const w = context.measureText(text).width
         context.save()
-        context.translate(this.x, this.y)
-        context.fillStyle = `${this.getColor()}`
-        context.font = '23pt Arial'
+        context.translate(this.x - 2*w, this.y)
+        context.fillStyle = this.getColor()
+        context.font = '50px  Comic Sans MS'
         context.fillText(`+${this.score}`, 0, 0)
         context.restore()
     }

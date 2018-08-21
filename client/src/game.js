@@ -178,7 +178,7 @@ class Game {
             case macro.StateGame:
                 if (this.reachDoor()) {
                     window.g.gameAudio.pause('bg.mp3')
-                    this.addScore(this.child.x, this.child.y, macro.ScoreLevel)
+                    this.addScore(this.door.x, this.door.y, macro.ScoreLevel)
                     window.g.gameState = macro.StateReachDoor
                     setTimeout(() => { this.levelUp() }, 2 * 1000)
                     window.g.gameAudio.play('win.mp3')

@@ -22904,7 +22904,7 @@ var Game = function () {
                 case _macro2.default.StateGame:
                     if (this.reachDoor()) {
                         window.g.gameAudio.pause('bg.mp3');
-                        this.addScore(this.child.x, this.child.y, _macro2.default.ScoreLevel);
+                        this.addScore(this.door.x, this.door.y, _macro2.default.ScoreLevel);
                         window.g.gameState = _macro2.default.StateReachDoor;
                         setTimeout(function () {
                             _this2.levelUp();
@@ -24427,9 +24427,10 @@ var Floating = function (_Element) {
         var _this = _possibleConstructorReturn(this, (Floating.__proto__ || Object.getPrototypeOf(Floating)).call(this, x, y, radius));
 
         _this.score = score;
-        _this.showTime = 0.3;
+        _this.moveTime = 0.1;
+        _this.showTime = _this.moveTime + 0.2;
         _this.pass = 0;
-        _this.speed = 100;
+        _this.speed = 300;
         _this.active = true;
         return _this;
     }
@@ -24448,9 +24449,11 @@ var Floating = function (_Element) {
         value: function update(elapsed) {
             if (!this.active) return;
 
-            if (this.pass < this.showTime) {
+            if (this.pass < this.moveTime) {
                 this.pass += elapsed;
                 this.y -= elapsed * this.speed;
+            } else if (this.pass < this.showTime) {
+                this.pass += elapsed;
             } else {
                 this.active = false;
             }
@@ -24464,10 +24467,10 @@ var Floating = function (_Element) {
                     c = 'blue';
                     break;
                 case _macro2.default.ScoreFence:
-                    c = 'blue';
+                    c = 'gold';
                     break;
                 case _macro2.default.ScoreLevel:
-                    c = 'yellow';
+                    c = 'white';
                     break;
                 default:
                     c = 'red';
@@ -24479,10 +24482,12 @@ var Floating = function (_Element) {
         key: 'draw',
         value: function draw(context) {
             if (!this.active) return;
+            var text = '+' + this.score;
+            var w = context.measureText(text).width;
             context.save();
-            context.translate(this.x, this.y);
-            context.fillStyle = '' + this.getColor();
-            context.font = '23pt Arial';
+            context.translate(this.x - 2 * w, this.y);
+            context.fillStyle = this.getColor();
+            context.font = '50px  Comic Sans MS';
             context.fillText('+' + this.score, 0, 0);
             context.restore();
         }
@@ -24866,7 +24871,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '50970' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '51216' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
