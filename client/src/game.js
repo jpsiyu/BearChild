@@ -148,7 +148,7 @@ class Game {
         window.g.gameState = macro.StateGameOver
         window.g.uiMgr.hide(macro.UIGame)
         window.g.uiMgr.show(macro.UIEnd)
-        axios.post('lv', { uid: window.g.uid, lv: window.g.gameLv }).then(response => {
+        axios.post('lv', { uid: window.g.uid, lv: window.g.gameLv, score:window.g.gameScore }).then(response => {
         })
     }
 

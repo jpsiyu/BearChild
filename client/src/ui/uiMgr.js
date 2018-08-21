@@ -39,12 +39,6 @@ class UIMgr{
         return res
     }
 
-    isPopUI(){
-        const uiInfo = this.getUIInfo()
-        const res = uiInfo ? !uiInfo.cfg.full: false
-        return res
-    }
-
     show(uiName){
         const cfg = uiConfig[uiName]
         if(!cfg) return

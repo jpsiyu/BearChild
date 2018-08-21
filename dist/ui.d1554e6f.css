@@ -236,6 +236,10 @@
     flex: 1;
 }
 
+.UIRank .liScore{
+    flex: 1;
+}
+
 /* UI Game */
 .UIGame {
     background-color: rgba(0,0,0,0);

@@ -23,33 +23,28 @@ class GameData {
     }
 
     remember(info) {
-        if (this.lvList.length == 0) {
+        if (this.lvList.length < this.limit) {
             this.lvList.push(info)
-            this.updateDbLvList()
-            return
-        }
-        const last = this.lvList[this.lvList.length - 1]
-        if (this.lvList.length >= this.limit && info.lv <= last.lv) {
-            return
-        }
-
-        let insertIndex = undefined
-        this.lvList.forEach((element, index) => {
-            if (insertIndex == undefined && info.lv > element.lv) {
-                insertIndex = index
+            this.filter()
+        } else {
+            const last = this.lvList[this.lvList.length - 1]
+            if (info.score > last.score) {
+                this.lvList.push(info)
+                this.filter()
             }
+        }
+    }
+
+    filter() {
+        if (this.lvList.length >= this.limit) {
+            this.lvList.splice(this.limit, this.lvList.length - this.limit + 1)
+        }
+        this.lvList.sort((a, b) => {
+            if (a.score != b.score) return b.score - a.score
+            if (a.lv != b.lv) return b.lv - a.lv
+            return a.uid - b.uid
         })
-
-        if (insertIndex == undefined && this.lvList.length < this.limit) {
-            insertIndex = this.lvList.length
-        }
-        if (insertIndex != undefined) {
-            this.lvList.splice(insertIndex, 0, info)
-            if(this.lvList.length >= this.limit){
-                this.lvList.splice(this.limit, this.lvList.length-this.limit+1)
-            }
-            this.updateDbLvList()
-        }
+        this.updateDbLvList()
     }
 
     updateDbLvList() {

@@ -22870,7 +22870,7 @@ var Game = function () {
             window.g.gameState = _macro2.default.StateGameOver;
             window.g.uiMgr.hide(_macro2.default.UIGame);
             window.g.uiMgr.show(_macro2.default.UIEnd);
-            _axios2.default.post('lv', { uid: window.g.uid, lv: window.g.gameLv }).then(function (response) {});
+            _axios2.default.post('lv', { uid: window.g.uid, lv: window.g.gameLv, score: window.g.gameScore }).then(function (response) {});
         }
     }, {
         key: 'addScore',
@@ -23977,6 +23977,11 @@ var UIRank = function (_React$Component) {
                 ),
                 _react2.default.createElement(
                     'p',
+                    { className: 'liScore' },
+                    'SCORE'
+                ),
+                _react2.default.createElement(
+                    'p',
                     { className: 'liLv' },
                     'LV'
                 )
@@ -24003,6 +24008,11 @@ var UIRank = function (_React$Component) {
                         'p',
                         { className: 'liUid' },
                         element.uid
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'liScore' },
+                        element.score
                     ),
                     _react2.default.createElement(
                         'p',
@@ -24296,13 +24306,6 @@ var UIMgr = function () {
         key: 'isShowing',
         value: function isShowing() {
             var res = Object.keys(this.showing).length != 0;
-            return res;
-        }
-    }, {
-        key: 'isPopUI',
-        value: function isPopUI() {
-            var uiInfo = this.getUIInfo();
-            var res = uiInfo ? !uiInfo.cfg.full : false;
             return res;
         }
     }, {

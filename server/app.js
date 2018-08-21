@@ -23,7 +23,7 @@ app.get(prefix('/uid'), (req, res) => {
 })
 
 app.post(prefix('/lv'), (req, res) => {
-    data.remember({uid: req.body.uid, lv: req.body.lv})
+    data.remember({uid: req.body.uid, lv: req.body.lv, score: req.body.score})
     res.status(200).json(1)
 })
 

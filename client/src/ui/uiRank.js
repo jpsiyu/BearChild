@@ -16,8 +16,8 @@ class UIRank extends React.Component {
         const header = <li key='header'>
             <div className='liStar'><p>{'STAR'}</p></div>
             <p className='liUid'>{'UID'}</p>
+            <p className='liScore'>{'SCORE'}</p>
             <p className='liLv'>{'LV'}</p>
-
         </li>
         l.push(header)
 
@@ -28,6 +28,7 @@ class UIRank extends React.Component {
             li = <li key={i}>
                 <div className='liStar'><p>{this.getStar(i)}</p></div>
                 <p className='liUid'>{element.uid}</p>
+                <p className='liScore'>{element.score}</p>
                 <p className='liLv'>{element.lv}</p>
             </li>
             l.push(li)
