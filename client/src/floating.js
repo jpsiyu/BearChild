@@ -61,7 +61,7 @@ class Floating extends Element {
         context.save()
         context.translate(this.x - 2*w, this.y)
         context.fillStyle = this.getColor()
-        context.font = '30px  Comic Sans MS'
+        context.font = '30px Game Font'
         context.fillText(`+${this.score}`, 0, 0)
         context.restore()
     }
