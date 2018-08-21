@@ -1,8 +1,9 @@
 const setCookie = (name, value, exdays=365) => {
     const d = new Date()
+    const create = d.getTime()
     d.setTime(d.getTime() + exdays * 24 * 3600 * 1000)
     const expires = `expires=${d.toUTCString()}`
-    document.cookie = `${name}=${value};${expires};path=/`
+    document.cookie = `${name}=${value}_${create};${expires};path=/`
 }
 
 const getCookie = (cname) => {

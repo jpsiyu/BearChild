@@ -1,12 +1,12 @@
 class RecordUidCounter {
     constructor(dbHander) {
         this.key = 'RecordUidCounter'
-        this.start = 1001
+        this.start = 1000
         this.dbHander = dbHander
     }
 
-    format(num) {
-        return { 'key': this.key, 'num': num }
+    format(num, create) {
+        return { 'key': this.key, 'num': num, create : create}
     }
 
     query() {
@@ -21,13 +21,14 @@ class RecordUidCounter {
         this.dbHander.findOne(this.query(), (err, doc) => {
             if (err) {
                 console.log(`err: ${err}`)
-                return cb(undefined)
+                return cb(undefined, undefined)
             }
             if (doc) {
-                return cb(doc.num)
+                return cb(doc.num, doc.create)
             }
-            this.dbHander.insert(this.format(this.start), (err, doc) => {
-                return cb(doc.num)
+            const create = new Date().getTime()
+            this.dbHander.insert(this.format(this.start, create), (err, doc) => {
+                return cb(doc.num, doc.create)
             })
         })
     }

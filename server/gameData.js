@@ -4,14 +4,16 @@ class GameData {
     constructor() {
         this.currentUid = undefined
         this.lvList = undefined
+        this.create = undefined
         this.limit = 10
     }
 
     init(success) {
-        db.load((count, list) => {
-            this.currentUid = count
+        db.load((count, create, list) => {
+            this.currentUid = Number(count)
+            this.create = Number(create)
             this.lvList = list
-            console.log(`game data init, uid:${this.currentUid}, lvList:${this.lvList}`)
+            console.log(`game data init, uid:${this.currentUid}, create:${new Date(this.create)}`)
             success()
         })
     }

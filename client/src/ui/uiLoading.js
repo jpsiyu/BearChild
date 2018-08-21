@@ -43,16 +43,19 @@ class UILoading extends React.Component {
     }
 
     getUid() {
-        let uid = gameCookie.getCookie(macro.UID)
-        if (!uid) {
-            axios.get(macro.UID).then(response => {
-                uid = response.data
-                gameCookie.setCookie(macro.UID, uid)
-                window.g.uid = uid
-            })
-        } else {
-            window.g.uid = uid
+        let uid_create = gameCookie.getCookie(macro.UID)
+        let uid = undefined
+        let create = undefined
+        if (uid_create) {
+            const splits = uid_create.split('_')
+            uid = splits[0]
+            create = splits[1]
         }
+        axios.get(`${macro.UID}/?uid=${uid}&create=${create}`).then(response => {
+            uid = response.data
+            gameCookie.setCookie(macro.UID, uid)
+            window.g.uid = uid
+        })
     }
 
     dots() {

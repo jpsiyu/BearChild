@@ -19,7 +19,13 @@ app.use(prefix(), express.static(path.resolve(__dirname, '../dist')))
 app.use(prefix(), express.static(path.resolve(__dirname, '../client/public')))
 
 app.get(prefix('/uid'), (req, res) => {
-    res.status(200).json(data.increase())
+    const uid = req.query.uid
+    const create = req.query.create
+    if(uid && create && Number(create) > data.create) {
+        res.status(200).json(uid)
+    }else{
+        res.status(200).json(data.increase())
+    }
 })
 
 app.post(prefix('/lv'), (req, res) => {

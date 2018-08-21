@@ -7,9 +7,9 @@ const lvs = new dbRecord.RecordLevelList(db)
 
 const load = (cb) => {
     db.loadDatabase((err) => {
-        counter.getCounter( (count) => {
+        counter.getCounter( (count, create) => {
             lvs.getList( (lvList) => {
-                cb(count, lvList)
+                cb(count, create, lvList)
             })
         })
     })

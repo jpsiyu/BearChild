@@ -23534,9 +23534,10 @@ var setCookie = function setCookie(name, value) {
     var exdays = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 365;
 
     var d = new Date();
+    var create = d.getTime();
     d.setTime(d.getTime() + exdays * 24 * 3600 * 1000);
     var expires = 'expires=' + d.toUTCString();
-    document.cookie = name + '=' + value + ';' + expires + ';path=/';
+    document.cookie = name + '=' + value + '_' + create + ';' + expires + ';path=/';
 };
 
 var getCookie = function getCookie(cname) {
@@ -23640,16 +23641,19 @@ var UILoading = function (_React$Component) {
     }, {
         key: 'getUid',
         value: function getUid() {
-            var uid = _gameCookie2.default.getCookie(_macro2.default.UID);
-            if (!uid) {
-                _axios2.default.get(_macro2.default.UID).then(function (response) {
-                    uid = response.data;
-                    _gameCookie2.default.setCookie(_macro2.default.UID, uid);
-                    window.g.uid = uid;
-                });
-            } else {
-                window.g.uid = uid;
+            var uid_create = _gameCookie2.default.getCookie(_macro2.default.UID);
+            var uid = undefined;
+            var create = undefined;
+            if (uid_create) {
+                var splits = uid_create.split('_');
+                uid = splits[0];
+                create = splits[1];
             }
+            _axios2.default.get(_macro2.default.UID + '/?uid=' + uid + '&create=' + create).then(function (response) {
+                uid = response.data;
+                _gameCookie2.default.setCookie(_macro2.default.UID, uid);
+                window.g.uid = uid;
+            });
         }
     }, {
         key: 'dots',
