@@ -2,6 +2,11 @@
     --ui-unit: 2.2vh;
 }
 
+@font-face {
+    font-family: 'Game Font';
+    src: url('ComicSansMS3.f2dc0ca5.ttf');
+}
+
 /* UI Loading */
 .UILoading{
     display:flex;
@@ -22,7 +27,7 @@
     position: absolute;
     font-size: calc(var(--ui-unit) * 5);
     font-weight: 3000;
-    font-family: 'Comic Sans MS';
+    font-family: 'Game Font';
     animation-name: gameName;
     animation-duration: 1s;
     animation-timing-function: linear;
@@ -133,7 +138,7 @@
     margin: auto;
     text-transform: uppercase;
     color: lightcoral;
-    font-family: 'Comic Sans MS';
+    font-family: 'Game Font';
 }
 
 .UIEnd .btnContainer{
@@ -173,7 +178,7 @@
 /* UI Rank */
 .UIRank{
     text-align: center;
-    font-family: 'Comic Sans MS';
+    font-family: 'Game Font';
     display: flex;
     flex-direction: column;
     color: white;
@@ -271,7 +276,7 @@
     width: 15%;
     text-align: center;
     font-size: calc(var(--ui-unit) * 2);
-    font-family: 'Comic Sans MS';
+    font-family: 'Game Font';
     background-color: beige;
     border-radius: calc(var(--ui-unit) * 3);
     display: flex;
