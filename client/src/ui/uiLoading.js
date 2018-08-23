@@ -75,7 +75,9 @@ class UILoading extends React.Component {
                 <p>{wps}</p>
             </div>
             <div className='bottom'>
-                <p>&copy; Copyright 2018, Email:cowbigcar@163.com, Version:{this.version}</p>
+                <div className='container'>
+                    <p>&copy; Copyright 2018, Email:cowbigcar@163.com, Version:{this.version}</p>
+                </div>
             </div>
         </div>
     }

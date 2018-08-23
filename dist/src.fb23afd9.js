@@ -23041,15 +23041,12 @@ module.exports = {
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server/app.js --watch ./server --ignore server/game.db -V",
-    "watch": "parcel watch client/public/index.html --public-url /bearchild",
+    "watch": "parcel watch client/public/index.html",
     "forever": "forever start server/app.js --uid BearChild"
   },
   "keywords": [],
   "production": false,
   "port": 3001,
-  "prefix": "/bearchild",
-  "ip": "http://34.209.241.122/bearchild/",
-  "localHost": "http://localhost/bearchild/",
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -23703,10 +23700,14 @@ var UILoading = function (_React$Component) {
                     'div',
                     { className: 'bottom' },
                     _react2.default.createElement(
-                        'p',
-                        null,
-                        '\xA9 Copyright 2018, Email:cowbigcar@163.com, Version:',
-                        this.version
+                        'div',
+                        { className: 'container' },
+                        _react2.default.createElement(
+                            'p',
+                            null,
+                            '\xA9 Copyright 2018, Email:cowbigcar@163.com, Version:',
+                            this.version
+                        )
                     )
                 )
             );
@@ -24871,7 +24872,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '51216' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '60999' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -25013,4 +25014,4 @@ function hmrAccept(bundle, id) {
   });
 }
 },{}]},{},["../../node_modules/parcel/src/builtins/hmr-runtime.js","../src/index.js"], null)
-//# sourceMappingURL=/bearchild/src.fb23afd9.map
+//# sourceMappingURL=/src.fb23afd9.map

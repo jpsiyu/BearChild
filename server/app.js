@@ -13,12 +13,10 @@ app.use('*', (req, res, next) => {
     next()
 })
 
-const prefix = (url = '') => { return `${pjson.prefix}${url}` }
+app.use(express.static(path.resolve(__dirname, '../dist')))
+app.use(express.static(path.resolve(__dirname, '../client/public')))
 
-app.use(prefix(), express.static(path.resolve(__dirname, '../dist')))
-app.use(prefix(), express.static(path.resolve(__dirname, '../client/public')))
-
-app.get(prefix('/uid'), (req, res) => {
+app.get('/uid', (req, res) => {
     const uid = req.query.uid
     const create = req.query.create
     if(uid && create && Number(create) > data.create) {
@@ -28,12 +26,12 @@ app.get(prefix('/uid'), (req, res) => {
     }
 })
 
-app.post(prefix('/lv'), (req, res) => {
+app.post('/lv', (req, res) => {
     data.remember({uid: req.body.uid, lv: req.body.lv, score: req.body.score})
     res.status(200).json(1)
 })
 
-app.get(prefix('/rank'), (req, res) => {
+app.get('/rank', (req, res) => {
     res.status(200).json(data.lvList)
 })
 
