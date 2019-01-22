@@ -8,13 +8,12 @@ class GameData {
         this.limit = 10
     }
 
-    init(success) {
+    init() {
         db.load((count, create, list) => {
             this.currentUid = Number(count)
             this.create = Number(create)
             this.lvList = list
             console.log(`game data init, uid:${this.currentUid}, create:${new Date(this.create)}`)
-            success()
         })
     }
 
