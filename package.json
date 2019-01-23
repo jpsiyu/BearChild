@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "production": false,
-  "port": 3001,
+  "port": 3002,
   "author": "",
   "license": "ISC",
   "dependencies": {
